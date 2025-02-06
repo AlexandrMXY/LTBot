@@ -1,5 +1,6 @@
 app:
   telegram-token: ${TELEGRAM_TOKEN} # env variable
+#  url-regex: .*
 
 spring:
   application:

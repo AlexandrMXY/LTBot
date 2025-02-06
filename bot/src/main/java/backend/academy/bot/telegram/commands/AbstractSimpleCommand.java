@@ -1,0 +1,50 @@
+package backend.academy.bot.telegram.commands;
+
+import backend.academy.bot.dto.MessageDto;
+import backend.academy.bot.telegram.session.SessionContext;
+import backend.academy.bot.telegram.session.SessionStateInitializer;
+import backend.academy.bot.telegram.session.TelegramSessionState;
+
+public abstract class AbstractSimpleCommand implements Command {
+    private SessionStateInitializer initializer;
+
+    protected void setProcessor(SimpleCommandProcessor processor) {
+        initializer = new SimpleCommandSessionStateInitializer(processor);
+    }
+
+    public AbstractSimpleCommand(SimpleCommandProcessor processor) {
+        setProcessor(processor);
+    }
+
+    @Override
+    public SessionStateInitializer getSessionStateInitializer() {
+        return initializer;
+    }
+
+    public static class SimpleCommandSessionStateInitializer implements SessionStateInitializer {
+        private final SimpleCommandProcessor processor;
+
+        public SimpleCommandSessionStateInitializer(SimpleCommandProcessor processor) {
+            this.processor = processor;
+        }
+
+        @Override
+        public TelegramSessionState initSessionState() {
+            return new SimpleCommandSessionState(processor);
+        }
+    }
+
+    public static class SimpleCommandSessionState extends TelegramSessionState {
+        private final SimpleCommandProcessor processor;
+
+        public SimpleCommandSessionState(SimpleCommandProcessor processor) {
+            this.processor = processor;
+        }
+
+        @Override
+        public TelegramSessionState updateState(TelegramSessionState state, MessageDto message, SessionContext context) {
+            processor.processCommand(state, message, context);
+            return null;
+        }
+    }
+}
