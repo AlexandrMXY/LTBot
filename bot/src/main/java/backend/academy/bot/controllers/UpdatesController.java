@@ -1,6 +1,6 @@
 package backend.academy.bot.controllers;
 
-import backend.academy.bot.model.LinkUpdate;
+import backend.academy.api.model.LinkUpdate;
 import backend.academy.bot.service.telegram.TelegramService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

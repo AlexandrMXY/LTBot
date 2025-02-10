@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class SessionContext {
     private final TelegramService telegramService;
 //    @Value("app.url-regex")
-    private String urlRegEx = ".*";
+    private String urlRegEx = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$";
 
     @Autowired
     public SessionContext(TelegramService telegramService) {

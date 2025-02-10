@@ -1,4 +1,4 @@
-package backend.academy.bot.model;
+package backend.academy.api.model;
 
 import java.util.Arrays;
 import java.util.List;

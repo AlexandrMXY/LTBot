@@ -67,13 +67,11 @@ public class TrackCommand implements Command {
                 }
                 case TAGS_INPUT -> {
                     tags.addAll(Arrays.stream(message.message().trim().split("\\s")).toList());
+                    context.telegramService().sendMessage(message.chat(), "Success");
                     // TODO
-                    LOGGER.info(this);
                     return null;
                 }
-
             }
-            LOGGER.info(this);
             return this;
         }
     }
