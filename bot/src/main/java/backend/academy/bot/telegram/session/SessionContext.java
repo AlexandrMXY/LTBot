@@ -1,23 +1,30 @@
 package backend.academy.bot.telegram.session;
 
+import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.service.telegram.TelegramService;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 
 @Component
 public class SessionContext {
-    private final TelegramService telegramService;
+    @Autowired
+    private TelegramService telegramService;
+    @Autowired
+    private ScrapperService scrapperService;
+
 //    @Value("app.url-regex")
     private String urlRegEx = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$";
 
-    @Autowired
-    public SessionContext(TelegramService telegramService) {
-        this.telegramService = telegramService;
-    }
-
     public TelegramService telegramService() {
         return telegramService;
+    }
+
+    public ScrapperService scrapperService() {
+        return scrapperService;
     }
 
     public String urlRegEx() {
