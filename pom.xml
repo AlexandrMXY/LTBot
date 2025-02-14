@@ -16,10 +16,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>bot</module>
-        <module>report</module>
-        <module>scrapper</module>
         <module>api</module>
+        <module>bot</module>
+<!--        <module>report</module>-->
+        <module>scrapper</module>
     </modules>
 
     <properties>
@@ -50,7 +50,7 @@
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
-        <error-prone.version>2.36.0</error-prone.version>
+<!--        <error-prone.version>2.36.0</error-prone.version>-->
 
         <!-- Spotless -->
         <spotless-maven-plugin.version>2.44.2</spotless-maven-plugin.version>
@@ -167,6 +167,12 @@
             <artifactId>wiremock-standalone</artifactId>
             <scope>test</scope>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.google.errorprone</groupId>-->
+<!--            <artifactId>error_prone_core</artifactId>-->
+<!--            <version>${error-prone.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -175,6 +181,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
+<!--                    <version>3.13.0</version>-->
                     <configuration>
                         <release>${java.version}</release>
                         <parameters>true</parameters>
@@ -182,7 +189,7 @@
                         <compilerArgs>
                             <arg>-XDcompilePolicy=simple</arg>
                             <arg>--should-stop=ifError=FLOW</arg>
-                            <arg>-Xplugin:ErrorProne</arg>
+<!--                            <arg>-Xplugin:ErrorProne</arg>-->
                         </compilerArgs>
                         <annotationProcessorPaths>
                             <path>
@@ -193,11 +200,11 @@
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
                             </path>
-                            <path>
-                                <groupId>com.google.errorprone</groupId>
-                                <artifactId>error_prone_core</artifactId>
-                                <version>${error-prone.version}</version>
-                            </path>
+<!--                            <path>-->
+<!--                                <groupId>com.google.errorprone</groupId>-->
+<!--                                <artifactId>error_prone_core</artifactId>-->
+<!--                                <version>${error-prone.version}</version>-->
+<!--                            </path>-->
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>

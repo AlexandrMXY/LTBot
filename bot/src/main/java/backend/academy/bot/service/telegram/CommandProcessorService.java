@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@Log4j
 public class CommandProcessorService {
     public static final String COMMAND_PREFIX = "/";
 
