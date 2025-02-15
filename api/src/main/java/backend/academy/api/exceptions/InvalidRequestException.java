@@ -3,4 +3,5 @@ package backend.academy.api.exceptions;
 import lombok.experimental.StandardException;
 
 @StandardException
-public class ErrorResponseException extends RuntimeException { }
+public class InvalidRequestException extends RuntimeException {
+}

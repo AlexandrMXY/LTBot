@@ -5,8 +5,9 @@ import backend.academy.api.model.AddLinkRequest;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.LinkResponse;
 import backend.academy.bot.BotConfig;
-import backend.academy.bot.telegram.session.SessionContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 
 @Service
+@Log4j2
 public class ScrapperService {
     private final RestClient client;
     private final String baseUrl;
@@ -22,7 +24,6 @@ public class ScrapperService {
     @Autowired
     public ScrapperService(BotConfig config) {
         client = RestClient.builder()
-//            .baseUrl(config.scrapperUrl())
             .build();
 
         baseUrl = config.scrapperUrl();
@@ -41,5 +42,13 @@ public class ScrapperService {
                 throw new ErrorResponseException(errorResponse.description());
             })
             .body(LinkResponse.class);
+    }
+
+    public void registerChar(long id) {
+        var response = client.post()
+            .uri(baseUrl + "/tg-chat/" + id)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) ->
+                log.error("Error registering user: {}", rawErrorResponse.getStatusCode()));
     }
 }
