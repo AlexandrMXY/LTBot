@@ -7,6 +7,10 @@ public interface Command {
     String getName();
     String getDescription();
 
+    default boolean isHidden() {
+        return false;
+    }
+
     default SessionStateInitializer getSessionStateInitializer() {
       return () -> null;
     }

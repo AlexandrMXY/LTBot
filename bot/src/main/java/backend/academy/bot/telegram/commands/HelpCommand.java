@@ -12,16 +12,14 @@ public class HelpCommand extends AbstractSimpleCommand {
     @Lazy
     private List<Command> commands;
 
-    public HelpCommand() {
-        super(((state, message, context) -> {
-            throw new IllegalStateException("SimpleCommandProcessor not initialized");
-        }));
-    }
-
     @PostConstruct
     private void init() {
         StringBuilder mb = new StringBuilder();
+        mb.append("/").append(getName()).append(": ").append(getDescription()).append(System.lineSeparator());
         for (Command command : commands) {
+            if (command.isHidden()) {
+                continue;
+            }
             mb
                 .append("/")
                 .append(command.getName())
@@ -41,6 +39,6 @@ public class HelpCommand extends AbstractSimpleCommand {
 
     @Override
     public String getDescription() {
-        return "Command description here";
+        return "display all commands";
     }
 }

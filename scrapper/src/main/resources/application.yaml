@@ -4,6 +4,8 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
+  tags-filter-regex: "[\\w]{1,}"
+
 spring:
   application:
     name: Scrapper
@@ -11,7 +13,7 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     open-in-view: false
   datasource:
     url: jdbc:postgresql://localhost:5432/tbhw

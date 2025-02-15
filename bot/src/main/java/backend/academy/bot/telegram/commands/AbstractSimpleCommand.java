@@ -8,12 +8,16 @@ import backend.academy.bot.telegram.session.TelegramSessionState;
 public abstract class AbstractSimpleCommand implements Command {
     private SessionStateInitializer initializer;
 
-    protected void setProcessor(SimpleCommandProcessor processor) {
-        initializer = new SimpleCommandSessionStateInitializer(processor);
+    public AbstractSimpleCommand() {
+        this((state, message, context) -> { throw new IllegalStateException("Command processor not initialized"); });
     }
 
     public AbstractSimpleCommand(SimpleCommandProcessor processor) {
         setProcessor(processor);
+    }
+
+    protected void setProcessor(SimpleCommandProcessor processor) {
+        initializer = new SimpleCommandSessionStateInitializer(processor);
     }
 
     @Override

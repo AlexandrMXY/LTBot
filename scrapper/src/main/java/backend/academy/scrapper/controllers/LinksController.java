@@ -2,10 +2,14 @@ package backend.academy.scrapper.controllers;
 
 import backend.academy.api.model.AddLinkRequest;
 import backend.academy.api.model.LinkResponse;
+import backend.academy.api.model.ListLinksResponse;
 import backend.academy.api.model.RemoveLinkRequest;
+import backend.academy.scrapper.dto.LinkDto;
+import backend.academy.scrapper.service.LinksManagementService;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,22 +21,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/links")
+@Log4j2
 public class LinksController {
-    private static final Logger LOGGER = LogManager.getLogger();
+
+    @Autowired
+    private LinksManagementService linksService;
 
     @GetMapping
-    public void getLinks(@RequestHeader("Tg-Chat-Id") long chatId) {
-
+    public ListLinksResponse getLinks(@RequestHeader("Tg-Chat-Id") long chatId) {
+        return new ListLinksResponse(
+            linksService.getLinks(chatId).stream()
+                .map(LinkDto::asResponse)
+                .toList()
+        );
     }
 
     @PostMapping
     public LinkResponse addLinks(@RequestHeader("Tg-Chat-Id") long chatId, @RequestBody AddLinkRequest request) {
-        LOGGER.info("addLinks: {} {}", chatId, request);
-        return new LinkResponse(chatId, request.url(), request.tags(), request.filters());
+        return linksService.addLink(chatId, new LinkDto(request)).asResponse();
     }
 
     @DeleteMapping
-    public void deleteLinks(@RequestHeader("Tg-Chat-Id") long chatId, RemoveLinkRequest request) {
-
+    public LinkResponse deleteLinks(@RequestHeader("Tg-Chat-Id") long chatId, @RequestBody RemoveLinkRequest request) {
+        return linksService.deleteLink(chatId, request.link()).asResponse();
     }
 }

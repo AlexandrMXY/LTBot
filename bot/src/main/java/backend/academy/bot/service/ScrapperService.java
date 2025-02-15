@@ -4,11 +4,13 @@ import backend.academy.api.exceptions.ErrorResponseException;
 import backend.academy.api.model.AddLinkRequest;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.LinkResponse;
+import backend.academy.api.model.ListLinksResponse;
+import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.bot.BotConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class ScrapperService {
         baseUrl = config.scrapperUrl();
     }
 
-    public LinkResponse addLinks(long chatId, AddLinkRequest request) {
+    public LinkResponse addLink(long chatId, AddLinkRequest request) {
         return client.post()
             .uri(baseUrl + "/links")
             .header("Tg-Chat-Id", String.valueOf(chatId))
@@ -39,16 +41,45 @@ public class ScrapperService {
             .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
                 ApiErrorResponse errorResponse =
                     new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ErrorResponseException(errorResponse.description());
+                throw new ErrorResponseException(errorResponse);
+            })
+            .body(LinkResponse.class);
+    }
+
+    public LinkResponse removeLink(long chatId, RemoveLinkRequest request) {
+        return client.method(HttpMethod.DELETE)
+            .uri(baseUrl + "/links")
+            .header("Tg-Chat-Id", String.valueOf(chatId))
+            .body(request)
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
+                ApiErrorResponse errorResponse =
+                    new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
+                throw new ErrorResponseException(errorResponse);
             })
             .body(LinkResponse.class);
     }
 
     public void registerChar(long id) {
-        var response = client.post()
+        client.post()
             .uri(baseUrl + "/tg-chat/" + id)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) ->
                 log.error("Error registering user: {}", rawErrorResponse.getStatusCode()));
+    }
+
+    public ListLinksResponse getTrackedLinks(long chatId) {
+        return client.get()
+            .uri(baseUrl + "/links")
+            .header("Tg-Chat-Id", String.valueOf(chatId))
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
+                ApiErrorResponse errorResponse =
+                    new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
+                throw new ErrorResponseException(errorResponse);
+            })
+            .body(ListLinksResponse.class);
     }
 }

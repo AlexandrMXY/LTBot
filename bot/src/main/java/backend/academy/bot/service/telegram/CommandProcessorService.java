@@ -11,6 +11,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 public class CommandProcessorService {
     public static final String COMMAND_PREFIX = "/";
 
     private final Map<String, Command> commands;
-    private final TelegramService telegramService;
     private final TelegramBot bot;
 
     @Autowired
@@ -32,8 +33,7 @@ public class CommandProcessorService {
 
 
     @Autowired
-    public CommandProcessorService(List<Command> commands, TelegramService telegramService, TelegramBot bot) {
-        this.telegramService = telegramService;
+    public CommandProcessorService(List<Command> commands, TelegramBot bot) {
         this.bot = bot;
         this.commands = commands.stream().collect(
             Collectors.toMap(Command::getName, command -> command));
@@ -41,12 +41,15 @@ public class CommandProcessorService {
 
     @PostConstruct
     private void registerCommands() {
-        bot.execute(
+        var res = bot.execute(
             new SetMyCommands(
                 commands.values().stream()
+                    .filter(command -> !command.isHidden())
                     .map(command -> new BotCommand(command.getName(), command.getDescription()))
-                    .toList()
-                    .toArray(new BotCommand[0])));
+                    .toArray(BotCommand[]::new)));
+        if (!res.isOk()) {
+            log.error("Error registering commands: {}", res);
+        }
     }
 
 
@@ -56,7 +59,10 @@ public class CommandProcessorService {
 
     public SessionStateInitializer getSessionStateInitializer(MessageDto messageDto) {
         if (isCommand(messageDto)) {
-            var commandName = messageDto.message().substring(COMMAND_PREFIX.length());
+            int delimIndex = messageDto.message().indexOf(' ');
+            var commandName = messageDto.message().substring(
+                COMMAND_PREFIX.length(),
+                delimIndex == -1 ? messageDto.message().length() : delimIndex);
             if (commands.containsKey(commandName)) {
                 return commands.get(commandName).getSessionStateInitializer();
             }

@@ -13,10 +13,6 @@ public class StartCommand extends AbstractSimpleCommand {
     @Autowired
     private ScrapperService scrapperService;
 
-    public StartCommand() {
-        super(null);
-    }
-
     @PostConstruct
     private void init() {
         setProcessor(((state, message, context) -> scrapperService.registerChar(message.chat())));
@@ -29,6 +25,11 @@ public class StartCommand extends AbstractSimpleCommand {
 
     @Override
     public String getDescription() {
-        return "Command description here";
+        return "";
+    }
+
+    @Override
+    public boolean isHidden() {
+        return true;
     }
 }

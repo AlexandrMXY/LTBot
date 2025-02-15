@@ -9,19 +9,17 @@ import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.SessionStateInitializer;
 import backend.academy.bot.telegram.session.TelegramSessionState;
 import backend.academy.bot.utils.RegExUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Component
+@Log4j2
 public class TrackCommand implements Command {
     @Override
     public String getName() {
@@ -30,7 +28,7 @@ public class TrackCommand implements Command {
 
     @Override
     public String getDescription() {
-        return "Command description here";
+        return "start tracking link";
     }
 
     @Override
@@ -48,7 +46,7 @@ public class TrackCommand implements Command {
     public static class TrackSessionState extends TelegramSessionState {
         private static final Logger LOGGER = LogManager.getLogger();
 
-        private static enum Stage {
+        private enum Stage {
             INIT,
             URL_INPUT,
             TAGS_INPUT,
@@ -58,8 +56,8 @@ public class TrackCommand implements Command {
         private Stage stage = Stage.INIT;
 
         private String url;
-        private List<String> tags = new ArrayList<>();
-        private List<String> filters = new ArrayList<>();
+        private final List<String> tags = new ArrayList<>();
+        private final List<String> filters = new ArrayList<>();
 
         @Override
         public TelegramSessionState updateState(TelegramSessionState state, MessageDto message, SessionContext context) {
@@ -96,11 +94,17 @@ public class TrackCommand implements Command {
 
         private void registerLink(SessionContext context, long chatId) {
             try {
-                LinkResponse response = context.scrapperService().addLinks(
+                LinkResponse response = context.scrapperService().addLink(
                     chatId, new AddLinkRequest(url, tags, filters));
                 context.telegramService().sendMessage(chatId, "Tracking " + response.url());
             } catch (ErrorResponseException exception) {
-                context.telegramService().sendMessage(chatId, exception.getMessage());
+                ApiErrorResponse response = exception.details();
+
+                if (response == null) {
+                    log.warn("Invalid response: {}", "", exception);
+                } else {
+                    context.telegramService().sendMessage(chatId, response.exceptionMessage());
+                }
             } catch (Exception t) {
                 LOGGER.error("", t);
             }
