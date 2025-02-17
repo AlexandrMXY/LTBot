@@ -5,6 +5,7 @@ app:
     access-token: ${SO_ACCESS_TOKEN}
 
   tags-filter-regex: "[\\w]{1,}"
+  update-delay: 10000 # milliseconds
 
 spring:
   application:

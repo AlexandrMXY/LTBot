@@ -1,6 +1,6 @@
 package backend.academy.bot.service;
 
-import backend.academy.api.exceptions.ErrorResponseException;
+import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.AddLinkRequest;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.LinkResponse;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import java.util.List;
 
 @Service
 @Log4j2
@@ -41,7 +40,7 @@ public class ScrapperService {
             .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
                 ApiErrorResponse errorResponse =
                     new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ErrorResponseException(errorResponse);
+                throw new ApiErrorResponseException(errorResponse);
             })
             .body(LinkResponse.class);
     }
@@ -56,7 +55,7 @@ public class ScrapperService {
             .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
                 ApiErrorResponse errorResponse =
                     new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ErrorResponseException(errorResponse);
+                throw new ApiErrorResponseException(errorResponse);
             })
             .body(LinkResponse.class);
     }
@@ -78,7 +77,7 @@ public class ScrapperService {
             .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
                 ApiErrorResponse errorResponse =
                     new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ErrorResponseException(errorResponse);
+                throw new ApiErrorResponseException(errorResponse);
             })
             .body(ListLinksResponse.class);
     }

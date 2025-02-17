@@ -1,6 +1,6 @@
 package backend.academy.bot.telegram.commands;
 
-import backend.academy.api.exceptions.ErrorResponseException;
+import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.bot.service.ScrapperService;
@@ -29,7 +29,7 @@ public class UntrackCommand extends AbstractSimpleCommand {
                 scrapperService.removeLink(message.chat(),
                     new RemoveLinkRequest(url));
                 context.telegramService().sendMessage(message.chat(), "Success");
-            } catch (ErrorResponseException exception) {
+            } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
                 if (response == null) {
                     log.warn("Invalid response: {}", "", exception);

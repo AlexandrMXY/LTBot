@@ -10,6 +10,7 @@ import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
+import backend.academy.scrapper.service.monitoring.LinkMonitor;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,12 @@ public class LinksManagementService {
             throw new UnsupportedLinkException("Unsupported link: " + link.link());
         }
 
+        LinkMonitor monitorInstance = linkDistributionService.getMonitor(linkMonitor);
+
         User user = userRepository.findById(userId).orElse(new User(userId, new ArrayList<>()));
-        TrackedLink trackedLink = new TrackedLink(0, link.link(), linkMonitor, link.tags());
+        TrackedLink trackedLink
+            = new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), monitorInstance.getLinkId(link));
+
         user.links().add(trackedLink);
         trackedLink = linkRepository.save(trackedLink);
         userRepository.save(user);
@@ -73,4 +78,6 @@ public class LinksManagementService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         return user.links().stream().map((LinkDto::new)).collect(Collectors.toList());
     }
+
+
 }

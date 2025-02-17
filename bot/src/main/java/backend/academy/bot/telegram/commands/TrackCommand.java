@@ -1,6 +1,6 @@
 package backend.academy.bot.telegram.commands;
 
-import backend.academy.api.exceptions.ErrorResponseException;
+import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.AddLinkRequest;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.LinkResponse;
@@ -10,7 +10,6 @@ import backend.academy.bot.telegram.session.SessionStateInitializer;
 import backend.academy.bot.telegram.session.TelegramSessionState;
 import backend.academy.bot.utils.RegExUtil;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -97,7 +96,7 @@ public class TrackCommand implements Command {
                 LinkResponse response = context.scrapperService().addLink(
                     chatId, new AddLinkRequest(url, tags, filters));
                 context.telegramService().sendMessage(chatId, "Tracking " + response.url());
-            } catch (ErrorResponseException exception) {
+            } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
 
                 if (response == null) {

@@ -1,6 +1,6 @@
 package backend.academy.bot.telegram.commands;
 
-import backend.academy.api.exceptions.ErrorResponseException;
+import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.LinkResponse;
 import backend.academy.api.model.ListLinksResponse;
@@ -30,7 +30,7 @@ public class ListCommand extends AbstractSimpleCommand {
                     result.append("Тo tracked links");
                 }
                 context.telegramService().sendMessage(message.chat(), result.toString());
-            } catch (ErrorResponseException exception) {
+            } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
                 if (response == null) {
                     log.warn("Invalid response: {}", "", exception);
