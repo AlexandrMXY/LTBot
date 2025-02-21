@@ -5,7 +5,9 @@ app:
     access-token: ${SO_ACCESS_TOKEN}
 
   tags-filter-regex: "[\\w]{1,}"
-  update-delay: 10000 # milliseconds
+  update-delay: 3600000 # milliseconds
+
+  bot-url: https://localhost:8080
 
 spring:
   application:

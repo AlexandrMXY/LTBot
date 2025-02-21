@@ -7,22 +7,24 @@ import java.util.List;
 
 @Getter
 @ToString
-public class UpdateResult {
-    private final List<UpdateDetails> updateDetails = new ArrayList<>();
+public class Updates {
+    private final List<Update> updateDetails = new ArrayList<>();
 
-    public void addUpdate(UpdateDetails details) {
+    public void addUpdate(Update details) {
         updateDetails.add(details);
     }
 
-    public UpdateResult mergeResult(UpdateResult result) {
+    public Updates mergeResult(Updates result) {
         updateDetails.addAll(result.updateDetails);
         return this;
     }
 
+    public List<Update> getUpdates() {
+        return updateDetails;
+    }
 
-
-    public static record UpdateDetails(
-        long user,
+    public static record Update(
+        List<Long> users,
         String url,
         String message
     ) { }

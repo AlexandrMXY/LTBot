@@ -2,13 +2,12 @@ package backend.academy.scrapper.service.monitoring;
 
 import backend.academy.scrapper.dto.GithubUpdate;
 import backend.academy.scrapper.dto.LinkDto;
-import backend.academy.scrapper.dto.updates.StackoverflowUpdate;
 import backend.academy.scrapper.entities.MonitoringServiceData;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.MonitoringServiceDataRepository;
 import backend.academy.scrapper.repositories.UserRepository;
-import backend.academy.scrapper.service.StackoverflowService;
+import backend.academy.scrapper.service.GithubService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
@@ -21,19 +20,20 @@ import java.util.stream.Stream;
 
 @Component
 @Log4j2
-public class StackoverflowMonitor implements LinkMonitor {
-    public static final String MONITOR_NAME = "stackoverflowMonitor";
-    public static final Pattern STACKOVERFLOW_LINK_PATTERN =
-        Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/([\\w\\-]*)$");
+public class GithubMonitor implements LinkMonitor {
+    public static final String MONITOR_NAME = "githubMonitor";
+    public static final Pattern GITHUB_LINK_PATTERN =
+        Pattern.compile("^(http(s)?://)?github\\.com/(?<uid>[\\w\\-]+)/(?<rid>[\\w\\-]+)$");
 
-    @Autowired
-    private StackoverflowService stackoverflowService;
-    @Autowired
-    private LinkRepository linkRepository;
     @Autowired
     private MonitoringServiceDataRepository monitoringServiceDataRepository;
     @Autowired
+    private LinkRepository linkRepository;
+    @Autowired
+    private GithubService githubService;
+    @Autowired
     private UserRepository userRepository;
+
 
     @PostConstruct
     private void init() {
@@ -44,16 +44,18 @@ public class StackoverflowMonitor implements LinkMonitor {
 
     @Override
     public boolean isLinkValid(LinkDto link) {
-        return link != null && STACKOVERFLOW_LINK_PATTERN.matcher(link.link()).matches();
+        return link != null && GITHUB_LINK_PATTERN.matcher(link.link()).matches();
     }
 
     @Override
     public String getLinkId(LinkDto link) {
         log.info(link.link());
-        log.info(STACKOVERFLOW_LINK_PATTERN.matcher(link.link()).namedGroups());
-        Matcher matcher = STACKOVERFLOW_LINK_PATTERN.matcher(link.link());
+        log.info(GITHUB_LINK_PATTERN.matcher(link.link()).namedGroups());
+        Matcher matcher = GITHUB_LINK_PATTERN.matcher(link.link());
         matcher.matches();
-        return matcher.group("id");
+        return matcher.group("uid") + "/" + matcher.group("rid");
+
+
     }
 
     @Override
@@ -63,22 +65,17 @@ public class StackoverflowMonitor implements LinkMonitor {
         Stream<TrackedLink> links = linkRepository.findAllByMonitoringService(MONITOR_NAME);
         long updateTime = System.currentTimeMillis() / 1000L;
 
-        log.info("Last update time: {}; Current time: {}", monitorData.orElseThrow().lastUpdate(),
-            updateTime);
-        log.info("Checking for updates {}", links);
-
-        var updates = stackoverflowService.getUpdates(
-            links.map(link -> Long.parseLong(link.serviceId())).toList(),
-            monitorData
-                .orElseThrow(() -> new IllegalStateException("Stackoverflow monitor data not found"))
+        List<GithubUpdate> updates = githubService.getUpdates(
+            links.map(TrackedLink::serviceId),
+            monitorData.orElseThrow(() -> new IllegalStateException("Github monitor data not found"))
                 .lastUpdate());
 
         Updates result = new Updates();
 
-        for (StackoverflowUpdate stackoverflowUpdate : updates) {
+        for (GithubUpdate githubUpdate : updates) {
             result.addUpdate(new Updates.Update(
-                userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(String.valueOf(stackoverflowUpdate.questionId())),
-                String.valueOf(stackoverflowUpdate.questionId()), // TODO replace repo id with url
+                userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(githubUpdate.repo()),
+                githubUpdate.repo(), // TODO replace repo id with url
                 "Updated"
             ));
         }

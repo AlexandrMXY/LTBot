@@ -7,5 +7,5 @@ public interface LinkMonitor {
 
     String getLinkId(LinkDto link);
 
-    UpdateResult checkForUpdates();
+    Updates checkForUpdates();
 }

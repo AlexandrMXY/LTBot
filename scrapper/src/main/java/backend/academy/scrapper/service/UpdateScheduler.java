@@ -2,7 +2,7 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
-import backend.academy.scrapper.service.monitoring.UpdateResult;
+import backend.academy.scrapper.service.monitoring.Updates;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +18,10 @@ public class UpdateScheduler {
     public void checkForUpdates() {
         var result = linkDistributionService.getMonitors().stream()
             .map(LinkMonitor::checkForUpdates)
-            .reduce(UpdateResult::mergeResult);
+            .reduce(Updates::mergeResult);
         log.info("Checking for updates complete: {}", result);
+
+
+        // TODO sending
     }
 }
