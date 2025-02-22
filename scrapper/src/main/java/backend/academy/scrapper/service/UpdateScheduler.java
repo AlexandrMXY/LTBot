@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 public class UpdateScheduler {
     @Autowired
     private LinkDistributionService linkDistributionService;
+    @Autowired
+    private BotService botService;
 
     @Scheduled(fixedDelayString = "${app.update-delay}")
     public void checkForUpdates() {
@@ -21,7 +23,6 @@ public class UpdateScheduler {
             .reduce(Updates::mergeResult);
         log.info("Checking for updates complete: {}", result);
 
-
-        // TODO sending
+        botService.sendUpdates(result.orElse(null));
     }
 }

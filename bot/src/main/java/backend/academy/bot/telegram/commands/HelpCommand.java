@@ -1,5 +1,6 @@
 package backend.academy.bot.telegram.commands;
 
+import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,7 +30,7 @@ public class HelpCommand extends AbstractSimpleCommand {
         }
 
         setProcessor((state, message, context) ->
-            context.telegramService().sendMessage(message.chat(), mb.toString()));
+            new TelegramResponse(message.chat(), mb.toString()));
     }
 
     @Override

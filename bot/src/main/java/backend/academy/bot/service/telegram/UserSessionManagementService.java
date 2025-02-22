@@ -19,6 +19,8 @@ public class UserSessionManagementService {
     private CommandProcessorService commandProcessorService;
     @Autowired
     private SessionContext context;
+    @Autowired
+    private TelegramService telegramService;
 
     public void processMessage(MessageDto message) {
         var state = states.get(message.chat());
@@ -30,12 +32,17 @@ public class UserSessionManagementService {
             states.remove(message.chat());
             return;
         }
-        state = state.updateState(state, message, context);
+
+        var updateResult = state.updateState(state, message, context);
+        state = updateResult.newState();
+
         if (state == null) {
             states.remove(message.chat());
         }
         else {
             states.put(message.chat(), state);
         }
+
+        telegramService.sendResponse(updateResult.response());
     }
 }

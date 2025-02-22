@@ -3,6 +3,7 @@ package backend.academy.scrapper.controllers;
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.exceptions.NotFoundException;
+import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class ApiExceptionHandler {
             HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({InvalidRequestException.class, UnsupportedLinkException.class})
+    @ExceptionHandler({InvalidRequestException.class, UnsupportedLinkException.class, AlreadyExistsException.class})
     public ResponseEntity<ApiErrorResponse> invalidRequest(Exception exception) {
         return new ResponseEntity<>(
             new ApiErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "400", exception),

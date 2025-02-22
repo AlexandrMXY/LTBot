@@ -3,9 +3,13 @@ package backend.academy.bot.telegram.session;
 import backend.academy.bot.dto.MessageDto;
 
 public class TelegramSessionState {
-
-    public TelegramSessionState updateState(TelegramSessionState state, MessageDto message, SessionContext context) {
+    public SessionUpdateResult updateState(TelegramSessionState state, MessageDto message, SessionContext context) {
         return null;
     }
 
+    public record SessionUpdateResult(
+        TelegramSessionState newState,
+        TelegramResponse response
+    ) {
+    }
 }

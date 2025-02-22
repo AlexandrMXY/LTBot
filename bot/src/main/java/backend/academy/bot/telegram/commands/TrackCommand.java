@@ -7,6 +7,7 @@ import backend.academy.api.model.LinkResponse;
 import backend.academy.bot.dto.MessageDto;
 import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.SessionStateInitializer;
+import backend.academy.bot.telegram.session.TelegramResponse;
 import backend.academy.bot.telegram.session.TelegramSessionState;
 import backend.academy.bot.utils.RegExUtil;
 import lombok.extern.log4j.Log4j2;
@@ -59,54 +60,59 @@ public class TrackCommand implements Command {
         private final List<String> filters = new ArrayList<>();
 
         @Override
-        public TelegramSessionState updateState(TelegramSessionState state, MessageDto message, SessionContext context) {
+        public TelegramSessionState.SessionUpdateResult updateState(
+                TelegramSessionState state,
+                MessageDto message,
+                SessionContext context) {
+            TelegramResponse response = null;
             switch (stage) {
                 case INIT -> {
-                    context.telegramService().sendMessage(message.chat(), "Enter URL:");
+                    response = new TelegramResponse(message.chat(), "Enter URL:");
                     stage = Stage.URL_INPUT;
                 }
                 case URL_INPUT -> {
                     url = message.message();
                     if (RegExUtil.isStringSatisfyRegex(message.message(), context.urlRegEx())) {
-                        context.telegramService().sendMessage(message.chat(), "Enter tags:");
+                        response = new TelegramResponse(message.chat(), "Enter tags:");
                         stage = Stage.TAGS_INPUT;
                     } else {
-                        context.telegramService().sendMessage(message.chat(), "Invalid URL");
+                        response = new TelegramResponse(message.chat(), "Invalid URL");
                     }
                 }
                 case TAGS_INPUT -> {
                     tags.addAll(Arrays.stream(message.message().trim().split("\\s")).toList());
                     stage = Stage.FILTERS_INPUT;
-                    context.telegramService().sendMessage(message.chat(), "Enter filters:");
+
+                    response = new TelegramResponse(message.chat(), "Enter filters:");
                 }
                 case FILTERS_INPUT -> {
                     filters.addAll(Arrays.stream(message.message().trim().split("\\s")).toList());
-                    context.telegramService().sendMessage(message.chat(), "Success");
 
-                    registerLink(context, message.chat());
+                    response = new TelegramResponse(message.chat(), registerLink(context, message.chat()));
 
-                    return null;
+                    return new SessionUpdateResult(null, response);
                 }
             }
-            return this;
+            return new SessionUpdateResult(this, response);
         }
 
-        private void registerLink(SessionContext context, long chatId) {
+        private String registerLink(SessionContext context, long chatId) {
             try {
                 LinkResponse response = context.scrapperService().addLink(
                     chatId, new AddLinkRequest(url, tags, filters));
-                context.telegramService().sendMessage(chatId, "Tracking " + response.url());
+                return "Tracking " + response.url();
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
 
                 if (response == null) {
                     log.warn("Invalid response: {}", "", exception);
                 } else {
-                    context.telegramService().sendMessage(chatId, response.exceptionMessage());
+                    return response.exceptionMessage();
                 }
             } catch (Exception t) {
                 LOGGER.error("", t);
             }
+            return null;
         }
     }
 }

@@ -48,7 +48,7 @@ public class GithubService {
     public GithubService(ScrapperConfig config) {
         client = RestClient.builder()
             .baseUrl("https://api.github.com")
-            .defaultHeader("Authorization", config.githubToken())
+            .defaultHeader("Authorization", "Bearer " + config.githubToken())
 
             .build();
     }

@@ -7,7 +7,7 @@ app:
   tags-filter-regex: "[\\w]{1,}"
   update-delay: 3600000 # milliseconds
 
-  bot-url: https://localhost:8080
+  bot-url: http://localhost:8080
 
 spring:
   application:
@@ -15,6 +15,10 @@ spring:
   liquibase:
     enabled: false
   jpa:
+    properties:
+      hibernate:
+#        show_sql: true
+#        format_sql: true
     hibernate:
       ddl-auto: validate
     open-in-view: false
@@ -22,6 +26,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/tbhw
     username: ${PG_USERNAME}
     password: ${PG_PASSWORD}
+#  logging:
+#    level:
+#      org:
+#        hibernate:
+#          SQL: DEBUG
+
 
 server:
   port: 8081

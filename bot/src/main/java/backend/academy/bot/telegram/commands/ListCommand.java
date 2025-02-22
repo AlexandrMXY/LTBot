@@ -5,6 +5,7 @@ import backend.academy.api.model.ApiErrorResponse;
 import backend.academy.api.model.LinkResponse;
 import backend.academy.api.model.ListLinksResponse;
 import backend.academy.bot.service.ScrapperService;
+import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +30,16 @@ public class ListCommand extends AbstractSimpleCommand {
                 if (links.links().isEmpty()) {
                     result.append("Тo tracked links");
                 }
-                context.telegramService().sendMessage(message.chat(), result.toString());
+                return new TelegramResponse(message.chat(), result.toString());
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
                 if (response == null) {
                     log.warn("Invalid response: {}", "", exception);
                 } else {
-                    context.telegramService().sendMessage(message.chat(), response.exceptionMessage());
+                    return new TelegramResponse(message.chat(), response.exceptionMessage());
                 }
             }
+            return null;
         });
     }
 
