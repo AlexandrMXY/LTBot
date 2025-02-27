@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = true)
+@ConfigurationProperties(prefix = "app")
 @EnableScheduling
 public record ScrapperConfig(
         @NotEmpty String githubToken, StackOverflowCredentials stackOverflow, String tagsFilterRegex) {

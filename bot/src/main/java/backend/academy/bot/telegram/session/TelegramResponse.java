@@ -6,20 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class TelegramResponse {
-    private long userId;
-    private List<String> messages;
+    private final long userId;
+    private final List<String> messages;
 
     public TelegramResponse(long userId, String message) {
         this.userId = userId;
         this.messages = new ArrayList<>();
         if (message != null) {
             this.messages.add(message);
-        }
-    }
-
-    public void addMessage(String message) {
-        if (message != null) {
-            messages.add(message);
         }
     }
 }

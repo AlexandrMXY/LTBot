@@ -1,6 +1,5 @@
 package backend.academy.scrapper.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;

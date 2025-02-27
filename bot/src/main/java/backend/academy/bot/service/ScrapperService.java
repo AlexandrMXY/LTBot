@@ -41,8 +41,8 @@ public class ScrapperService {
                 .body(LinkResponse.class);
     }
 
-    public LinkResponse removeLink(long chatId, RemoveLinkRequest request) {
-        return client.method(HttpMethod.DELETE)
+    public void removeLink(long chatId, RemoveLinkRequest request) {
+        client.method(HttpMethod.DELETE)
                 .uri("/links")
                 .header("Tg-Chat-Id", String.valueOf(chatId))
                 .body(request)

@@ -57,7 +57,7 @@ public class GithubMonitor implements LinkMonitor {
         log.info(link.link());
         log.info(GITHUB_LINK_PATTERN.matcher(link.link()).namedGroups());
         Matcher matcher = GITHUB_LINK_PATTERN.matcher(link.link());
-        matcher.matches();
+        if (!matcher.matches()) return null;
         return matcher.group("uid") + "/" + matcher.group("rid");
     }
 
@@ -79,11 +79,15 @@ public class GithubMonitor implements LinkMonitor {
         for (GithubUpdate githubUpdate : updates) {
             result.addUpdate(new Updates.Update(
                     userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(githubUpdate.repo()),
-                    githubUpdate.repo(), // TODO replace repo id with url
+                    getRepoLink(githubUpdate.repo()),
                     "Updated"));
         }
 
         monitoringServiceDataRepository.save(monitorData.orElseThrow().lastUpdate(updateTime));
         return result;
+    }
+
+    private String getRepoLink(String id) {
+        return "https://github.com/" + id;
     }
 }

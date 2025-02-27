@@ -56,7 +56,7 @@ public class StackoverflowMonitor implements LinkMonitor {
         log.info(link.link());
         log.info(STACKOVERFLOW_LINK_PATTERN.matcher(link.link()).namedGroups());
         Matcher matcher = STACKOVERFLOW_LINK_PATTERN.matcher(link.link());
-        matcher.matches();
+        if (!matcher.matches()) return null;
         return matcher.group("id");
     }
 
@@ -85,11 +85,15 @@ public class StackoverflowMonitor implements LinkMonitor {
             result.addUpdate(new Updates.Update(
                     userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(
                             String.valueOf(stackoverflowUpdate.questionId())),
-                    String.valueOf(stackoverflowUpdate.questionId()), // TODO replace repo id with url
+                    linkToQuestionWithId(String.valueOf(stackoverflowUpdate.questionId())),
                     "Updated"));
         }
 
         monitoringServiceDataRepository.save(monitorData.orElseThrow().lastUpdate(updateTime));
         return result;
+    }
+
+    private String linkToQuestionWithId(String id) {
+        return "https://stackoverflow.com/questions/" + id;
     }
 }

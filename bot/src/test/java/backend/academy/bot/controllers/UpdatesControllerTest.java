@@ -1,6 +1,5 @@
 package backend.academy.bot.controllers;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import backend.academy.api.model.LinkUpdate;

@@ -87,7 +87,7 @@ class LinksManagementServiceTest {
 
         LinkDto link = new LinkDto("", List.of("f"), List.of(""), 0);
 
-        LinkDto result = linksManagementService.addLink(id, link);
+        linksManagementService.addLink(id, link);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         ArgumentCaptor<TrackedLink> linkCaptor = ArgumentCaptor.forClass(TrackedLink.class);
@@ -113,7 +113,7 @@ class LinksManagementServiceTest {
 
         LinkDto link = new LinkDto("", List.of("f"), List.of(""), 0);
 
-        LinkDto result = linksManagementService.addLink(id, link);
+        linksManagementService.addLink(id, link);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         ArgumentCaptor<TrackedLink> linkCaptor = ArgumentCaptor.forClass(TrackedLink.class);
@@ -187,6 +187,7 @@ class LinksManagementServiceTest {
         assertIterableEquals(expected, res);
     }
 
+    @SafeVarargs
     private static <T> List<T> listOf(T... args) {
         return new ArrayList<>(Arrays.asList(args));
     }

@@ -10,7 +10,6 @@ import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import backend.academy.scrapper.repositories.LinkRepository;
-import backend.academy.scrapper.repositories.MonitoringServiceDataRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +35,13 @@ public class LinksAddRemoveTest {
     @MockitoBean
     public LinkRepository linkRepository;
 
-    @MockitoBean
-    public MonitoringServiceDataRepository monitoringServiceDataRepository;
-
     @Autowired
     public MockClientsHolder clientsMocks;
 
     @Autowired
     private LinksController linksController;
 
-    private User existingUser = new User(
+    private final User existingUser = new User(
             0,
             new ArrayList<>(List.of(new TrackedLink(
                     777,
@@ -120,7 +116,7 @@ public class LinksAddRemoveTest {
 
     @Test
     public void deleteLink_validLink_shouldDelete() {
-        var response = linksController.deleteLinks(0, new RemoveLinkRequest("https://github.com/qwerty/qwerty"));
+        linksController.deleteLinks(0, new RemoveLinkRequest("https://github.com/qwerty/qwerty"));
 
         verify(linkRepository, only()).deleteById(eq(777L));
     }
