@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class TelegramEventHandlerService {
     @Autowired
     private TelegramService telegramService;
+
     @Autowired
     private UserSessionManagementService userSessionManagementService;
 
@@ -31,6 +32,4 @@ public class TelegramEventHandlerService {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
     }
-
-
 }

@@ -1,14 +1,13 @@
 package backend.academy.bot.service.telegram;
 
 import backend.academy.bot.dto.MessageDto;
-import backend.academy.bot.service.telegram.CommandProcessorService;
 import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.TelegramSessionState;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @Log4j2
@@ -17,14 +16,16 @@ public class UserSessionManagementService {
 
     @Autowired
     private CommandProcessorService commandProcessorService;
+
     @Autowired
     private SessionContext context;
+
     @Autowired
     private TelegramService telegramService;
 
     public void processMessage(MessageDto message) {
         var state = states.get(message.chat());
-        if (state == null || commandProcessorService.isCommand(message))  {
+        if (state == null || commandProcessorService.isCommand(message)) {
             var initializer = commandProcessorService.getSessionStateInitializer(message);
             state = initializer.initSessionState();
         }
@@ -38,8 +39,7 @@ public class UserSessionManagementService {
 
         if (state == null) {
             states.remove(message.chat());
-        }
-        else {
+        } else {
             states.put(message.chat(), state);
         }
 

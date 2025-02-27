@@ -13,14 +13,15 @@ import org.springframework.stereotype.Service;
 public class UpdateScheduler {
     @Autowired
     private LinkDistributionService linkDistributionService;
+
     @Autowired
     private BotService botService;
 
     @Scheduled(fixedDelayString = "${app.update-delay}")
     public void checkForUpdates() {
         var result = linkDistributionService.getMonitors().stream()
-            .map(LinkMonitor::checkForUpdates)
-            .reduce(Updates::mergeResult);
+                .map(LinkMonitor::checkForUpdates)
+                .reduce(Updates::mergeResult);
         log.info("Checking for updates complete: {}", result);
 
         if (result.isPresent() && result.orElseThrow().hasUpdates()) {

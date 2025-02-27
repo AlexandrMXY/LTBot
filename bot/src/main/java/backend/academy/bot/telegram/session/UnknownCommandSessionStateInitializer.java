@@ -11,12 +11,8 @@ public class UnknownCommandSessionStateInitializer implements SessionStateInitia
     public TelegramSessionState initSessionState() {
         return new TelegramSessionState() {
             @Override
-            public TelegramSessionState.SessionUpdateResult updateState(
-                MessageDto message,
-                SessionContext context) {
-                return new SessionUpdateResult(
-                    null,
-                    new TelegramResponse(message.chat(), "Unknown command"));
+            public TelegramSessionState.SessionUpdateResult updateState(MessageDto message, SessionContext context) {
+                return new SessionUpdateResult(null, new TelegramResponse(message.chat(), "Unknown command"));
             }
         };
     }

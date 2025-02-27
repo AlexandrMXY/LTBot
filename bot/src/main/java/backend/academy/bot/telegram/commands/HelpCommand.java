@@ -2,10 +2,10 @@ package backend.academy.bot.telegram.commands;
 
 import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 @Component
 public class HelpCommand extends AbstractSimpleCommand {
@@ -21,16 +21,14 @@ public class HelpCommand extends AbstractSimpleCommand {
             if (command.isHidden()) {
                 continue;
             }
-            mb
-                .append("/")
-                .append(command.getName())
-                .append(": ")
-                .append(command.getDescription())
-                .append(System.lineSeparator());
+            mb.append("/")
+                    .append(command.getName())
+                    .append(": ")
+                    .append(command.getDescription())
+                    .append(System.lineSeparator());
         }
 
-        setProcessor((state, message, context) ->
-            new TelegramResponse(message.chat(), mb.toString()));
+        setProcessor((state, message, context) -> new TelegramResponse(message.chat(), mb.toString()));
     }
 
     @Override

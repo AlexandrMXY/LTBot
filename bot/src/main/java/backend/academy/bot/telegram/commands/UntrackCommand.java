@@ -26,8 +26,7 @@ public class UntrackCommand extends AbstractSimpleCommand {
 
             String url = msg[1];
             try {
-                scrapperService.removeLink(message.chat(),
-                    new RemoveLinkRequest(url));
+                scrapperService.removeLink(message.chat(), new RemoveLinkRequest(url));
                 return new TelegramResponse(message.chat(), "Success");
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();

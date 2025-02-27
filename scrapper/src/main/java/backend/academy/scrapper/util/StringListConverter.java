@@ -11,19 +11,17 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
 
     @Override
     public String convertToDatabaseColumn(List<String> strings) {
-        if (strings == null)
-            return null;
+        if (strings == null) return null;
         if (strings.stream().anyMatch((s) -> s.contains(SEPARATOR))) {
             throw new IllegalArgumentException(
-                "Unable to covert string which contains separator (" + SEPARATOR + ") as a character");
+                    "Unable to covert string which contains separator (" + SEPARATOR + ") as a character");
         }
         return String.join(SEPARATOR, strings);
     }
 
     @Override
     public List<String> convertToEntityAttribute(String string) {
-        if (string == null)
-            return null;
+        if (string == null) return null;
         return Arrays.stream(string.split(SEPARATOR)).collect(Collectors.toCollection(ArrayList::new));
     }
 }

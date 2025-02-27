@@ -1,6 +1,5 @@
 package backend.academy.bot.telegram.commands;
 
-
 import backend.academy.bot.service.ScrapperService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;

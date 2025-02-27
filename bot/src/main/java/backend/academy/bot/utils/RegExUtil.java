@@ -1,7 +1,7 @@
 package backend.academy.bot.utils;
 
-import lombok.experimental.UtilityClass;
 import java.util.regex.Pattern;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class RegExUtil {

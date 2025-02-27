@@ -1,8 +1,9 @@
 package backend.academy.bot.telegram.session;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.bot.dto.MessageDto;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UnknownCommandSessionStateInitializerTest {
     @Test

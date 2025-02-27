@@ -1,17 +1,17 @@
 package backend.academy.bot.service;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.AddLinkRequest;
 import backend.academy.bot.BotConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 class ScrapperServiceTest {
     public static final String SCRAPPER_URL = "http://localhost:8080";
@@ -33,11 +33,13 @@ class ScrapperServiceTest {
         var request = new AddLinkRequest("", List.of(), List.of());
 
         stubFor(
-            post(urlPathEqualTo("/links"))
-                .withHeader("Tg-Chat-Id", equalTo(String.valueOf(chat)))
-                .willReturn(aResponse()
-                    .withStatus(400)
-                    .withBody("{\"description\":\"Bad Request\",\"code\":\"400\",\"exceptionName\":\"backend.academy.scrapper.exceptions.AlreadyExistsException\",\"exceptionMessage\":\"Link already exists\",\"stacktrace\":[\"\"]}")));
+                post(urlPathEqualTo("/links"))
+                        .withHeader("Tg-Chat-Id", equalTo(String.valueOf(chat)))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(400)
+                                        .withBody(
+                                                "{\"description\":\"Bad Request\",\"code\":\"400\",\"exceptionName\":\"backend.academy.scrapper.exceptions.AlreadyExistsException\",\"exceptionMessage\":\"Link already exists\",\"stacktrace\":[\"\"]}")));
 
         assertThrows(ApiErrorResponseException.class, () -> service.addLink(chat, request));
     }

@@ -7,9 +7,5 @@ public class TelegramSessionState {
         return null;
     }
 
-    public record SessionUpdateResult(
-        TelegramSessionState newState,
-        TelegramResponse response
-    ) {
-    }
+    public record SessionUpdateResult(TelegramSessionState newState, TelegramResponse response) {}
 }

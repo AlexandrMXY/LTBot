@@ -10,30 +10,32 @@ import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.GithubService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 @Log4j2
 public class GithubMonitor implements LinkMonitor {
     public static final String MONITOR_NAME = "githubMonitor";
     public static final Pattern GITHUB_LINK_PATTERN =
-        Pattern.compile("^(http(s)?://)?github\\.com/(?<uid>[\\w\\-]+)/(?<rid>[\\w\\-]+)$");
+            Pattern.compile("^(http(s)?://)?github\\.com/(?<uid>[\\w\\-]+)/(?<rid>[\\w\\-]+)$");
 
     @Autowired
     private MonitoringServiceDataRepository monitoringServiceDataRepository;
+
     @Autowired
     private LinkRepository linkRepository;
+
     @Autowired
     private GithubService githubService;
+
     @Autowired
     private UserRepository userRepository;
-
 
     @PostConstruct
     private void init() {
@@ -54,8 +56,6 @@ public class GithubMonitor implements LinkMonitor {
         Matcher matcher = GITHUB_LINK_PATTERN.matcher(link.link());
         matcher.matches();
         return matcher.group("uid") + "/" + matcher.group("rid");
-
-
     }
 
     @Override
@@ -66,18 +66,18 @@ public class GithubMonitor implements LinkMonitor {
         long updateTime = System.currentTimeMillis() / 1000L;
 
         List<GithubUpdate> updates = githubService.getUpdates(
-            links.map(TrackedLink::serviceId),
-            monitorData.orElseThrow(() -> new IllegalStateException("Github monitor data not found"))
-                .lastUpdate());
+                links.map(TrackedLink::serviceId),
+                monitorData
+                        .orElseThrow(() -> new IllegalStateException("Github monitor data not found"))
+                        .lastUpdate());
 
         Updates result = new Updates();
 
         for (GithubUpdate githubUpdate : updates) {
             result.addUpdate(new Updates.Update(
-                userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(githubUpdate.repo()),
-                githubUpdate.repo(), // TODO replace repo id with url
-                "Updated"
-            ));
+                    userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(githubUpdate.repo()),
+                    githubUpdate.repo(), // TODO replace repo id with url
+                    "Updated"));
         }
 
         monitoringServiceDataRepository.save(monitorData.orElseThrow().lastUpdate(updateTime));

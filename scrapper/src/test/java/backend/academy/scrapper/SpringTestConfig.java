@@ -13,16 +13,16 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 @TestConfiguration
-@SpringBootApplication(exclude = {
-    DataSourceAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class
-})
+@SpringBootApplication(
+        exclude = {
+            DataSourceAutoConfiguration.class,
+            DataSourceTransactionManagerAutoConfiguration.class,
+            HibernateJpaAutoConfiguration.class
+        })
 public class SpringTestConfig {
     @Bean
     @Primary
@@ -48,12 +48,9 @@ public class SpringTestConfig {
         return new ScrapperConfig("GT", new ScrapperConfig.StackOverflowCredentials("SOK", "SOT"), ".*");
     }
 
-
-
     @Bean
     public RestClient botRestClient(@Value("${app.bot-url}") String botUrl, MockClientsHolder holder) {
-        var builder = RestClient.builder()
-            .baseUrl(botUrl);
+        var builder = RestClient.builder().baseUrl(botUrl);
         holder.bot = MockRestServiceServer.bindTo(builder).build();
         return builder.build();
     }
@@ -61,12 +58,12 @@ public class SpringTestConfig {
     @Bean
     public RestClient stackoverflowRestClient(ScrapperConfig config, MockClientsHolder holder) {
         var builder = RestClient.builder()
-            .baseUrl("https://api.stackexchange.com/2.2")
-            .defaultUriVariables(
-                MapBuilder.<String, String>builder()
-                    .put("key", config.stackOverflow().key())
-                    .put("access_token", config.stackOverflow().accessToken())
-                    .put("site", "stackoverflow").build());
+                .baseUrl("https://api.stackexchange.com/2.2")
+                .defaultUriVariables(MapBuilder.<String, String>builder()
+                        .put("key", config.stackOverflow().key())
+                        .put("access_token", config.stackOverflow().accessToken())
+                        .put("site", "stackoverflow")
+                        .build());
         holder.stackoverflow = MockRestServiceServer.bindTo(builder).build();
         return builder.build();
     }
@@ -74,8 +71,8 @@ public class SpringTestConfig {
     @Bean
     RestClient githubRestClient(ScrapperConfig config, MockClientsHolder holder) {
         var builder = RestClient.builder()
-            .baseUrl("https://api.github.com")
-            .defaultHeader("Authorization", "Bearer " + config.githubToken());
+                .baseUrl("https://api.github.com")
+                .defaultHeader("Authorization", "Bearer " + config.githubToken());
         holder.github = MockRestServiceServer.bindTo(builder).build();
         return builder.build();
     }

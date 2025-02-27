@@ -1,8 +1,8 @@
 package backend.academy.bot.telegram.session;
 
-import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 @Getter
 public class TelegramResponse {

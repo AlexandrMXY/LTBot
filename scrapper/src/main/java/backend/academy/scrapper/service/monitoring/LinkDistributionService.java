@@ -1,12 +1,10 @@
 package backend.academy.scrapper.service.monitoring;
 
 import backend.academy.scrapper.dto.LinkDto;
-import jakarta.persistence.ManyToOne;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class LinkDistributionService {
@@ -25,7 +23,6 @@ public class LinkDistributionService {
     public LinkMonitor getMonitor(String monitorName) {
         return monitors.get(monitorName);
     }
-
 
     public Collection<LinkMonitor> getMonitors() {
         return monitors.values();

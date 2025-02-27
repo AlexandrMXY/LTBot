@@ -15,5 +15,6 @@ import lombok.Setter;
 public class MonitoringServiceData {
     @Id
     private String name;
+
     private long lastUpdate;
 }

@@ -1,5 +1,8 @@
 package backend.academy.scrapper.controllers;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
 import backend.academy.scrapper.service.UserService;
@@ -9,14 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatusCode;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 public class ChatControllerTest {
     @Mock
     public UserService userService;
+
     @InjectMocks
     public ChatController chatController;
 
@@ -31,8 +32,10 @@ public class ChatControllerTest {
     @Test
     public void registerChat_requestReceived_shouldThrowIfAlreadyExists() {
         doAnswer((invocation) -> {
-            throw (Exception) invocation.getArgument(1);
-        }).when(userService).registerUserOrThrow(anyLong(), any());
+                    throw (Exception) invocation.getArgument(1);
+                })
+                .when(userService)
+                .registerUserOrThrow(anyLong(), any());
 
         assertThrows(InvalidRequestException.class, () -> chatController.registerChat(111));
     }
@@ -48,8 +51,10 @@ public class ChatControllerTest {
     @Test
     public void deleteChat_requestReceived_shouldThrowIfNotFound() {
         doAnswer((invocation) -> {
-            throw (Exception) invocation.getArgument(1);
-        }).when(userService).deleteUserOrThrow(anyLong(), any());
+                    throw (Exception) invocation.getArgument(1);
+                })
+                .when(userService)
+                .deleteUserOrThrow(anyLong(), any());
 
         assertThrows(NotFoundException.class, () -> chatController.deleteChat(111));
     }

@@ -1,18 +1,23 @@
 package backend.academy.scrapper.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
 import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
-import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
-import org.junit.Before;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,24 +26,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LinksManagementServiceTest {
     @Spy
     private ScrapperConfig scrapperConfig = new ScrapperConfig("", null, "f*");
+
     @Mock
     private LinkRepository linkRepository;
+
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private LinkDistributionService linkDistributionService;
+
     @InjectMocks
     private LinksManagementService linksManagementService;
 
@@ -71,7 +73,8 @@ class LinksManagementServiceTest {
 
     @Test
     public void addLinks_userExists_shouldModifyUser() {
-        when(linkRepository.existsByUserAndMonitoringServiceAndServiceId(any(), any(), any())).thenReturn(false);
+        when(linkRepository.existsByUserAndMonitoringServiceAndServiceId(any(), any(), any()))
+                .thenReturn(false);
         long id = 0;
         User user = new User(id, listOf());
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -81,7 +84,6 @@ class LinksManagementServiceTest {
         LinkMonitor monitor = mock(LinkMonitor.class);
         when(monitor.getLinkId(any())).thenReturn("sid");
         when(linkDistributionService.getMonitor(eq("monitor"))).thenReturn(monitor);
-
 
         LinkDto link = new LinkDto("", List.of("f"), List.of(""), 0);
 
@@ -97,7 +99,8 @@ class LinksManagementServiceTest {
 
     @Test
     public void addLinks_whenNoThrow_shouldSaveCorrectLink() {
-        when(linkRepository.existsByUserAndMonitoringServiceAndServiceId(any(), any(), any())).thenReturn(false);
+        when(linkRepository.existsByUserAndMonitoringServiceAndServiceId(any(), any(), any()))
+                .thenReturn(false);
         long id = 0;
         User user = new User(id, listOf());
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -118,15 +121,16 @@ class LinksManagementServiceTest {
         verify(linkRepository).save(linkCaptor.capture());
 
         assertEquals(userCaptor.getValue().id(), linkCaptor.getValue().user().id());
-        assertEquals(new TrackedLink(
-            linkCaptor.getValue().id(),
-            userCaptor.getValue(),
-            link.link(),
-            "monitor",
-            link.tags(),
-            link.filters(),
-            "sid" ),
-            linkCaptor.getValue());
+        assertEquals(
+                new TrackedLink(
+                        linkCaptor.getValue().id(),
+                        userCaptor.getValue(),
+                        link.link(),
+                        "monitor",
+                        link.tags(),
+                        link.filters(),
+                        "sid"),
+                linkCaptor.getValue());
     }
 
     @Test
@@ -182,7 +186,7 @@ class LinksManagementServiceTest {
 
         assertIterableEquals(expected, res);
     }
-    
+
     private static <T> List<T> listOf(T... args) {
         return new ArrayList<>(Arrays.asList(args));
     }

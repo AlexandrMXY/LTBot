@@ -1,10 +1,8 @@
 package backend.academy.scrapper.service.monitoring;
 
-import lombok.Getter;
-import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
-
+import lombok.ToString;
 
 @ToString
 public class Updates {
@@ -27,9 +25,5 @@ public class Updates {
         return !updateDetails.isEmpty();
     }
 
-    public static record Update(
-        List<Long> users,
-        String url,
-        String message
-    ) { }
+    public static record Update(List<Long> users, String url, String message) {}
 }

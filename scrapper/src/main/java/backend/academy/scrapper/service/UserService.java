@@ -1,12 +1,10 @@
 package backend.academy.scrapper.service;
 
-import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.repositories.UserRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class UserService {

@@ -1,6 +1,5 @@
 package backend.academy.scrapper.service.monitoring;
 
-import backend.academy.scrapper.dto.GithubUpdate;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.dto.updates.StackoverflowUpdate;
 import backend.academy.scrapper.entities.MonitoringServiceData;
@@ -11,27 +10,29 @@ import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.StackoverflowService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 @Log4j2
 public class StackoverflowMonitor implements LinkMonitor {
     public static final String MONITOR_NAME = "stackoverflowMonitor";
     public static final Pattern STACKOVERFLOW_LINK_PATTERN =
-        Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/([\\w\\-]*)$");
+            Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/([\\w\\-]*)$");
 
     @Autowired
     private StackoverflowService stackoverflowService;
+
     @Autowired
     private LinkRepository linkRepository;
+
     @Autowired
     private MonitoringServiceDataRepository monitoringServiceDataRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -63,24 +64,26 @@ public class StackoverflowMonitor implements LinkMonitor {
         Stream<TrackedLink> links = linkRepository.findAllByMonitoringService(MONITOR_NAME);
         long updateTime = System.currentTimeMillis() / 1000L;
 
-        log.info("Last update time: {}; Current time: {}", monitorData.orElseThrow().lastUpdate(),
-            updateTime);
+        log.info(
+                "Last update time: {}; Current time: {}",
+                monitorData.orElseThrow().lastUpdate(),
+                updateTime);
         log.info("Checking for updates {}", links);
 
         var updates = stackoverflowService.getUpdates(
-            links.map(link -> Long.parseLong(link.serviceId())).toList(),
-            monitorData
-                .orElseThrow(() -> new IllegalStateException("Stackoverflow monitor data not found"))
-                .lastUpdate());
+                links.map(link -> Long.parseLong(link.serviceId())).toList(),
+                monitorData
+                        .orElseThrow(() -> new IllegalStateException("Stackoverflow monitor data not found"))
+                        .lastUpdate());
 
         Updates result = new Updates();
 
         for (StackoverflowUpdate stackoverflowUpdate : updates) {
             result.addUpdate(new Updates.Update(
-                userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(String.valueOf(stackoverflowUpdate.questionId())),
-                String.valueOf(stackoverflowUpdate.questionId()), // TODO replace repo id with url
-                "Updated"
-            ));
+                    userRepository.findDistinctUserIdsWhereAnyLinkWithServiceId(
+                            String.valueOf(stackoverflowUpdate.questionId())),
+                    String.valueOf(stackoverflowUpdate.questionId()), // TODO replace repo id with url
+                    "Updated"));
         }
 
         monitoringServiceDataRepository.save(monitorData.orElseThrow().lastUpdate(updateTime));

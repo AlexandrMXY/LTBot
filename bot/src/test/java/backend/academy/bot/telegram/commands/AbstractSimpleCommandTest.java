@@ -1,18 +1,20 @@
 package backend.academy.bot.telegram.commands;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import backend.academy.bot.dto.MessageDto;
 import backend.academy.bot.telegram.session.SessionContext;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class AbstractSimpleCommandTest {
     @Test
     public void noArgsConstructor_whenCalled_throwIllegalStateExceptionOnUpdateState() {
         var instance = new AbstractSimpleCommandImpl();
 
-        assertThrows(IllegalStateException.class,
-            () -> instance.getSessionStateInitializer().initSessionState().updateState(null, null));
+        assertThrows(
+                IllegalStateException.class,
+                () -> instance.getSessionStateInitializer().initSessionState().updateState(null, null));
     }
 
     @Test
@@ -30,10 +32,8 @@ class AbstractSimpleCommandTest {
         verify(processor).processCommand(same(state), same(msg), same(context));
     }
 
-
     static class AbstractSimpleCommandImpl extends AbstractSimpleCommand {
-        public AbstractSimpleCommandImpl() {
-        }
+        public AbstractSimpleCommandImpl() {}
 
         public AbstractSimpleCommandImpl(SimpleCommandProcessor processor) {
             super(processor);

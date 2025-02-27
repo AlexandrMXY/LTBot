@@ -9,7 +9,9 @@ public abstract class AbstractSimpleCommand implements Command {
     private SessionStateInitializer initializer;
 
     public AbstractSimpleCommand() {
-        this((state, message, context) -> { throw new IllegalStateException("Command processor not initialized"); });
+        this((state, message, context) -> {
+            throw new IllegalStateException("Command processor not initialized");
+        });
     }
 
     public AbstractSimpleCommand(SimpleCommandProcessor processor) {

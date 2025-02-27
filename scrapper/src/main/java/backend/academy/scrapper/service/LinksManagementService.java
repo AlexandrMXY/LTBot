@@ -14,22 +14,25 @@ import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class LinksManagementService {
     @Autowired
     private LinkRepository linkRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private ScrapperConfig config;
+
     @Autowired
     private LinkDistributionService linkDistributionService;
 
@@ -42,7 +45,7 @@ public class LinksManagementService {
 
     @Transactional
     public LinkDto addLink(long userId, LinkDto link) {
-        if(link.tags().stream().anyMatch((tag) -> !tagsPatter.matcher(tag).matches())) {
+        if (link.tags().stream().anyMatch((tag) -> !tagsPatter.matcher(tag).matches())) {
             throw new InvalidRequestException("Invalid tags");
         }
 
@@ -60,8 +63,8 @@ public class LinksManagementService {
             throw new AlreadyExistsException("Link already exists");
         }
 
-        TrackedLink trackedLink
-            = new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), link.filters(), serviceId);
+        TrackedLink trackedLink =
+                new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), link.filters(), serviceId);
 
         user.links().add(trackedLink);
         trackedLink = linkRepository.save(trackedLink);
@@ -72,7 +75,9 @@ public class LinksManagementService {
     @Transactional
     public LinkDto deleteLink(long userId, String url) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        var linkOpt = user.links().stream().filter(link -> Objects.equals(link.url(), url)).findAny();
+        var linkOpt = user.links().stream()
+                .filter(link -> Objects.equals(link.url(), url))
+                .findAny();
         if (linkOpt.isEmpty()) {
             throw new NotFoundException("Link not found");
         }
@@ -87,6 +92,4 @@ public class LinksManagementService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         return user.links().stream().map((LinkDto::new)).collect(Collectors.toList());
     }
-
-
 }

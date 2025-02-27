@@ -7,8 +7,6 @@ import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.LinksManagementService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 @RequestMapping("/links")
@@ -30,10 +27,7 @@ public class LinksController {
     @GetMapping
     public ListLinksResponse getLinks(@RequestHeader("Tg-Chat-Id") long chatId) {
         return new ListLinksResponse(
-            linksService.getLinks(chatId).stream()
-                .map(LinkDto::asResponse)
-                .toList()
-        );
+                linksService.getLinks(chatId).stream().map(LinkDto::asResponse).toList());
     }
 
     @PostMapping

@@ -1,5 +1,8 @@
 package backend.academy.scrapper.service;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.assertj.core.api.Assertions.*;
+
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.service.monitoring.Updates;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,19 +20,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
-import java.util.List;
-import java.util.Objects;
-import static org.assertj.core.api.Assertions.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 @ExtendWith(MockitoExtension.class)
 class BotServiceTest {
     private static final String BOT_URL = "http://localhost:8080";
 
     @Spy
-    private RestClient botClient = RestClient.builder()
-        .baseUrl(BOT_URL)
-        .build();
+    private RestClient botClient = RestClient.builder().baseUrl(BOT_URL).build();
 
     @InjectMocks
     private BotService service;
@@ -53,7 +52,6 @@ class BotServiceTest {
         service.sendUpdates(new Updates());
         verify(0, postRequestedFor(urlEqualTo("/updates")));
     }
-
 
     @Test
     public void sendUpdates_nullPassed_doNothing() {
@@ -83,12 +81,14 @@ class BotServiceTest {
         LinkUpdate expected2 = new LinkUpdate(0, "AA", "BB", List.of(2L));
 
         assertThat((compareLinkUpdates(l1, expected1) && compareLinkUpdates(l2, expected2))
-            || (compareLinkUpdates(l2, expected1) && compareLinkUpdates(l1, expected2))).isTrue();
+                        || (compareLinkUpdates(l2, expected1) && compareLinkUpdates(l1, expected2)))
+                .isTrue();
     }
 
     public boolean compareLinkUpdates(LinkUpdate l1, LinkUpdate l2) {
-        return
-            Objects.equals(l1.url(), l2.url()) && compareLists(l1.tgChatIds(), l2.tgChatIds()) && Objects.equals(l1.description(), l2.description());
+        return Objects.equals(l1.url(), l2.url())
+                && compareLists(l1.tgChatIds(), l2.tgChatIds())
+                && Objects.equals(l1.description(), l2.description());
     }
 
     public <T> boolean compareLists(List<T> l1, List<T> l2) {

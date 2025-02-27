@@ -1,6 +1,3 @@
 package backend.academy.api.model;
 
-public record RemoveLinkRequest(
-    String link
-) {
-}
+public record RemoveLinkRequest(String link) {}

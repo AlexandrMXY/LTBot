@@ -10,13 +10,13 @@ import backend.academy.bot.telegram.session.SessionStateInitializer;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import backend.academy.bot.telegram.session.TelegramSessionState;
 import backend.academy.bot.utils.RegExUtil;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 @Log4j2
@@ -60,9 +60,7 @@ public class TrackCommand implements Command {
         private final List<String> filters = new ArrayList<>();
 
         @Override
-        public TelegramSessionState.SessionUpdateResult updateState(
-                MessageDto message,
-                SessionContext context) {
+        public TelegramSessionState.SessionUpdateResult updateState(MessageDto message, SessionContext context) {
             TelegramResponse response = null;
             switch (stage) {
                 case INIT -> {
@@ -79,13 +77,15 @@ public class TrackCommand implements Command {
                     }
                 }
                 case TAGS_INPUT -> {
-                    tags.addAll(Arrays.stream(message.message().trim().split("\\s")).toList());
+                    tags.addAll(
+                            Arrays.stream(message.message().trim().split("\\s")).toList());
                     stage = Stage.FILTERS_INPUT;
 
                     response = new TelegramResponse(message.chat(), "Enter filters:");
                 }
                 case FILTERS_INPUT -> {
-                    filters.addAll(Arrays.stream(message.message().trim().split("\\s")).toList());
+                    filters.addAll(
+                            Arrays.stream(message.message().trim().split("\\s")).toList());
 
                     response = new TelegramResponse(message.chat(), registerLink(context, message.chat()));
 
@@ -97,8 +97,8 @@ public class TrackCommand implements Command {
 
         private String registerLink(SessionContext context, long chatId) {
             try {
-                LinkResponse response = context.scrapperService().addLink(
-                    chatId, new AddLinkRequest(url, tags, filters));
+                LinkResponse response =
+                        context.scrapperService().addLink(chatId, new AddLinkRequest(url, tags, filters));
                 return "Tracking " + response.url();
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();

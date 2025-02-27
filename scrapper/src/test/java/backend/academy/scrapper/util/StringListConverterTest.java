@@ -1,25 +1,19 @@
 package backend.academy.scrapper.util;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class StringListConverterTest {
     @Test
     void convertToDatabaseColumn_correctInput_correctOutput() {
-        assertEquals(
-            "qwerty;qwerty1",
-            new StringListConverter().convertToDatabaseColumn(List.of("qwerty", "qwerty1"))
-        );
+        assertEquals("qwerty;qwerty1", new StringListConverter().convertToDatabaseColumn(List.of("qwerty", "qwerty1")));
     }
 
     @Test
     void convertToDatabaseColumn_emptyInput_emptyOutput() {
-        assertEquals(
-            "",
-            new StringListConverter().convertToDatabaseColumn(List.of())
-        );
+        assertEquals("", new StringListConverter().convertToDatabaseColumn(List.of()));
     }
 
     @Test
@@ -29,21 +23,19 @@ class StringListConverterTest {
 
     @Test
     void convertToDatabaseColumn_inputContainsSeparator_throw() {
-        assertThrows(IllegalArgumentException.class, () ->
-            new StringListConverter().convertToDatabaseColumn(List.of("qw;erty", "qwerty1")));
+        assertThrows(IllegalArgumentException.class, () -> new StringListConverter()
+                .convertToDatabaseColumn(List.of("qw;erty", "qwerty1")));
     }
-
 
     @Test
     void convertToEntityAttribute_correctInput_correctOutput() {
-        assertIterableEquals(List.of("qwerty", "qwerty1"),
-            new StringListConverter().convertToEntityAttribute("qwerty;qwerty1"));
+        assertIterableEquals(
+                List.of("qwerty", "qwerty1"), new StringListConverter().convertToEntityAttribute("qwerty;qwerty1"));
     }
 
     @Test
     void convertToEntityAttribute_emptyInput_emptyOutput() {
-        assertIterableEquals(List.of(""),
-            new StringListConverter().convertToEntityAttribute(""));
+        assertIterableEquals(List.of(""), new StringListConverter().convertToEntityAttribute(""));
     }
 
     @Test

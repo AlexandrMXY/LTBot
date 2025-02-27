@@ -23,60 +23,60 @@ public class ScrapperService {
 
     @Autowired
     public ScrapperService(BotConfig config) {
-        client = RestClient.builder()
-            .baseUrl(config.scrapperUrl())
-            .build();
+        client = RestClient.builder().baseUrl(config.scrapperUrl()).build();
     }
 
     public LinkResponse addLink(long chatId, AddLinkRequest request) {
         return client.post()
-            .uri("/links")
-            .header("Tg-Chat-Id", String.valueOf(chatId))
-            .body(request)
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
-                ApiErrorResponse errorResponse =
-                    new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ApiErrorResponseException(errorResponse);
-            })
-            .body(LinkResponse.class);
+                .uri("/links")
+                .header("Tg-Chat-Id", String.valueOf(chatId))
+                .body(request)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
+                    ApiErrorResponse errorResponse =
+                            new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
+                    throw new ApiErrorResponseException(errorResponse);
+                })
+                .body(LinkResponse.class);
     }
 
     public LinkResponse removeLink(long chatId, RemoveLinkRequest request) {
         return client.method(HttpMethod.DELETE)
-            .uri("/links")
-            .header("Tg-Chat-Id", String.valueOf(chatId))
-            .body(request)
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
-                ApiErrorResponse errorResponse =
-                    new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ApiErrorResponseException(errorResponse);
-            })
-            .body(LinkResponse.class);
+                .uri("/links")
+                .header("Tg-Chat-Id", String.valueOf(chatId))
+                .body(request)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
+                    ApiErrorResponse errorResponse =
+                            new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
+                    throw new ApiErrorResponseException(errorResponse);
+                })
+                .body(LinkResponse.class);
     }
 
     public void registerChar(long id) {
         client.post()
-            .uri("/tg-chat/" + id)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) ->
-                log.error("Error registering user: {}", rawErrorResponse.getStatusCode()));
+                .uri("/tg-chat/" + id)
+                .retrieve()
+                .onStatus(
+                        HttpStatusCode::isError,
+                        (request_, rawErrorResponse) ->
+                                log.error("Error registering user: {}", rawErrorResponse.getStatusCode()));
     }
 
     public ListLinksResponse getTrackedLinks(long chatId) {
         return client.get()
-            .uri("/links")
-            .header("Tg-Chat-Id", String.valueOf(chatId))
-            .accept(MediaType.APPLICATION_JSON)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
-                ApiErrorResponse errorResponse =
-                    new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                throw new ApiErrorResponseException(errorResponse);
-            })
-            .body(ListLinksResponse.class);
+                .uri("/links")
+                .header("Tg-Chat-Id", String.valueOf(chatId))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
+                    ApiErrorResponse errorResponse =
+                            new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
+                    throw new ApiErrorResponseException(errorResponse);
+                })
+                .body(ListLinksResponse.class);
     }
 }
