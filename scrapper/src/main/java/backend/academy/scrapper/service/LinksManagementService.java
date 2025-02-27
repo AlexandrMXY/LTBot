@@ -90,6 +90,6 @@ public class LinksManagementService {
     @Transactional
     public List<LinkDto> getLinks(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        return user.links().stream().map((LinkDto::new)).collect(Collectors.toList());
+        return user.links().stream().map(LinkDto::new).collect(Collectors.toList());
     }
 }

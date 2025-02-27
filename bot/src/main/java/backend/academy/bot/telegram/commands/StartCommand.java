@@ -14,10 +14,10 @@ public class StartCommand extends AbstractSimpleCommand {
 
     @PostConstruct
     private void init() {
-        setProcessor(((state, message, context) -> {
+        setProcessor((state, message, context) -> {
             scrapperService.registerChar(message.chat());
             return null;
-        }));
+        });
     }
 
     @Override

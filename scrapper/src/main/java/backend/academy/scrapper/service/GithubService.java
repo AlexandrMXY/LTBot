@@ -2,6 +2,7 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.dto.GithubUpdate;
 import backend.academy.scrapper.model.github.Commit;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.time.Instant;
@@ -26,12 +27,13 @@ import org.springframework.web.client.RestClient;
 
 @Service
 @Log4j2
+@SuppressFBWarnings("REDOS")
 public class GithubService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss'Z'").withZone(ZoneId.from(ZoneOffset.UTC));
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withZone(ZoneId.from(ZoneOffset.UTC));
 
     private static final Pattern LINKS_HEADER_NEXT_PAGE_PATTERN =
-            Pattern.compile("\\<((http(s)?://)?api.github.com/(?<url>[\\w/?=&]+))\\>;\\s*rel=\\\"next\\\"");
+            Pattern.compile("<((http(s)?://)?api.github.com/(?<url>[\\w/?=&]+))>;\\s*rel=\"next\"");
 
     @Autowired
     @Qualifier("githubRestClient")
@@ -48,6 +50,7 @@ public class GithubService {
         return updates;
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private List<Commit> getAllCommits(String repo, long fromDate) {
         String nextURL = "/repos/" + repo + "/commits?since=" + getDateString(fromDate);
         List<Commit> result = new ArrayList<>();

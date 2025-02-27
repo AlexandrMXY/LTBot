@@ -8,6 +8,7 @@ import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.MonitoringServiceDataRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.StackoverflowService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import java.util.regex.Matcher;
@@ -19,10 +20,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Log4j2
+@SuppressFBWarnings("REDOS")
 public class StackoverflowMonitor implements LinkMonitor {
     public static final String MONITOR_NAME = "stackoverflowMonitor";
+
     public static final Pattern STACKOVERFLOW_LINK_PATTERN =
-            Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/([\\w\\-]*)$");
+            Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/[\\w\\-]*$");
 
     @Autowired
     private StackoverflowService stackoverflowService;

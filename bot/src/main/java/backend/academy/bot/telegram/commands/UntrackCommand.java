@@ -18,7 +18,7 @@ public class UntrackCommand extends AbstractSimpleCommand {
 
     @PostConstruct
     private void init() {
-        setProcessor(((state, message, context) -> {
+        setProcessor((state, message, context) -> {
             String[] msg = message.message().trim().split(" ");
             if (msg.length != 2) {
                 return new TelegramResponse(message.chat(), "Use /untrack <url>");
@@ -37,7 +37,7 @@ public class UntrackCommand extends AbstractSimpleCommand {
                 }
             }
             return null;
-        }));
+        });
     }
 
     @Override

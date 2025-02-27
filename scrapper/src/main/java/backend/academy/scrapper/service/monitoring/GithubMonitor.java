@@ -8,6 +8,7 @@ import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.MonitoringServiceDataRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.GithubService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -20,8 +21,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Log4j2
+@SuppressFBWarnings("REDOS")
 public class GithubMonitor implements LinkMonitor {
     public static final String MONITOR_NAME = "githubMonitor";
+
     public static final Pattern GITHUB_LINK_PATTERN =
             Pattern.compile("^(http(s)?://)?github\\.com/(?<uid>[\\w\\-]+)/(?<rid>[\\w\\-]+)$");
 

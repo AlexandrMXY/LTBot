@@ -25,5 +25,5 @@ public class Updates {
         return !updateDetails.isEmpty();
     }
 
-    public static record Update(List<Long> users, String url, String message) {}
+    public record Update(List<Long> users, String url, String message) {}
 }

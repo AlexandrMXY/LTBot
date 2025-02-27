@@ -22,12 +22,12 @@ public class TelegramEventHandlerService {
     @PostConstruct
     private void initListener() {
         telegramService.getBot().setUpdatesListener((updates) -> {
-            updates.forEach((update -> {
+            updates.forEach(update -> {
                 Message message = update.message();
                 if (message != null) {
                     userSessionManagementService.processMessage(new MessageDto(message));
                 }
-            }));
+            });
 
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
