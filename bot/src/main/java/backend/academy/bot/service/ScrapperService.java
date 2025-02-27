@@ -20,19 +20,17 @@ import org.springframework.web.client.RestClient;
 @Log4j2
 public class ScrapperService {
     private final RestClient client;
-    private final String baseUrl;
 
     @Autowired
     public ScrapperService(BotConfig config) {
         client = RestClient.builder()
+            .baseUrl(config.scrapperUrl())
             .build();
-
-        baseUrl = config.scrapperUrl();
     }
 
     public LinkResponse addLink(long chatId, AddLinkRequest request) {
         return client.post()
-            .uri(baseUrl + "/links")
+            .uri("/links")
             .header("Tg-Chat-Id", String.valueOf(chatId))
             .body(request)
             .accept(MediaType.APPLICATION_JSON)
@@ -47,7 +45,7 @@ public class ScrapperService {
 
     public LinkResponse removeLink(long chatId, RemoveLinkRequest request) {
         return client.method(HttpMethod.DELETE)
-            .uri(baseUrl + "/links")
+            .uri("/links")
             .header("Tg-Chat-Id", String.valueOf(chatId))
             .body(request)
             .accept(MediaType.APPLICATION_JSON)
@@ -62,7 +60,7 @@ public class ScrapperService {
 
     public void registerChar(long id) {
         client.post()
-            .uri(baseUrl + "/tg-chat/" + id)
+            .uri("/tg-chat/" + id)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) ->
                 log.error("Error registering user: {}", rawErrorResponse.getStatusCode()));
@@ -70,7 +68,7 @@ public class ScrapperService {
 
     public ListLinksResponse getTrackedLinks(long chatId) {
         return client.get()
-            .uri(baseUrl + "/links")
+            .uri("/links")
             .header("Tg-Chat-Id", String.valueOf(chatId))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()

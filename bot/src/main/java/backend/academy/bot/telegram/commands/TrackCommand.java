@@ -61,7 +61,6 @@ public class TrackCommand implements Command {
 
         @Override
         public TelegramSessionState.SessionUpdateResult updateState(
-                TelegramSessionState state,
                 MessageDto message,
                 SessionContext context) {
             TelegramResponse response = null;

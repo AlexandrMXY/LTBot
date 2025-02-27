@@ -8,6 +8,7 @@ import backend.academy.scrapper.util.MapBuilder;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -42,16 +43,9 @@ public class GithubService {
     private static final Pattern LINKS_HEADER_NEXT_PAGE_PATTERN =
         Pattern.compile("\\<((http(s)?://)?api.github.com/(?<url>[\\w/?=&]+))\\>;\\s*rel=\\\"next\\\"");
 
-    private final RestClient client;
-
     @Autowired
-    public GithubService(ScrapperConfig config) {
-        client = RestClient.builder()
-            .baseUrl("https://api.github.com")
-            .defaultHeader("Authorization", "Bearer " + config.githubToken())
-
-            .build();
-    }
+    @Qualifier("githubRestClient")
+    private RestClient client;
 
     public List<GithubUpdate> getUpdates(Stream<String> reposIds, long fromDate) {
         List<GithubUpdate> updates = new ArrayList<>();

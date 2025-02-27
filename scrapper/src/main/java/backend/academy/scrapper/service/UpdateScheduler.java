@@ -23,6 +23,8 @@ public class UpdateScheduler {
             .reduce(Updates::mergeResult);
         log.info("Checking for updates complete: {}", result);
 
-        botService.sendUpdates(result.orElse(null));
+        if (result.isPresent() && result.orElseThrow().hasUpdates()) {
+            botService.sendUpdates(result.orElseThrow());
+        }
     }
 }

@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -26,21 +27,12 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class StackoverflowService {
-    public static final int MAX_IDS_PER_QUERY = 100;
-
-    private final RestClient client;
+    private static final int MAX_IDS_PER_QUERY = 100;
 
     @Autowired
-    public StackoverflowService(ScrapperConfig config) {
-        client = RestClient.builder()
-            .baseUrl("https://api.stackexchange.com/2.2")
-            .defaultUriVariables(
-                MapBuilder.<String, String>builder()
-                    .put("key", config.stackOverflow().key())
-                    .put("access_token", config.stackOverflow().accessToken())
-                    .put("site", "stackoverflow").build())
-            .build();
-    }
+    @Qualifier("stackoverflowRestClient")
+    private RestClient client;
+
 
     public List<StackoverflowUpdate> getUpdates(List<Long> questionIds, long fromDate) {
         log.info("Getting updates for {}, since {}", questionIds, fromDate);

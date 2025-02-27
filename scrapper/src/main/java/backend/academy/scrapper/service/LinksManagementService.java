@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class LinksManagementService {
         }
 
         TrackedLink trackedLink
-            = new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), serviceId);
+            = new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), link.filters(), serviceId);
 
         user.links().add(trackedLink);
         trackedLink = linkRepository.save(trackedLink);
@@ -71,7 +72,7 @@ public class LinksManagementService {
     @Transactional
     public LinkDto deleteLink(long userId, String url) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-        var linkOpt = user.links().stream().filter(link -> link.url().equals(url)).findAny();
+        var linkOpt = user.links().stream().filter(link -> Objects.equals(link.url(), url)).findAny();
         if (linkOpt.isEmpty()) {
             throw new NotFoundException("Link not found");
         }

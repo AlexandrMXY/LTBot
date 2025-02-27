@@ -5,7 +5,7 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+
 @ToString
 public class Updates {
     private final List<Update> updateDetails = new ArrayList<>();
@@ -21,6 +21,10 @@ public class Updates {
 
     public List<Update> getUpdates() {
         return updateDetails;
+    }
+
+    public boolean hasUpdates() {
+        return !updateDetails.isEmpty();
     }
 
     public static record Update(

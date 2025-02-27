@@ -33,7 +33,7 @@ public class UserSessionManagementService {
             return;
         }
 
-        var updateResult = state.updateState(state, message, context);
+        var updateResult = state.updateState(message, context);
         state = updateResult.newState();
 
         if (state == null) {

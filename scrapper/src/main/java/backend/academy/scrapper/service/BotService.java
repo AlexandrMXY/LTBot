@@ -3,6 +3,8 @@ package backend.academy.scrapper.service;
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.service.monitoring.Updates;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -15,14 +17,9 @@ import java.util.stream.Collectors;
 @Service
 @Log4j2
 public class BotService {
-    private final RestClient client;
-
-    public BotService(@Value("${app.bot-url}") String botUrl) {
-        client = RestClient.builder()
-            .baseUrl(botUrl)
-            .build();
-        log.info("Bot service initialized with target url {}", botUrl);
-    }
+    @Autowired
+    @Qualifier("botRestClient")
+    private RestClient client;
 
     public void sendUpdates(Updates updates) {
         if (updates == null)

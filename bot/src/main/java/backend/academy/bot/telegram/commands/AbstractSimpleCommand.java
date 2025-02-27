@@ -46,8 +46,8 @@ public abstract class AbstractSimpleCommand implements Command {
         }
 
         @Override
-        public TelegramSessionState.SessionUpdateResult updateState(TelegramSessionState state, MessageDto message, SessionContext context) {
-            return new SessionUpdateResult(null, processor.processCommand(state, message, context));
+        public TelegramSessionState.SessionUpdateResult updateState(MessageDto message, SessionContext context) {
+            return new SessionUpdateResult(null, processor.processCommand(this, message, context));
         }
     }
 }

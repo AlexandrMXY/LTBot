@@ -30,4 +30,13 @@ public class LinkDistributionService {
     public Collection<LinkMonitor> getMonitors() {
         return monitors.values();
     }
+
+    public String getServiceId(LinkDto link) {
+        String monitorName = findMonitor(link);
+        if (monitorName == null) {
+            return null;
+        }
+        LinkMonitor monitor = getMonitor(monitorName);
+        return monitor.getLinkId(link);
+    }
 }

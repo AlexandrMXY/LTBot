@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @ToString
+@EqualsAndHashCode
 public class TrackedLink {
     @Id
     @GeneratedValue
@@ -28,6 +30,7 @@ public class TrackedLink {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User user;
 
     private String url;
@@ -35,6 +38,8 @@ public class TrackedLink {
 
     @Convert(converter = StringListConverter.class)
     private List<String> tags;
+    @Convert(converter = StringListConverter.class)
+    private List<String> filters;
 
     private String serviceId;
 }
