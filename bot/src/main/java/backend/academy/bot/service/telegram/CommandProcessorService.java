@@ -1,8 +1,11 @@
 package backend.academy.bot.service.telegram;
 
 import backend.academy.bot.dto.MessageDto;
+import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.SessionStateInitializer;
 import backend.academy.bot.telegram.commands.Command;
+import backend.academy.bot.telegram.session.TelegramResponse;
+import backend.academy.bot.telegram.session.TelegramSessionState;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.request.Keyboard;
@@ -14,6 +17,7 @@ import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +72,15 @@ public class CommandProcessorService {
             }
             return unknownCommandSessionStateInitializer;
         }
-        // TODO
-        return () -> null;
+
+        return () -> new TelegramSessionState() {
+            @Override
+            public SessionUpdateResult updateState(MessageDto message, SessionContext context) {
+                return new SessionUpdateResult(null, new TelegramResponse(
+                    message.chat(),
+                    "Invalid message. Type /help for list of all commands"
+                ));
+            }
+        };
     }
 }

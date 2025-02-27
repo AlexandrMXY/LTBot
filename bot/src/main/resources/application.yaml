@@ -4,6 +4,8 @@ app:
 #  url-regex: .*
 
 spring:
+  profiles:
+    default: prod
   application:
     name: Bot
   liquibase:

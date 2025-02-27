@@ -1,0 +1,85 @@
+package backend.academy.bot.moduleTests;
+
+import backend.academy.api.model.LinkResponse;
+import backend.academy.api.model.ListLinksResponse;
+import backend.academy.bot.dto.MessageDto;
+import backend.academy.bot.service.ScrapperService;
+import backend.academy.bot.service.telegram.CommandProcessorService;
+import backend.academy.bot.service.telegram.TelegramEventHandlerService;
+import backend.academy.bot.service.telegram.TelegramService;
+import backend.academy.bot.service.telegram.UserSessionManagementService;
+import backend.academy.bot.telegram.session.TelegramResponse;
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.response.BaseResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import java.util.List;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest
+@ActiveProfiles("test")
+public class TelegramCommandsTest {
+
+    @MockitoSpyBean
+    private TelegramService telegramService;
+    @MockitoBean
+    private ScrapperService scrapperService;
+    @Autowired
+    private UserSessionManagementService userSessionManagementService;
+
+    @BeforeEach
+    public void init() {
+        doNothing().when(telegramService).sendMessage(anyLong(), any());
+        doNothing().when(telegramService).sendResponse(any());
+    }
+
+    @Test
+    public void processMessage_unknownCommand_answerUnknownCommandMessage() {
+        userSessionManagementService.processMessage(new MessageDto(0, "/qwertyuiop["));
+
+        ArgumentCaptor<TelegramResponse> responseCaptor = ArgumentCaptor.forClass(TelegramResponse.class);
+        verify(telegramService).sendResponse(responseCaptor.capture());
+        TelegramResponse response = responseCaptor.getValue();
+
+        assertEquals(1, response.messages().size());
+        assertEquals("Unknown command", response.messages().getFirst());
+        assertEquals(0, response.userId());
+    }
+
+    @Test
+    public void processMessage_listCommand_correctFormat() {
+        when(scrapperService.getTrackedLinks(eq(0L))).thenReturn(
+            new ListLinksResponse(List.of(
+                new LinkResponse(0, "https://github.com/ESCOMP/atmospheric_physics", List.of("A"), List.of("A")),
+                new LinkResponse(0, "https://github.com/topics/3b-yp-1tri-2025", List.of("A"), List.of("A")),
+                new LinkResponse(0, "https://github.com/frappe/erpnext", List.of("A"), List.of("A")),
+                new LinkResponse(0, "https://stackoverflow.com/questions/14938748/how-to-lazy-load-collection-when-using-spring-data-jpa-with-hibernate-from-an", List.of("A"), List.of("A"))
+            )));
+
+        userSessionManagementService.processMessage(new MessageDto(0, "/list"));
+
+
+        ArgumentCaptor<TelegramResponse> responseCaptor = ArgumentCaptor.forClass(TelegramResponse.class);
+        verify(telegramService).sendResponse(responseCaptor.capture());
+        TelegramResponse response = responseCaptor.getValue();
+
+        assertEquals(0, response.userId());
+        assertEquals(1, response.messages().size());
+
+        assertThatCharSequence(response.messages().getFirst()).isEqualTo("""
+                https://github.com/ESCOMP/atmospheric_physics
+                https://github.com/topics/3b-yp-1tri-2025
+                https://github.com/frappe/erpnext
+                https://stackoverflow.com/questions/14938748/how-to-lazy-load-collection-when-using-spring-data-jpa-with-hibernate-from-an
+                """);
+    }
+}
