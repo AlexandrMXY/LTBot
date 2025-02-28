@@ -6,12 +6,10 @@ import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
 public class UntrackCommand extends AbstractSimpleCommand {
     @Autowired
     private ScrapperService scrapperService;
@@ -30,9 +28,7 @@ public class UntrackCommand extends AbstractSimpleCommand {
                 return new TelegramResponse(message.chat(), "Success");
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
-                if (response == null) {
-                    log.warn("Invalid response: {}", "", exception);
-                } else {
+                if (response != null) {
                     return new TelegramResponse(message.chat(), response.exceptionMessage());
                 }
             }

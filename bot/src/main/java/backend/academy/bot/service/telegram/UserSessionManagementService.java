@@ -5,12 +5,10 @@ import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.TelegramSessionState;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@Log4j2
 public class UserSessionManagementService {
     private final Map<Long, TelegramSessionState> states = new HashMap<>();
 

@@ -13,13 +13,13 @@ import jakarta.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-@Log4j2
+@Slf4j
 public class CommandProcessorService {
     public static final String COMMAND_PREFIX = "/";
 
@@ -43,7 +43,12 @@ public class CommandProcessorService {
                 .map(command -> new BotCommand(command.getName(), command.getDescription()))
                 .toArray(BotCommand[]::new)));
         if (!res.isOk()) {
-            log.error("Error registering commands: {}", res);
+            log.atError()
+                    .setMessage("Unable to set bot commands: received error response")
+                    .addKeyValue("code", res.errorCode())
+                    .addKeyValue("description", res.description())
+                    .addKeyValue("parameters", res.parameters())
+                    .log();
         }
     }
 

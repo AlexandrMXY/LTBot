@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Log4j2
 public class UpdatesController {
-
     @Autowired
     private TelegramService telegramService;
 

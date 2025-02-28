@@ -6,7 +6,6 @@ import backend.academy.api.model.ListLinksResponse;
 import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.LinksManagementService;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/links")
-@Log4j2
 public class LinksController {
 
     @Autowired

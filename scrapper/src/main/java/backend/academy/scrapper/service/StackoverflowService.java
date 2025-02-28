@@ -3,21 +3,19 @@ package backend.academy.scrapper.service;
 import backend.academy.scrapper.dto.updates.StackoverflowUpdate;
 import backend.academy.scrapper.model.stackoverflow.AnswerResponse;
 import backend.academy.scrapper.model.stackoverflow.AnswersResponse;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import backend.academy.scrapper.util.RequestErrorHandlers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.client.RestClient;
 
 @Service
-@Log4j2
+@Slf4j
 public class StackoverflowService {
     private static final int MAX_IDS_PER_QUERY = 100;
 
@@ -26,7 +24,6 @@ public class StackoverflowService {
     private RestClient client;
 
     public List<StackoverflowUpdate> getUpdates(List<Long> questionIds, long fromDate) {
-        log.info("Getting updates for {}, since {}", questionIds, fromDate);
         if (questionIds.isEmpty()) {
             return List.of();
         }
@@ -62,7 +59,6 @@ public class StackoverflowService {
             response = sendRequest(questionIds, fromDate, page);
             page++;
         } while (response.hasMore());
-        log.info("Received {} responses: {}", result.size(), result);
         return result;
     }
 
@@ -71,15 +67,7 @@ public class StackoverflowService {
         return client.get()
                 .uri(buildUriString(questionIds, page, fromDate))
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (request0, response0) -> {
-                    log.error(
-                            "Error request: {} -> {}",
-                            request0.getURI().toString(),
-                            new BufferedReader(new InputStreamReader(response0.getBody()))
-                                    .lines()
-                                    .collect(Collectors.joining()));
-                    throw new ErrorResponseException(response0.getStatusCode());
-                })
+                .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
                 .body(AnswersResponse.class);
     }
 

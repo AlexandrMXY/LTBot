@@ -7,12 +7,12 @@ import backend.academy.api.model.ListLinksResponse;
 import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
+@Slf4j
 public class ListCommand extends AbstractSimpleCommand {
 
     @Autowired
@@ -33,9 +33,7 @@ public class ListCommand extends AbstractSimpleCommand {
                 return new TelegramResponse(message.chat(), result.toString());
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
-                if (response == null) {
-                    log.warn("Invalid response: {}", "", exception);
-                } else {
+                if (response != null) {
                     return new TelegramResponse(message.chat(), response.exceptionMessage());
                 }
             }

@@ -2,9 +2,8 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.dto.GithubUpdate;
 import backend.academy.scrapper.model.github.Commit;
+import backend.academy.scrapper.util.RequestErrorHandlers;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -14,19 +13,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.client.RestClient;
 
 @Service
-@Log4j2
+@Slf4j
 @SuppressFBWarnings("REDOS")
 public class GithubService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
@@ -63,19 +60,10 @@ public class GithubService {
     }
 
     private ResponseEntity<Commit[]> sendRequest(String uri) {
-        log.info("Sending request to {}", uri);
         return client.get()
                 .uri(uri)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (request0, response0) -> {
-                    log.error(
-                            "Error request: {} -> {}",
-                            request0.getURI().toString(),
-                            new BufferedReader(new InputStreamReader(response0.getBody()))
-                                    .lines()
-                                    .collect(Collectors.joining()));
-                    throw new ErrorResponseException(response0.getStatusCode());
-                })
+                .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
                 .toEntity(Commit[].class);
     }
 

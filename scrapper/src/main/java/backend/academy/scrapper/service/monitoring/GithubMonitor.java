@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
+@Slf4j
 @SuppressFBWarnings("REDOS")
 public class GithubMonitor implements LinkMonitor {
     public static final String MONITOR_NAME = "githubMonitor";
@@ -54,8 +54,6 @@ public class GithubMonitor implements LinkMonitor {
 
     @Override
     public String getLinkId(LinkDto link) {
-        log.info(link.link());
-        log.info(GITHUB_LINK_PATTERN.matcher(link.link()).namedGroups());
         Matcher matcher = GITHUB_LINK_PATTERN.matcher(link.link());
         if (!matcher.matches()) return null;
         return matcher.group("uid") + "/" + matcher.group("rid");
@@ -67,6 +65,11 @@ public class GithubMonitor implements LinkMonitor {
         var monitorData = monitoringServiceDataRepository.findById(MONITOR_NAME);
         Stream<TrackedLink> links = linkRepository.findAllByMonitoringService(MONITOR_NAME);
         long updateTime = System.currentTimeMillis() / 1000L;
+
+        log.atInfo()
+                .setMessage("Checking links for updates")
+                .addKeyValue("monitor", MONITOR_NAME)
+                .log();
 
         List<GithubUpdate> updates = githubService.getUpdates(
                 links.map(TrackedLink::serviceId),

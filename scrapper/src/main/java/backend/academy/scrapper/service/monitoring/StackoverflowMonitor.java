@@ -14,12 +14,12 @@ import jakarta.transaction.Transactional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
+@Slf4j
 @SuppressFBWarnings("REDOS")
 public class StackoverflowMonitor implements LinkMonitor {
     public static final String MONITOR_NAME = "stackoverflowMonitor";
@@ -53,8 +53,6 @@ public class StackoverflowMonitor implements LinkMonitor {
 
     @Override
     public String getLinkId(LinkDto link) {
-        log.info(link.link());
-        log.info(STACKOVERFLOW_LINK_PATTERN.matcher(link.link()).namedGroups());
         Matcher matcher = STACKOVERFLOW_LINK_PATTERN.matcher(link.link());
         if (!matcher.matches()) return null;
         return matcher.group("id");
@@ -67,11 +65,10 @@ public class StackoverflowMonitor implements LinkMonitor {
         Stream<TrackedLink> links = linkRepository.findAllByMonitoringService(MONITOR_NAME);
         long updateTime = System.currentTimeMillis() / 1000L;
 
-        log.info(
-                "Last update time: {}; Current time: {}",
-                monitorData.orElseThrow().lastUpdate(),
-                updateTime);
-        log.info("Checking for updates {}", links);
+        log.atInfo()
+                .setMessage("Checking links for updates")
+                .addKeyValue("monitor", MONITOR_NAME)
+                .log();
 
         var updates = stackoverflowService.getUpdates(
                 links.map(link -> Long.parseLong(link.serviceId())).toList(),

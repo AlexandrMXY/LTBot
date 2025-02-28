@@ -7,17 +7,21 @@ import backend.academy.api.model.LinkResponse;
 import backend.academy.api.model.ListLinksResponse;
 import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.bot.BotConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
-@Log4j2
+@Slf4j
 public class ScrapperService {
     private final RestClient client;
 
@@ -33,11 +37,7 @@ public class ScrapperService {
                 .body(request)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
-                    ApiErrorResponse errorResponse =
-                            new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                    throw new ApiErrorResponseException(errorResponse);
-                })
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
                 .body(LinkResponse.class);
     }
 
@@ -48,11 +48,7 @@ public class ScrapperService {
                 .body(request)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
-                    ApiErrorResponse errorResponse =
-                            new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                    throw new ApiErrorResponseException(errorResponse);
-                })
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
                 .body(LinkResponse.class);
     }
 
@@ -60,10 +56,7 @@ public class ScrapperService {
         client.post()
                 .uri("/tg-chat/" + id)
                 .retrieve()
-                .onStatus(
-                        HttpStatusCode::isError,
-                        (request_, rawErrorResponse) ->
-                                log.error("Error registering user: {}", rawErrorResponse.getStatusCode()));
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse);
     }
 
     public ListLinksResponse getTrackedLinks(long chatId) {
@@ -72,11 +65,27 @@ public class ScrapperService {
                 .header("Tg-Chat-Id", String.valueOf(chatId))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, (request_, rawErrorResponse) -> {
-                    ApiErrorResponse errorResponse =
-                            new ObjectMapper().readValue(rawErrorResponse.getBody(), ApiErrorResponse.class);
-                    throw new ApiErrorResponseException(errorResponse);
-                })
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
                 .body(ListLinksResponse.class);
+    }
+
+    private static void handleErrorResponse(HttpRequest request, ClientHttpResponse response) throws IOException {
+        ApiErrorResponse details = null;
+        try {
+            details = new ObjectMapper().readValue(response.getBody(), ApiErrorResponse.class);
+        } catch (JsonProcessingException ignored) {
+        } catch (IOException exception) {
+            log.atError().setMessage("IOException occurred").setCause(exception).log();
+        }
+
+        log.atError()
+                .setMessage("Error response received")
+                .addKeyValue("uri", request.getURI())
+                .addKeyValue("method", request.getURI())
+                .addKeyValue("code", response.getStatusCode())
+                .addKeyValue("details", details)
+                .log();
+
+        throw new ApiErrorResponseException(details);
     }
 }

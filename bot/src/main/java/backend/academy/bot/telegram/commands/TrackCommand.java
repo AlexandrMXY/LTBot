@@ -13,13 +13,11 @@ import backend.academy.bot.utils.RegExUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log4j2
+@Slf4j
 public class TrackCommand implements Command {
     @Override
     public String getName() {
@@ -44,7 +42,6 @@ public class TrackCommand implements Command {
     }
 
     public static class TrackSessionState extends TelegramSessionState {
-        private static final Logger LOGGER = LogManager.getLogger();
 
         private enum Stage {
             INIT,
@@ -102,14 +99,9 @@ public class TrackCommand implements Command {
                 return "Tracking " + response.url();
             } catch (ApiErrorResponseException exception) {
                 ApiErrorResponse response = exception.details();
-
-                if (response == null) {
-                    log.warn("Invalid response: {}", "", exception);
-                } else {
-                    return response.exceptionMessage();
-                }
+                return response.exceptionMessage();
             } catch (Exception t) {
-                LOGGER.error("", t);
+                log.atError().setMessage("Exception occurred").setCause(t).log();
             }
             return null;
         }

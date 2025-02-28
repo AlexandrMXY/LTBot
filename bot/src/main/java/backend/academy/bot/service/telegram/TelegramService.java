@@ -3,13 +3,13 @@ package backend.academy.bot.service.telegram;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /** @noinspection LombokGetterMayBeUsed */
 @Service
-@Log4j2
+@Slf4j
 public class TelegramService {
     @Autowired
     private TelegramBot bot;
@@ -28,7 +28,12 @@ public class TelegramService {
         SendMessage request = new SendMessage(chatId, message);
         var response = bot.execute(request);
         if (!response.isOk()) {
-            log.error("Telegram sendMessage error: {}", response.message());
+            log.atWarn()
+                    .setMessage("Telegram sendMessage error")
+                    .addKeyValue("code", response.errorCode())
+                    .addKeyValue("description", response.description())
+                    .addKeyValue("parameters", response.parameters())
+                    .log();
         }
     }
 

@@ -2,19 +2,16 @@ package backend.academy.scrapper.service;
 
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.service.monitoring.Updates;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
+import backend.academy.scrapper.util.RequestErrorHandlers;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
 import org.springframework.web.client.RestClient;
 
 @Service
-@Log4j2
+@Slf4j
 public class BotService {
     @Autowired
     @Qualifier("botRestClient")
@@ -24,22 +21,13 @@ public class BotService {
         if (updates == null) return;
         for (Updates.Update update : updates.getUpdates()) {
             var request = new LinkUpdate(0, update.url(), update.message(), update.users());
-            log.info("Sending update: {}", request);
-            var response = client.post()
+
+            client.post()
                     .uri("/updates")
                     .body(request)
                     .retrieve()
-                    .onStatus(HttpStatusCode::isError, (req, resp) -> {
-                        log.error(
-                                "Error request: {} -> {}",
-                                req.getURI().toString(),
-                                new BufferedReader(new InputStreamReader(resp.getBody()))
-                                        .lines()
-                                        .collect(Collectors.joining()));
-                        throw new ErrorResponseException(resp.getStatusCode());
-                    })
+                    .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
                     .toBodilessEntity();
-            log.info("Response: {}", response.toString());
         }
     }
 }

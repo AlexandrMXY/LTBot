@@ -9,7 +9,12 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app")
 @EnableScheduling
 public record ScrapperConfig(
-        @NotEmpty String githubToken, StackOverflowCredentials stackOverflow, String tagsFilterRegex) {
+        @NotEmpty String githubToken,
+        StackOverflowCredentials stackOverflow,
+        String tagsFilterRegex,
+        String botUrl,
+        String githubApiUrl,
+        String stackoverflowApiUrl) {
 
     public record StackOverflowCredentials(@NotEmpty String key, @NotEmpty String accessToken) {}
 }

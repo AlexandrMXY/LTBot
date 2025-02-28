@@ -4,13 +4,11 @@ import backend.academy.bot.dto.MessageDto;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Log4j2
 @Profile("prod")
 public class TelegramEventHandlerService {
     @Autowired

@@ -8,6 +8,7 @@ import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.scrapper.controllers.LinksController;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
+import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
@@ -34,9 +35,6 @@ public class LinksAddRemoveTest {
 
     @MockitoBean
     public LinkRepository linkRepository;
-
-    @Autowired
-    public MockClientsHolder clientsMocks;
 
     @Autowired
     private LinksController linksController;
@@ -112,6 +110,18 @@ public class LinksAddRemoveTest {
                 () -> linksController.addLinks(0, new AddLinkRequest("youtube.com", List.of(), List.of())));
 
         verify(linkRepository, never()).save(any());
+    }
+
+    @Test
+    public void addLink_duplicatePassed_alreadyExistsException() {
+        doReturn(true)
+                .when(linkRepository)
+                .existsByUserAndMonitoringServiceAndServiceId(
+                        eq(existingUser), eq("githubMonitor"), eq("qwerty/qwerty"));
+        assertThrows(
+                AlreadyExistsException.class,
+                () -> linksController.addLinks(
+                        0, new AddLinkRequest("https://github.com/qwerty/qwerty", List.of(), List.of())));
     }
 
     @Test

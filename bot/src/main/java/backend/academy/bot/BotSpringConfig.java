@@ -10,11 +10,4 @@ public class BotSpringConfig {
     public TelegramBot telegramBot(BotConfig config) {
         return new TelegramBot(config.telegramToken());
     }
-
-    //    @Bean
-    //    public RestClient scrapperRestClient(BotConfig config) {
-    //        return RestClient.builder()
-    //            .baseUrl(config.scrapperUrl())
-    //            .build();
-    //    }
 }
