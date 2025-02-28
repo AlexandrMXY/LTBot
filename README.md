@@ -1,20 +1,17 @@
-![Build](https://github.com/central-university-dev/backend-academy-2025-spring-template/actions/workflows/build.yaml/badge.svg)
-
 # Link Tracker
 
-<!-- этот файл можно и нужно менять -->
+Для запуска пректа необходимо:
+- Произвести настройку проекта (отредактировать файлы application.yaml в scrapper и bot):
+    - Указать адреса скрапера (`scrapper-url`) и бота (`bot-url`) при запуске на разных серверах
+    - Указать адрес базы данных (`spring.datasource.url`)
+- Задать необзодимые переменные среды
+  - Для bot:
+    - `TELEGRAM_TOKEN` токен бота Telegram
+  - Для scrapper:
+    - `GITHUB_TOKEN` токен Github
+    - `SO_TOKEN_KEY` ключ Stackoverflow
+    - `SO_ACCESS_TOKEN` токен Stackoverflow
+    - `PG_USERNAME` логин базы данных
+    - `PG_PASSWORD` парол базы данных
 
-Проект сделан в рамках курса Академия Бэкенда.
-
-Приложение для отслеживания обновлений контента по ссылкам.
-При появлении новых событий отправляется уведомление в Telegram.
-
-Проект написан на `Java 23` с использованием `Spring Boot 3`.
-
-Проект состоит из 2-х приложений:
-* Bot
-* Scrapper
-
-Для работы требуется БД `PostgreSQL`. Присутствует опциональная зависимость на `Kafka`.
-
-Для дополнительной справки: [HELP.md](./HELP.md)
+Запуск: `mvn spring-boot:run` (выполнять в дериктории модуля (scrapper/bot))

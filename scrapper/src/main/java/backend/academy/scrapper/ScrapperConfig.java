@@ -11,10 +11,10 @@ import org.springframework.validation.annotation.Validated;
 public record ScrapperConfig(
         @NotEmpty String githubToken,
         StackOverflowCredentials stackOverflow,
-        String tagsFilterRegex,
-        String botUrl,
-        String githubApiUrl,
-        String stackoverflowApiUrl) {
+        @NotEmpty String tagsFilterRegex,
+        @NotEmpty String botUrl,
+        @NotEmpty String githubApiUrl,
+        @NotEmpty String stackoverflowApiUrl) {
 
     public record StackOverflowCredentials(@NotEmpty String key, @NotEmpty String accessToken) {}
 }
