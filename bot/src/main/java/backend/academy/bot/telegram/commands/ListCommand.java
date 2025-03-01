@@ -28,7 +28,7 @@ public class ListCommand extends AbstractSimpleCommand {
                     result.append(link.url()).append("\n");
                 }
                 if (links.links().isEmpty()) {
-                    result.append("Тo tracked links");
+                    result.append("No tracked links");
                 }
                 return new TelegramResponse(message.chat(), result.toString());
             } catch (ApiErrorResponseException exception) {

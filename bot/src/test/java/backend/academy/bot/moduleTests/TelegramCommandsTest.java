@@ -85,4 +85,20 @@ public class TelegramCommandsTest {
                 https://stackoverflow.com/questions/14938748/how-to-lazy-load-collection-when-using-spring-data-jpa-with-hibernate-from-an
                 """);
     }
+
+    @Test
+    public void processMessage_listCommand_noLinks_correctFormat() {
+        when(scrapperService.getTrackedLinks(eq(0L))).thenReturn(new ListLinksResponse(List.of()));
+
+        userSessionManagementService.processMessage(new MessageDto(0, "/list"));
+
+        ArgumentCaptor<TelegramResponse> responseCaptor = ArgumentCaptor.forClass(TelegramResponse.class);
+        verify(telegramService).sendResponse(responseCaptor.capture());
+        TelegramResponse response = responseCaptor.getValue();
+
+        assertEquals(0, response.userId());
+        assertEquals(1, response.messages().size());
+
+        assertThatCharSequence(response.messages().getFirst()).isEqualTo("No tracked links");
+    }
 }
