@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ScrapperConfig.class})
-@Profile("prod")
 @Slf4j
 public class ScrapperApplication {
     public static void main(String[] args) {

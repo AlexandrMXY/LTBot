@@ -6,5 +6,4 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile("prod")
 public interface MonitoringServiceDataRepository extends CrudRepository<MonitoringServiceData, String> {}

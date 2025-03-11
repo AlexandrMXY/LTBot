@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 @TestConfiguration
 @SpringBootApplication(
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Primary;
             DataSourceTransactionManagerAutoConfiguration.class,
             HibernateJpaAutoConfiguration.class
         })
+@Profile("test")
 public class SpringTestConfig {
     @Bean
     @Primary

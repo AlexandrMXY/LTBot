@@ -8,7 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile("prod")
 public interface UserRepository extends CrudRepository<User, Long> {
     @Query("select distinct u.id from User u join u.links tl where tl.serviceId = ?1")
     List<Long> findDistinctUserIdsWhereAnyLinkWithServiceId(String serviceId);

@@ -8,9 +8,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@Profile("prod")
 public interface LinkRepository extends CrudRepository<TrackedLink, Long> {
     Stream<TrackedLink> findAllByMonitoringService(String monitoringService);
 
     boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId);
+
 }
