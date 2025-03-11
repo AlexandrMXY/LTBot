@@ -10,7 +10,6 @@ import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.GithubService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,7 +59,6 @@ public class GithubMonitor implements LinkMonitor {
     }
 
     @Override
-    @Transactional
     public Updates checkForUpdates() {
         var monitorData = monitoringServiceDataRepository.findById(MONITOR_NAME);
         Stream<TrackedLink> links = linkRepository.findAllByMonitoringService(MONITOR_NAME);
