@@ -4,7 +4,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.scrapper.service.monitoring.Updates;
+import backend.academy.scrapper.dto.updates.SimpleUpdate;
+import backend.academy.scrapper.dto.updates.Updates;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -62,8 +63,8 @@ class BotServiceTest {
     @Test
     public void sendUpdates_updatesPassed_requestSent() throws JsonProcessingException {
         Updates u = new Updates();
-        u.addUpdate(new Updates.Update(List.of(1L), "A", "B"));
-        u.addUpdate(new Updates.Update(List.of(2L), "AA", "BB"));
+        u.addUpdate(new SimpleUpdate(List.of(1L), "A", "B"));
+        u.addUpdate(new SimpleUpdate(List.of(2L), "AA", "BB"));
 
         stubFor(post("/updates").willReturn(aResponse()));
 

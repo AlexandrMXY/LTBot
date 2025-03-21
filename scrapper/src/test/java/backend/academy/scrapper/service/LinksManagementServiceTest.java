@@ -30,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class LinksManagementServiceTest {
     @Spy
-    private ScrapperConfig scrapperConfig = new ScrapperConfig("", null, "f*", "", "", "");
+    private ScrapperConfig scrapperConfig = new ScrapperConfig("", null, "f*", "", "", "", null);
 
     @Mock
     private LinkRepository linkRepository;
@@ -129,7 +129,8 @@ class LinksManagementServiceTest {
                         "monitor",
                         link.tags(),
                         link.filters(),
-                        "sid"),
+                        "sid",
+                        linkCaptor.getValue().lastUpdate()),
                 linkCaptor.getValue());
     }
 
@@ -149,7 +150,7 @@ class LinksManagementServiceTest {
 
     @Test
     public void deleteLink_success_returnRemovedLink() {
-        TrackedLink link = new TrackedLink(1, null, "qwerty", null, null, null, null);
+        TrackedLink link = new TrackedLink(1, null, "qwerty", null, null, null, null, 0);
         User user = new User(0, listOf(link));
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(user));
 
@@ -158,7 +159,7 @@ class LinksManagementServiceTest {
 
     @Test
     public void deleteLink_success_shouldSaveChanges() {
-        TrackedLink link = new TrackedLink(1, null, "qwerty", null, null, null, null);
+        TrackedLink link = new TrackedLink(1, null, "qwerty", null, null, null, null, 0);
         User user = new User(0, listOf(link));
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(user));
 
@@ -175,9 +176,9 @@ class LinksManagementServiceTest {
 
     @Test
     public void getLinks_success_shouldReturnListOfLinks() {
-        TrackedLink link1 = new TrackedLink(1, null, "qwerty1", null, null, null, null);
-        TrackedLink link2 = new TrackedLink(2, null, "qwerty2", null, null, null, null);
-        TrackedLink link3 = new TrackedLink(3, null, "qwerty3", null, null, null, null);
+        TrackedLink link1 = new TrackedLink(1, null, "qwerty1", null, null, null, null, 0);
+        TrackedLink link2 = new TrackedLink(2, null, "qwerty2", null, null, null, null, 0);
+        TrackedLink link3 = new TrackedLink(3, null, "qwerty3", null, null, null, null, 0);
 
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(new User(0, List.of(link1, link2, link3))));
 

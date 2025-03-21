@@ -1,0 +1,40 @@
+{
+    "items": [
+        {
+            "owner": {
+                "user_id": 1,
+                "display_name": "1ABOBA"
+            },
+            "creation_date": 1001,
+            "question_id": 767,
+            "answer_id": 110,
+            "last_activity_date": 1000,
+            "body": "Lorem ipsum 1"
+        },
+        {
+            "owner": {
+                "user_id": 12,
+                "display_name": "2ABOBA2"
+            },
+            "creation_date": 1011,
+            "question_id": 768,
+            "answer_id": 111,
+            "last_activity_date": 1010,
+            "body": "Lorem ipsum 2"
+        },
+        {
+            "owner": {
+                "user_id": 123,
+                "display_name": "3ABOBA2"
+            },
+            "creation_date": 1021,
+            "question_id": 769,
+            "answer_id": 112,
+            "last_activity_date": 1020,
+            "body": "Lorem ipsum 3"
+        }
+    ],
+    "has_more" : true,
+    "quota_max": 1000,
+    "quota_remaining": 1000
+}

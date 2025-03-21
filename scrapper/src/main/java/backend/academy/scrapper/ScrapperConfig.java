@@ -14,7 +14,12 @@ public record ScrapperConfig(
         @NotEmpty String tagsFilterRegex,
         @NotEmpty String botUrl,
         @NotEmpty String githubApiUrl,
-        @NotEmpty String stackoverflowApiUrl) {
+        @NotEmpty String stackoverflowApiUrl,
+        DBAccessImpl dbAccessImpl) {
 
     public record StackOverflowCredentials(@NotEmpty String key, @NotEmpty String accessToken) {}
+    public enum DBAccessImpl {
+        SQL,
+        ORM
+    }
 }

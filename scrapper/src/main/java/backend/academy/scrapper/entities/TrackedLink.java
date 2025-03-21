@@ -26,7 +26,7 @@ public class TrackedLink {
     @GeneratedValue
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
@@ -41,4 +41,6 @@ public class TrackedLink {
     private List<String> filters;
 
     private String serviceId;
+
+    private long lastUpdate;
 }

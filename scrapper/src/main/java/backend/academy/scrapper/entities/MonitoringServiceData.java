@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MonitoringServiceData {
     @Id
-    private String name;
+    private String id;
 
     private long lastUpdate;
 }

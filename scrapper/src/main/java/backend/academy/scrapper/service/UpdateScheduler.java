@@ -2,7 +2,7 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
-import backend.academy.scrapper.service.monitoring.Updates;
+import backend.academy.scrapper.dto.updates.Updates;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,28 +19,23 @@ public class UpdateScheduler {
 
     @Scheduled(fixedDelayString = "${app.update-delay}")
     public void checkForUpdates() {
-        var result = linkDistributionService.getMonitors().stream()
-                .map(this::tryCheckForUpdates)
-                .reduce(Updates::mergeResult);
+        linkDistributionService.getMonitors()
+                .forEach(this::tryCheckForUpdates);
 
         log.atInfo()
                 .setMessage("Checking for updates complete")
-                .addKeyValue(
-                        "updates_found",
-                        result.orElse(new Updates()).getUpdates().size())
                 .log();
+    }
 
-        if (result.isPresent() && result.orElseThrow().hasUpdates()) {
-            botService.sendUpdates(result.orElseThrow());
+    private void tryCheckForUpdates(LinkMonitor monitor) {
+        try {
+            monitor.checkForUpdates(this::updatesConsumer);
+        } catch (Exception e) {
+            log.atWarn().setMessage("Checking for updates error").setCause(e).log();
         }
     }
 
-    private Updates tryCheckForUpdates(LinkMonitor monitor) {
-        try {
-            return monitor.checkForUpdates();
-        } catch (Exception e) {
-            log.atWarn().setMessage("Checking for updates error").setCause(e).log();
-            return new Updates();
-        }
+    private void updatesConsumer(Updates updates) {
+        botService.sendUpdates(updates);
     }
 }

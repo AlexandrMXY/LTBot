@@ -1,4 +1,4 @@
-package backend.academy.scrapper.service.monitoring;
+package backend.academy.scrapper.dto.updates;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,11 @@ public class Updates {
 
     public void addUpdate(Update details) {
         updateDetails.add(details);
+    }
+
+    public Updates addUpdates(List<Update> updates) {
+        updateDetails.addAll(updates);
+        return this;
     }
 
     public Updates mergeResult(Updates result) {
@@ -25,5 +30,4 @@ public class Updates {
         return !updateDetails.isEmpty();
     }
 
-    public record Update(List<Long> users, String url, String message) {}
 }

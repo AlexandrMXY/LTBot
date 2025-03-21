@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Profile;
             DataSourceTransactionManagerAutoConfiguration.class,
             HibernateJpaAutoConfiguration.class
         })
-@Profile("test")
 public class SpringTestConfig {
     @Bean
     @Primary
@@ -49,6 +48,7 @@ public class SpringTestConfig {
                 ".*",
                 "http://localhost:8080",
                 "http://localhost:8082",
-                "http://localhost:8083");
+                "http://localhost:8083",
+            ScrapperConfig.DBAccessImpl.ORM);
     }
 }

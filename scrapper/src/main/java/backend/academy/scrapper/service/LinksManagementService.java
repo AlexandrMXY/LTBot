@@ -64,7 +64,8 @@ public class LinksManagementService {
         }
 
         TrackedLink trackedLink =
-                new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), link.filters(), serviceId);
+                new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), link.filters(), serviceId,
+                    System.currentTimeMillis() / 1000L);
 
         user.links().add(trackedLink);
         trackedLink = linkRepository.save(trackedLink);

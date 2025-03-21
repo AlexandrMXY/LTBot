@@ -1,7 +1,8 @@
 package backend.academy.scrapper.service;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.scrapper.service.monitoring.Updates;
+import backend.academy.scrapper.dto.updates.Update;
+import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.util.RequestErrorHandlers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class BotService {
 
     public void sendUpdates(Updates updates) {
         if (updates == null) return;
-        for (Updates.Update update : updates.getUpdates()) {
+        for (Update update : updates.getUpdates()) {
             var request = new LinkUpdate(0, update.url(), update.message(), update.users());
 
             client.post()

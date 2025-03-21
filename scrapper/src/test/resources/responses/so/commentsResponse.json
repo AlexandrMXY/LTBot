@@ -1,0 +1,25 @@
+{
+    "items": [
+        {
+            "owner": {
+                "user_id": 100,
+                "display_name": "User1"
+            },
+            "creation_date": 1000,
+            "comment_id": 0,
+            "body": "Comment 1"
+        },
+        {
+            "owner": {
+                "user_id": 101,
+                "display_name": "User2"
+            },
+            "creation_date": 1000,
+            "comment_id": 0,
+            "body": "Comment 2"
+        }
+    ],
+    "hasMore" : false,
+    "quota_max": 1000,
+    "quota_remaining": 1000
+}
