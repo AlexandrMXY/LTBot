@@ -36,9 +36,6 @@ public class SqlLinkRepository implements LinkRepository {
     @Autowired
     private TrackedLinkMapper mapper;
 
-    @Autowired
-    private UserRepository userRepo;
-
     @Override
     public boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
@@ -52,8 +49,7 @@ public class SqlLinkRepository implements LinkRepository {
         return res > 0;
     }
 
-    @Override
-    public TrackedLink save(TrackedLink link) {
+    TrackedLink saveLinkOnly(TrackedLink link) {
         long id = jdbcTemplate.queryForObject("select nextval('tracked_link_seq')",
             new MapSqlParameterSource(), Long.class);
 
@@ -67,17 +63,25 @@ public class SqlLinkRepository implements LinkRepository {
             .addValue("serviceId", link.serviceId())
             .addValue("lastUpdate", link.lastUpdate());
 
-        if (!userRepo.existsById(link.user().id()))
-            jdbcTemplate.update("insert into users (id) values (:userId)", parameterSource);
 
         jdbcTemplate.update(
             "insert into tracked_link (id, user_id, monitoring_service, service_id, tags, url, filters, last_update) " +
-            "values (:id, :userId, :monitoringService, :serviceId, :tags, :url, :filters, :lastUpdate)", parameterSource);
+                "values (:id, :userId, :monitoringService, :serviceId, :tags, :url, :filters, :lastUpdate)", parameterSource);
 
         jdbcTemplate.update("insert into users_links (links_id, user_id) VALUES (:id, :userId)", parameterSource);
 
         link.id(id);
         return link;
+    }
+
+    @Override
+    public TrackedLink save(TrackedLink link) {
+        SqlParameterSource idSource = new MapSqlParameterSource().addValue("userId", link.user().id());
+
+        if (jdbcTemplate.queryForObject("select count(1) from users where id = :userId;", idSource, Integer.class) == 0)
+            jdbcTemplate.update("insert into users (id) values (:userId)", idSource);
+
+        return saveLinkOnly(link);
     }
 
     @Override

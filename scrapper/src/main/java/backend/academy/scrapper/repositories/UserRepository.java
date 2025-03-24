@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-//@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "orm")
+@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "orm")
 public interface UserRepository extends org.springframework.data.repository.Repository<User, Long> {
     User save(User user);
 
