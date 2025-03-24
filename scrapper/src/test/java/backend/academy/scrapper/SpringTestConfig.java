@@ -1,7 +1,6 @@
 package backend.academy.scrapper;
 
 import backend.academy.scrapper.repositories.LinkRepository;
-import backend.academy.scrapper.repositories.MonitoringServiceDataRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +19,7 @@ import org.springframework.context.annotation.Profile;
             DataSourceTransactionManagerAutoConfiguration.class,
             HibernateJpaAutoConfiguration.class
         })
+@Profile("!testDb")
 public class SpringTestConfig {
     @Bean
     @Primary
@@ -31,12 +31,6 @@ public class SpringTestConfig {
     @Primary
     public LinkRepository linkRepository() {
         return Mockito.mock(LinkRepository.class);
-    }
-
-    @Bean
-    @Primary
-    public MonitoringServiceDataRepository monitoringServiceDataRepository() {
-        return Mockito.mock(MonitoringServiceDataRepository.class);
     }
 
     @Bean

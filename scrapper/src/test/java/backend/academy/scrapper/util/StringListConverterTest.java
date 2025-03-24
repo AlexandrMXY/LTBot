@@ -35,7 +35,7 @@ class StringListConverterTest {
 
     @Test
     void convertToEntityAttribute_emptyInput_emptyOutput() {
-        assertIterableEquals(List.of(""), new StringListConverter().convertToEntityAttribute(""));
+        assertIterableEquals(List.of(), new StringListConverter().convertToEntityAttribute(""));
     }
 
     @Test

@@ -3,14 +3,13 @@ package backend.academy.scrapper.repositories;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import java.util.List;
-import java.util.stream.Stream;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jdbc.repository.support.SimpleJdbcRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
@@ -20,6 +19,7 @@ public interface LinkRepository extends org.springframework.data.repository.Repo
 
     TrackedLink save(TrackedLink link);
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void deleteById(long id);
 
     Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(String monitoring, long lastUpdate, Pageable pageable);

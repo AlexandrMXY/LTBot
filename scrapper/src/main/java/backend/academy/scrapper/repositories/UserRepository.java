@@ -10,11 +10,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "orm")
+//@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "orm")
 public interface UserRepository extends org.springframework.data.repository.Repository<User, Long> {
-    @Query("select distinct u.id from User u join u.links tl where tl.serviceId = ?1")
-    List<Long> findDistinctUserIdsWhereAnyLinkWithServiceId(String serviceId);
-
     User save(User user);
 
     boolean existsById(long id);

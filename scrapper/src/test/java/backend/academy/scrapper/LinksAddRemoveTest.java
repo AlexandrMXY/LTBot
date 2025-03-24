@@ -44,7 +44,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Import({LinksAddRemoveTest.DBInitializer.class, SpringDBTestConfig.class})
 @Testcontainers
 @AutoConfigureTestDatabase
-//@Execution(ExecutionMode.SAME_THREAD)
 public class LinksAddRemoveTest {
     @Container
     @ServiceConnection

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 @SpringBootApplication
 @EnableConfigurationProperties({ScrapperConfig.class})
 @Slf4j
+@Profile("prod")
 public class ScrapperApplication {
     public static void main(String[] args) {
         SpringApplication.run(ScrapperApplication.class, args);

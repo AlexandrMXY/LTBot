@@ -1,20 +1,23 @@
 package backend.academy.scrapper;
 
+import backend.academy.scrapper.repositories.LinkRepository;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 
 
 @SpringBootApplication
 @EnableJpaRepositories
 @TestConfiguration
-@Profile("test_db")
 public class SpringDBTestConfig {
-
     @Bean
     @Primary
     public ScrapperConfig scrapperConfig() {
