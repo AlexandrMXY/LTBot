@@ -21,7 +21,7 @@ public class BotService {
     public void sendUpdates(Updates updates) {
         if (updates == null) return;
         for (Update update : updates.getUpdates()) {
-            var request = new LinkUpdate(0, update.url(), update.message(), update.users());
+            var request = update.createRequest();
 
             client.post()
                     .uri("/updates")

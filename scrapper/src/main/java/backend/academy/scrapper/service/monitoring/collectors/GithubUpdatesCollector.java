@@ -1,6 +1,6 @@
 package backend.academy.scrapper.service.monitoring.collectors;
 
-import backend.academy.scrapper.dto.updates.GithubIssueUpdate;
+import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
@@ -16,6 +16,8 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,12 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
 
         return new Updates().addUpdates(
             issues.stream()
-                .map(i -> (Update) new GithubIssueUpdate(tl.user().id(), i.htmlUrl(), i.body(), i.user().login()))
+                .map(i -> (Update) new UpdateImpl(
+                    tl.user().id(),
+                    convertDate(i.createdAt()),
+                    i.htmlUrl(),
+                    i.body(),
+                    i.user().login()))
                 .toList());
     }
 
@@ -86,16 +93,20 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
     }
 
     private String getNextRequestUrl(String responseLinksHeader) {
-        if (responseLinksHeader == null) {
+        if (responseLinksHeader == null)
             return null;
-        }
 
         Matcher matcher = LINKS_HEADER_NEXT_PAGE_PATTERN.matcher(responseLinksHeader);
 
-        if (!matcher.find()) {
+        if (!matcher.find())
             return null;
-        }
 
         return matcher.group("url");
+    }
+
+    private long convertDate(String dateStr) {
+        TemporalAccessor accessor =  DATE_TIME_FORMATTER.parse(dateStr);
+        Instant instant = Instant.from(accessor);
+        return Instant.EPOCH.until(instant, ChronoUnit.SECONDS);
     }
 }

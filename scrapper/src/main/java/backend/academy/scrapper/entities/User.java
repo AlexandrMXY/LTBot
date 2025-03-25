@@ -26,7 +26,7 @@ public class User {
     @Id
     private long id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<TrackedLink> links;
 
 

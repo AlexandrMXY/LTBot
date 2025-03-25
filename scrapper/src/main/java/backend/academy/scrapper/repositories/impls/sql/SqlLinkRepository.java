@@ -3,30 +3,23 @@ package backend.academy.scrapper.repositories.impls.sql;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.repositories.LinkRepository;
-import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.repositories.impls.sql.mappers.TrackedLinkMapper;
-import backend.academy.scrapper.util.StringListConverter;
-import jakarta.annotation.PostConstruct;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
+
+// TODO исправить delete'ы в обоих репозитория
 @Repository
 @ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "sql")
 public class SqlLinkRepository implements LinkRepository {
@@ -85,12 +78,22 @@ public class SqlLinkRepository implements LinkRepository {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deleteById(long id) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
             .addValue("id", id);
 //        jdbcTemplate.update("delete from users_links where links_id = :id", parameterSource);
         jdbcTemplate.update("delete from tracked_link where id = :id", parameterSource);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteByUserAndUrl(User u, String url) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+            .addValue("userId", u.id())
+            .addValue("url", url);
+
+        jdbcTemplate.update("delete from tracked_link where user_id = :userId and url = :url", parameterSource);
     }
 
     @Override

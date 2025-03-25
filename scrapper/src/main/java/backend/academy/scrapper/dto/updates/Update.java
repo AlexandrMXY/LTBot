@@ -1,11 +1,8 @@
 package backend.academy.scrapper.dto.updates;
 
+import backend.academy.api.model.LinkUpdate;
 import java.util.List;
 
 public interface Update {
-    List<Long> users();
-
-    String url();
-
-    String message();
+    LinkUpdate createRequest();
 }

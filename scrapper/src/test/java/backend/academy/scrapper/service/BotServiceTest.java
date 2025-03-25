@@ -4,7 +4,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.scrapper.dto.updates.SimpleUpdate;
+import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class BotServiceTest {
@@ -63,8 +64,8 @@ class BotServiceTest {
     @Test
     public void sendUpdates_updatesPassed_requestSent() throws JsonProcessingException {
         Updates u = new Updates();
-        u.addUpdate(new SimpleUpdate(List.of(1L), "A", "B"));
-        u.addUpdate(new SimpleUpdate(List.of(2L), "AA", "BB"));
+        u.addUpdate(new UpdateImpl(1L,11, "A", "A", "B"));
+        u.addUpdate(new UpdateImpl(2L,11, "AA", "AA", "BB"));
 
         stubFor(post("/updates").willReturn(aResponse()));
 
@@ -78,26 +79,12 @@ class BotServiceTest {
         LinkUpdate l1 = new ObjectMapper().readValue(body1, LinkUpdate.class);
         LinkUpdate l2 = new ObjectMapper().readValue(body2, LinkUpdate.class);
 
-        LinkUpdate expected1 = new LinkUpdate(0, "A", "B", List.of(1L));
-        LinkUpdate expected2 = new LinkUpdate(0, "AA", "BB", List.of(2L));
+        LinkUpdate expected1 = new LinkUpdate(1L,11, "A", "A", "B");
+        LinkUpdate expected2 = new LinkUpdate(2L,11, "AA", "AA", "BB");
 
-        assertThat((compareLinkUpdates(l1, expected1) && compareLinkUpdates(l2, expected2))
-                        || (compareLinkUpdates(l2, expected1) && compareLinkUpdates(l1, expected2)))
-                .isTrue();
-    }
 
-    public boolean compareLinkUpdates(LinkUpdate l1, LinkUpdate l2) {
-        return Objects.equals(l1.url(), l2.url())
-                && compareLists(l1.tgChatIds(), l2.tgChatIds())
-                && Objects.equals(l1.description(), l2.description());
-    }
+        assertThatIterable(List.of(l1, l2))
+            .containsExactlyInAnyOrderElementsOf(List.of(expected1, expected2));
 
-    public <T> boolean compareLists(List<T> l1, List<T> l2) {
-        try {
-            assertThatList(l1).containsExactlyInAnyOrderElementsOf(l2);
-            return true;
-        } catch (Throwable t) {
-            return false;
-        }
     }
 }

@@ -13,7 +13,6 @@ import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +20,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LinksManagementService {
@@ -82,9 +82,9 @@ public class LinksManagementService {
         if (linkOpt.isEmpty()) {
             throw new NotFoundException("Link not found");
         }
-        user.links().remove(linkOpt.orElseThrow());
-        linkRepository.deleteById(linkOpt.orElseThrow().id());
+        user.links().remove(linkOpt.get());
         userRepository.save(user);
+        linkRepository.deleteById(linkOpt.orElseThrow().id());
         return new LinkDto(linkOpt.orElseThrow());
     }
 

@@ -2,6 +2,7 @@ package backend.academy.bot.controllers;
 
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.bot.service.telegram.TelegramService;
+import backend.academy.bot.telegram.formatters.UpdateFormatter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UpdatesController {
     @Autowired
     private TelegramService telegramService;
+    @Autowired
+    private UpdateFormatter formatter;
 
     @PostMapping("/updates")
     public ResponseEntity<?> updates(@RequestBody LinkUpdate update) {
-        for (long id : update.tgChatIds()) {
-            telegramService.sendMessage(id, "New update: " + update.url() + " " + update.description());
-        }
+        telegramService.sendMessage(update.chatId(), formatter.format(update));
+
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
 }

@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.collections4.ListUtils;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @NoArgsConstructor
@@ -29,7 +31,7 @@ public class TrackedLink {
     @Setter
     private long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @ToString.Exclude
     private User user;
 

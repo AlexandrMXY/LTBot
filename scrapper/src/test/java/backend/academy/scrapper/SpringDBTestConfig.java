@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootApplication
 @EnableJpaRepositories
 @TestConfiguration
+@Profile("testDb")
 public class SpringDBTestConfig {
     @Bean
     @Primary

@@ -19,8 +19,9 @@ public interface LinkRepository extends org.springframework.data.repository.Repo
 
     TrackedLink save(TrackedLink link);
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void deleteById(long id);
+
+    void deleteByUserAndUrl(User u, String url);
 
     Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(String monitoring, long lastUpdate, Pageable pageable);
 
@@ -29,4 +30,5 @@ public interface LinkRepository extends org.springframework.data.repository.Repo
     @Query("update TrackedLink set lastUpdate = ?1 where monitoringService = ?2 and serviceId in (?3)")
     void updateAllByMonitoringServiceAndServiceIdIsIn(Long newLastUpdate, String monitoringService, List<String> sIds);
 }
+
 

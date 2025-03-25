@@ -1,7 +1,6 @@
 package backend.academy.scrapper.service.monitoring.collectors;
 
-import backend.academy.scrapper.dto.updates.StackoverflowAnswerUpdate;
-import backend.academy.scrapper.dto.updates.StackoverflowCommentUpdate;
+import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.model.stackoverflow.AnswerResponse;
@@ -64,22 +63,22 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
         answers.stream()
             .filter((ans) -> ans.creationDate() >= link.lastUpdate())
             .forEach((ans) -> {
-                updates.addUpdate(new StackoverflowAnswerUpdate(
+                updates.addUpdate(new UpdateImpl(
                     link.user().id(),
                     ans.creationDate(),
-                    ans.questionId(),
-                    ans.owner().displayName(),
-                    ans.body()
+                    link.url(),
+                    ans.body(),
+                    ans.owner().displayName()
                 ));
             });
 
         comments.forEach((comment) -> {
-            updates.addUpdate(new StackoverflowCommentUpdate(
+            updates.addUpdate(new UpdateImpl(
                 link.user().id(),
                 comment.creationDate(),
-                comment.commentId(),
-                comment.owner().displayName(),
-                comment.body()
+                link.url(),
+                comment.body(),
+                comment.owner().displayName()
             ));
         });
 
@@ -126,5 +125,6 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
 
         return result;
     }
+
 }
 

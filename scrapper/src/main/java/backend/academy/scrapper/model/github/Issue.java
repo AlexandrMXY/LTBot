@@ -9,6 +9,7 @@ public record Issue(
     @JsonProperty("comments_url") String commentsUrl,
     GHUser user,
     String body,
-    @JsonProperty("pull_request") PullRequest pullRequest
+    @JsonProperty("pull_request") PullRequest pullRequest,
+    @JsonProperty("created_at") String createdAt
 ) {
 }

@@ -36,6 +36,8 @@ import static org.assertj.core.api.Assertions.*;
 public class LinkRepositoryTest {
     @Autowired
     LinkRepository repository;
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     TestEntityManager entityManager;
@@ -127,7 +129,7 @@ public class LinkRepositoryTest {
     }
 
     @Test
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional()
     public void deleteById_whenCalled_shouldDelete() {
         User u = new User(1, new ArrayList<>());
         TrackedLink link = new TrackedLink(
@@ -144,6 +146,10 @@ public class LinkRepositoryTest {
         entityManager.persist(u);
         TrackedLink saved = entityManager.persistAndFlush(link);
 
+        entityManager.clear();
+
+        u.links().clear();
+        userRepository.save(u);
         repository.deleteById(saved.id());
 
         assertNull(entityManager.find(TrackedLink.class, saved.id()));

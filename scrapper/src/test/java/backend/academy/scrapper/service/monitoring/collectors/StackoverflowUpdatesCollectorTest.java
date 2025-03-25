@@ -1,10 +1,10 @@
 package backend.academy.scrapper.service.monitoring.collectors;
 
+import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.RestClientsConfiguration;
 import backend.academy.scrapper.SpringTestConfig;
 import backend.academy.scrapper.TestUtils;
-import backend.academy.scrapper.dto.updates.StackoverflowAnswerUpdate;
-import backend.academy.scrapper.dto.updates.StackoverflowCommentUpdate;
+import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
@@ -89,14 +89,14 @@ class StackoverflowUpdatesCollectorTest {
         assertThatIterable(updates.getUpdates())
             .size().isEqualTo(6).returnToIterable()
             .satisfiesExactlyInAnyOrder(
-                    u -> assertEquals("Lorem ipsum 1", ((StackoverflowAnswerUpdate)u).content()),
-                    u -> assertEquals("Lorem ipsum 2", ((StackoverflowAnswerUpdate)u).content()),
-                    u -> assertEquals("Lorem ipsum 3", ((StackoverflowAnswerUpdate)u).content()),
-                    u -> assertEquals("Lorem ipsum 4", ((StackoverflowAnswerUpdate)u).content()),
-                    u -> assertEquals("Lorem ipsum 5", ((StackoverflowAnswerUpdate)u).content()),
-                    u -> assertEquals("Lorem ipsum 7", ((StackoverflowAnswerUpdate)u).content()))
+                    u -> assertEquals("Lorem ipsum 1", u.createRequest().content()),
+                    u -> assertEquals("Lorem ipsum 2", u.createRequest().content()),
+                    u -> assertEquals("Lorem ipsum 3", u.createRequest().content()),
+                    u -> assertEquals("Lorem ipsum 4", u.createRequest().content()),
+                    u -> assertEquals("Lorem ipsum 5", u.createRequest().content()),
+                    u -> assertEquals("Lorem ipsum 7", u.createRequest().content()))
             .allSatisfy(upd -> {
-                StackoverflowAnswerUpdate u = (StackoverflowAnswerUpdate)upd;
+                UpdateImpl u = (UpdateImpl) upd;
                 assertEquals(10, u.user());
                 assertThat(u.date()).isGreaterThan(100);
             });
@@ -152,23 +152,23 @@ class StackoverflowUpdatesCollectorTest {
 
         assertThatIterable(updates.getUpdates())
             .satisfiesExactlyInAnyOrder(u -> {
-                assertEquals("Lorem ipsum 4", ((StackoverflowAnswerUpdate)u).content());
-                assertEquals(10L, ((StackoverflowAnswerUpdate)u).user());
+                assertEquals("Lorem ipsum 4", u.createRequest().content());
+                assertEquals(10L, u.createRequest().chatId());
             }, u -> {
-                assertEquals("Lorem ipsum 5", ((StackoverflowAnswerUpdate)u).content());
-                assertEquals(10L, ((StackoverflowAnswerUpdate)u).user());
+                assertEquals("Lorem ipsum 5", u.createRequest().content());
+                assertEquals(10L, u.createRequest().chatId());
             }, u -> {
-                assertEquals("Lorem ipsum 7", ((StackoverflowAnswerUpdate)u).content());
-                assertEquals(10L, ((StackoverflowAnswerUpdate)u).user());
+                assertEquals("Lorem ipsum 7", u.createRequest().content());
+                assertEquals(10L, u.createRequest().chatId());
             }, u -> {
-                assertEquals("Lorem ipsum 8", ((StackoverflowAnswerUpdate)u).content());
-                assertEquals(20L, ((StackoverflowAnswerUpdate)u).user());
+                assertEquals("Lorem ipsum 8", u.createRequest().content());
+                assertEquals(20L, u.createRequest().chatId());
             }, u -> {
-                assertEquals("Lorem ipsum 9", ((StackoverflowAnswerUpdate)u).content());
-                assertEquals(20L, ((StackoverflowAnswerUpdate)u).user());
+                assertEquals("Lorem ipsum 9", u.createRequest().content());
+                assertEquals(20L, u.createRequest().chatId());
             }, u -> {
-                assertEquals("Lorem ipsum 10", ((StackoverflowAnswerUpdate)u).content());
-                assertEquals(20L, ((StackoverflowAnswerUpdate)u).user());
+                assertEquals("Lorem ipsum 10", u.createRequest().content());
+                assertEquals(20L, u.createRequest().chatId());
             });
     }
 
@@ -206,11 +206,11 @@ class StackoverflowUpdatesCollectorTest {
 
         assertThatIterable(updates.getUpdates())
             .satisfiesExactlyInAnyOrder((u) -> {
-                assertEquals(10, ((StackoverflowCommentUpdate)u).user());
-                assertEquals("Comment 1", ((StackoverflowCommentUpdate)u).content());
+                assertEquals(10, u.createRequest().chatId());
+                assertEquals("Comment 1", u.createRequest().content());
             }, (u) -> {
-                assertEquals(10, ((StackoverflowCommentUpdate)u).user());
-                assertEquals("Comment 2", ((StackoverflowCommentUpdate)u).content());
+                assertEquals(10, u.createRequest().chatId());
+                assertEquals("Comment 2", u.createRequest().content());
             });
     }
 
@@ -244,11 +244,11 @@ class StackoverflowUpdatesCollectorTest {
 
         assertThatIterable(updates.getUpdates())
             .satisfiesExactlyInAnyOrder((upd) -> {
-                StackoverflowAnswerUpdate u = (StackoverflowAnswerUpdate) upd;
-                assertEquals(10, u.user());
+                LinkUpdate u = upd.createRequest();
+                assertEquals(10, u.chatId());
                 assertEquals("Ans 1", u.content());
-                assertEquals(50, u.date());
-                assertEquals("User1", u.creator());
+                assertEquals(50, u.time());
+                assertEquals("User1", u.author());
             });
     }
 
@@ -282,17 +282,17 @@ class StackoverflowUpdatesCollectorTest {
 
         assertThatIterable(updates.getUpdates())
             .satisfiesExactlyInAnyOrder((upd) -> {
-                StackoverflowCommentUpdate u = (StackoverflowCommentUpdate) upd;
-                assertEquals(10, u.user());
+                LinkUpdate u = upd.createRequest();
+                assertEquals(10, u.chatId());
                 assertEquals("Comment 1", u.content());
-                assertEquals(1000, u.date());
-                assertEquals("User1", u.creator());
+                assertEquals(1000L, u.time());
+                assertEquals("User1", u.author());
             }, (upd) -> {
-                StackoverflowCommentUpdate u = (StackoverflowCommentUpdate) upd;
-                assertEquals(10, u.user());
+                LinkUpdate u = upd.createRequest();
+                assertEquals(10, u.chatId());
                 assertEquals("Comment 2", u.content());
-                assertEquals(1000, u.date());
-                assertEquals("User2", u.creator());
+                assertEquals(1000L, u.time());
+                assertEquals("User2", u.author());
             });
     }
 }
