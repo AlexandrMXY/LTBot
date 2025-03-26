@@ -24,9 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @AutoConfigureTestEntityManager
 @AutoConfigureDataJpa
-@SpringBootTest(classes = LinkRepository.class)
 @ActiveProfiles("testDb")
-public class UserRepositoryTest {
+public abstract class UserRepositoryTest {
     @Autowired
     UserRepository repository;
 
@@ -67,7 +66,7 @@ public class UserRepositoryTest {
         User u = new User(3, new ArrayList<>());
         entityManager.persistAndFlush(u);
         repository.deleteById(u.id());
-        assertNull(entityManager.find(User.class, u.id()));
+        assertFalse(repository.findById(u.id()).isPresent());
     }
 
     @Test

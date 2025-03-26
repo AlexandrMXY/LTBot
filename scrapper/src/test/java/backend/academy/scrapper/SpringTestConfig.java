@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @TestConfiguration
 @SpringBootApplication(
@@ -21,6 +22,12 @@ import org.springframework.context.annotation.Profile;
         })
 @Profile("!testDb")
 public class SpringTestConfig {
+    @Bean
+    @Primary
+    public NamedParameterJdbcTemplate jdbcTemplate() {
+        return Mockito.mock(NamedParameterJdbcTemplate.class);
+    }
+
     @Bean
     @Primary
     public UserRepository userRepository() {

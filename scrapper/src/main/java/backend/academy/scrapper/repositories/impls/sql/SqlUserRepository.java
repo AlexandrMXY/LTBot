@@ -1,6 +1,7 @@
 package backend.academy.scrapper.repositories.impls.sql;
 
 
+import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.repositories.impls.sql.mappers.TrackedLinkMapper;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
@@ -28,10 +30,23 @@ public class SqlUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
+        if (existsById(user.id())) {
+            update(user);
+            return user;
+        }
+
         jdbcTemplate.update("insert into users (id) values (:id)",
             new MapSqlParameterSource().addValue("id", user.id()));
         user.links().replaceAll(linkRepository::saveLinkOnly);
         return user;
+    }
+
+    private void update(User u) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+            .addValue("id", u.id());
+        jdbcTemplate.update("delete from tracked_link where user_id = :id", parameterSource);
+        for (TrackedLink tl : u.links())
+            linkRepository.save(tl);
     }
 
     @Override
@@ -45,11 +60,7 @@ public class SqlUserRepository implements UserRepository {
     @Transactional
     public void deleteById(long id) {
         var params = new MapSqlParameterSource().addValue("id", id);
-        jdbcTemplate.update(
-            "delete from tracked_link where id in " +
-                "(select links_id from users_links where users_links.user_id = :id)",
-            params);
-        jdbcTemplate.update("delete from users_links where user_id = :id", params);
+        jdbcTemplate.update("delete from tracked_link where tracked_link.user_id = :id", params);
         jdbcTemplate.update("delete from users where id = :id", params);
     }
 
@@ -65,8 +76,7 @@ public class SqlUserRepository implements UserRepository {
         User user = res.getFirst();
 
         var links = jdbcTemplate.query(
-            "select * from tracked_link where id in " +
-                "(select links_id from users_links where users_links.user_id = :id)",
+            "select * from tracked_link where tracked_link.user_id = :id",
                 params, linkMapper);
 
         user.links(links);

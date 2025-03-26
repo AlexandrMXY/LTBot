@@ -31,9 +31,8 @@ import static org.assertj.core.api.Assertions.*;
 @AutoConfigureTestDatabase
 @AutoConfigureTestEntityManager
 @AutoConfigureDataJpa
-@SpringBootTest(classes = LinkRepository.class)
 @ActiveProfiles("testDb")
-public class LinkRepositoryTest {
+public abstract class LinkRepositoryTest {
     @Autowired
     LinkRepository repository;
     @Autowired

@@ -29,6 +29,13 @@ public class SqlLinkRepository implements LinkRepository {
     @Autowired
     private TrackedLinkMapper mapper;
 
+
+    public boolean existsById(long id) {
+        SqlParameterSource idSource = new MapSqlParameterSource().addValue("id", id);
+        return jdbcTemplate.queryForObject("select count(1) from tracked_link where id = :id",
+            idSource, Integer.class) > 0;
+    }
+
     @Override
     public boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
@@ -61,33 +68,56 @@ public class SqlLinkRepository implements LinkRepository {
             "insert into tracked_link (id, user_id, monitoring_service, service_id, tags, url, filters, last_update) " +
                 "values (:id, :userId, :monitoringService, :serviceId, :tags, :url, :filters, :lastUpdate)", parameterSource);
 
-        jdbcTemplate.update("insert into users_links (links_id, user_id) VALUES (:id, :userId)", parameterSource);
-
         link.id(id);
         return link;
     }
 
+    @Transactional
+    public void update(TrackedLink link) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+            .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
+            .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
+            .addValue("lastUpdate", link.lastUpdate())
+            .addValue("monitoringService", link.monitoringService())
+            .addValue("url", link.url())
+            .addValue("serviceId", link.serviceId())
+            .addValue("id", link.id())
+            .addValue("userId", link.user().id());
+        jdbcTemplate.update("update tracked_link " +
+            "set filters = :filters, " +
+            "    tags = :tags, " +
+            "    last_update = :lastUpdate, " +
+            "    monitoring_service = :monitoringService, " +
+            "    url = :url, " +
+            "    user_id = :userId, " +
+            "    service_id = :serviceId " +
+            "where id = :id", parameterSource);
+    }
+
     @Override
+    @Transactional
     public TrackedLink save(TrackedLink link) {
         SqlParameterSource idSource = new MapSqlParameterSource().addValue("userId", link.user().id());
 
-        if (jdbcTemplate.queryForObject("select count(1) from users where id = :userId;", idSource, Integer.class) == 0)
+        if (jdbcTemplate.queryForObject("select count(1) from users where id = :userId;",
+            idSource, Integer.class) == 0)
             jdbcTemplate.update("insert into users (id) values (:userId)", idSource);
+        else
+            update(link);
 
         return saveLinkOnly(link);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void deleteById(long id) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
             .addValue("id", id);
-//        jdbcTemplate.update("delete from users_links where links_id = :id", parameterSource);
         jdbcTemplate.update("delete from tracked_link where id = :id", parameterSource);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void deleteByUserAndUrl(User u, String url) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
             .addValue("userId", u.id())
