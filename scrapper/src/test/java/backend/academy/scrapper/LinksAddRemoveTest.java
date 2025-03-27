@@ -153,8 +153,6 @@ public class LinksAddRemoveTest {
         linksController.deleteLinks(0, new RemoveLinkRequest("https://github.com/Qw/Qw"));
 
         assertThatIterable(linksController.getLinks(0).links())
-            .allSatisfy((lnk) -> {
-                assertThat(lnk.url()).isNotEqualTo("https://github.com/Qw/Qw");
-            });
+            .allSatisfy((lnk) -> assertThat(lnk.url()).isNotEqualTo("https://github.com/Qw/Qw"));
     }
 }

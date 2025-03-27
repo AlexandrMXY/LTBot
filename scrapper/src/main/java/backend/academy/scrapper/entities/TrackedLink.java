@@ -2,6 +2,7 @@ package backend.academy.scrapper.entities;
 
 import backend.academy.scrapper.util.StringListConverter;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,9 +40,11 @@ public class TrackedLink {
     private String monitoringService;
 
     @Convert(converter = StringListConverter.class)
+    @Column(length = 1024)
     private List<String> tags;
 
     @Convert(converter = StringListConverter.class)
+    @Column(length = 1024)
     private List<String> filters;
 
     private String serviceId;

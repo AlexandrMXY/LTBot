@@ -9,8 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
+
+// TODO so ignores since update date
 @RequiredArgsConstructor
 @Slf4j
 public abstract class AbstractMonitor implements LinkMonitor {
@@ -33,7 +37,7 @@ public abstract class AbstractMonitor implements LinkMonitor {
 
             try {
                 long updateTime = System.currentTimeMillis() / 1000L;
-                Updates updates = linkUpdatesCollector.getUpdates(links.stream());
+                Updates updates = linkUpdatesCollector.getUpdates(links.stream().filter(this::checkIfLinkActive));
                 updatesConsumer.accept(updates);
 
                 linkRepository.updateAllByMonitoringServiceAndServiceIdIsIn(
@@ -47,7 +51,10 @@ public abstract class AbstractMonitor implements LinkMonitor {
             } finally {
                 page = page.next();
             }
-        } while (page.getPageNumber() > links.getTotalPages());
+        } while (page.getPageNumber() <= links.getTotalPages());
     }
 
+    private boolean checkIfLinkActive(TrackedLink link) {
+        return Collections.disjoint(link.tags(), link.user().inactiveTags());
+    }
 }

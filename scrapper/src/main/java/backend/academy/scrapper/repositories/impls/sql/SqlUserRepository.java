@@ -35,17 +35,25 @@ public class SqlUserRepository implements UserRepository {
             return user;
         }
 
-        jdbcTemplate.update("insert into users (id) values (:id)",
-            new MapSqlParameterSource().addValue("id", user.id()));
+        jdbcTemplate.update("insert into users (id, inactive_tags) values (:id, :inactiveTags)",
+            new MapSqlParameterSource()
+                .addValue("id", user.id())
+                .addValue("inactiveTags", mapper.converter().convertToDatabaseColumn(user.inactiveTags())));
         user.links().replaceAll(linkRepository::saveLinkOnly);
         return user;
     }
 
-    private void update(User u) {
+    private void update(User user) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("id", u.id());
-        jdbcTemplate.update("delete from tracked_link where user_id = :id", parameterSource);
-        for (TrackedLink tl : u.links())
+            .addValue("userId", user.id())
+            .addValue("inactiveTags", mapper.converter().convertToDatabaseColumn(user.inactiveTags()))
+            .addValue("linksIds", user.links().stream().map(TrackedLink::id).toList());
+
+        jdbcTemplate.update("update users set inactive_tags = :inactiveTags where id = :userId", parameterSource);
+        if (!user.links().isEmpty())
+            jdbcTemplate.update("delete from tracked_link where user_id = :userId and id not in (:linksIds)",
+                parameterSource);
+        for (TrackedLink tl : user.links())
             linkRepository.save(tl);
     }
 

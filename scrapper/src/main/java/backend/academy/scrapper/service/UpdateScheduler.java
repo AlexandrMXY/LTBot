@@ -17,7 +17,7 @@ public class UpdateScheduler {
     @Autowired
     private BotService botService;
 
-    @Scheduled(fixedDelayString = "${app.update-delay}")
+    @Scheduled(fixedDelayString = "${app.update-delay}") // TODO
     public void checkForUpdates() {
         linkDistributionService.getMonitors()
                 .forEach(this::tryCheckForUpdates);

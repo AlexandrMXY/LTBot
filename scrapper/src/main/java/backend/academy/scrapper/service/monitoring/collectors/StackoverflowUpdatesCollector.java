@@ -72,7 +72,8 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
                 ));
             });
 
-        comments.forEach((comment) -> {
+        comments.stream().filter((comment) -> comment.creationDate() >= link.lastUpdate())
+            .forEach((comment) -> {
             updates.addUpdate(new UpdateImpl(
                 link.user().id(),
                 comment.creationDate(),

@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-// TODO исправить delete'ы в обоих репозитория
 @Repository
 @ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "sql")
 public class SqlLinkRepository implements LinkRepository {
@@ -29,12 +28,6 @@ public class SqlLinkRepository implements LinkRepository {
     @Autowired
     private TrackedLinkMapper mapper;
 
-
-    public boolean existsById(long id) {
-        SqlParameterSource idSource = new MapSqlParameterSource().addValue("id", id);
-        return jdbcTemplate.queryForObject("select count(1) from tracked_link where id = :id",
-            idSource, Integer.class) > 0;
-    }
 
     @Override
     public boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId) {
@@ -97,15 +90,20 @@ public class SqlLinkRepository implements LinkRepository {
     @Override
     @Transactional
     public TrackedLink save(TrackedLink link) {
-        SqlParameterSource idSource = new MapSqlParameterSource().addValue("userId", link.user().id());
+        SqlParameterSource parameterSource = new MapSqlParameterSource()
+            .addValue("userId", link.user().id())
+            .addValue("linkId", link.id());
 
         if (jdbcTemplate.queryForObject("select count(1) from users where id = :userId;",
-            idSource, Integer.class) == 0)
-            jdbcTemplate.update("insert into users (id) values (:userId)", idSource);
-        else
-            update(link);
+            parameterSource, Integer.class) == 0)
+            jdbcTemplate.update("insert into users (id) values (:userId)", parameterSource);
 
-        return saveLinkOnly(link);
+        if (jdbcTemplate.queryForObject("select count(1) from tracked_link where id = :linkId",
+            parameterSource, Integer.class) == 0)
+            return saveLinkOnly(link);
+
+        update(link);
+        return link;
     }
 
     @Override
@@ -153,6 +151,9 @@ public class SqlLinkRepository implements LinkRepository {
 
     @Override
     public void updateAllByMonitoringServiceAndServiceIdIsIn(Long newLastUpdate, String monitoringService, List<String> sIds) {
+        if (sIds == null || sIds.isEmpty())
+            return;
+
         SqlParameterSource parameterSource = new MapSqlParameterSource()
             .addValue("monitoringService", monitoringService)
             .addValue("newLastUpdate", newLastUpdate)
