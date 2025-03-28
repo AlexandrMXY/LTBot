@@ -4,12 +4,14 @@ import backend.academy.bot.dto.MessageDto;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
 @Profile("prod")
+@Slf4j
 public class TelegramEventHandlerService {
     @Autowired
     private TelegramService telegramService;
@@ -21,9 +23,16 @@ public class TelegramEventHandlerService {
     private void initListener() {
         telegramService.getBot().setUpdatesListener((updates) -> {
             updates.forEach(update -> {
-                Message message = update.message();
-                if (message != null) {
-                    userSessionManagementService.processMessage(new MessageDto(message));
+                try {
+                    Message message = update.message();
+                    if (message != null) {
+                        userSessionManagementService.processMessage(new MessageDto(message));
+                    }
+                } catch (Throwable t) {
+                    log.atWarn()
+                        .setMessage("An error occurred during message processing")
+                        .setCause(t)
+                        .log();
                 }
             });
 

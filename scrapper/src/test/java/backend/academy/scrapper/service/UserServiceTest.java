@@ -3,6 +3,8 @@ package backend.academy.scrapper.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import backend.academy.api.exceptions.NotFoundException;
+import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,27 +24,27 @@ class UserServiceTest {
     public void registerUserOrThrow_userExists_shouldThrow() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
 
-        assertThrows(RuntimeException.class, () -> userService.registerUserOrThrow(0, new RuntimeException()));
+        assertThrows(AlreadyExistsException.class, () -> userService.registerUser(0));
     }
 
     @Test
     public void registerUserOrThrow_userNotExists_shouldNoThrow() {
         when(userRepository.existsById(anyLong())).thenReturn(false);
 
-        userService.registerUserOrThrow(0, new RuntimeException());
+        userService.registerUser(0);
     }
 
     @Test
     public void deleteUserOrThrow_userExists_shouldNoThrow() {
         when(userRepository.existsById(eq(0L))).thenReturn(true);
 
-        userService.deleteUserOrThrow(0, new RuntimeException());
+        userService.deleteUser(0);
     }
 
     @Test
     public void deleteUserOrThrow_userNotExists_shouldThrow() {
         when(userRepository.existsById(eq(0L))).thenReturn(false);
 
-        assertThrows(RuntimeException.class, () -> userService.deleteUserOrThrow(0, new RuntimeException()));
+        assertThrows(NotFoundException.class, () -> userService.deleteUser(0));
     }
 }

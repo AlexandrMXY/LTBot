@@ -8,12 +8,12 @@ import backend.academy.api.model.ListLinksResponse;
 import backend.academy.api.model.RemoveLinkRequest;
 import backend.academy.api.model.TagsListResponse;
 import backend.academy.api.model.TagsRequest;
-import backend.academy.bot.BotConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatusCode;
@@ -25,12 +25,9 @@ import org.springframework.web.client.RestClient;
 @Service
 @Slf4j
 public class ScrapperService {
-    private final RestClient client;
-
     @Autowired
-    public ScrapperService(BotConfig config) {
-        client = RestClient.builder().baseUrl(config.scrapperUrl()).build();
-    }
+    @Qualifier("scrapperRestClient")
+    private RestClient client;
 
     public void deactivateTag(long chatId, String tag) {
         client.post()
@@ -84,7 +81,8 @@ public class ScrapperService {
         client.post()
                 .uri("/tg-chat/" + id)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse);
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .toBodilessEntity();
     }
 
     public ListLinksResponse getTrackedLinks(long chatId) {
@@ -103,10 +101,10 @@ public class ScrapperService {
             details = new ObjectMapper().readValue(response.getBody(), ApiErrorResponse.class);
         } catch (JsonProcessingException ignored) {
         } catch (IOException exception) {
-            log.atError().setMessage("IOException occurred").setCause(exception).log();
+            log.atWarn().setMessage("IOException occurred").setCause(exception).log();
         }
 
-        log.atError()
+        log.atWarn()
                 .setMessage("Error response received")
                 .addKeyValue("uri", request.getURI())
                 .addKeyValue("method", request.getURI())

@@ -20,7 +20,13 @@ public class ApiExceptionHandler {
                 new ApiErrorResponse(HttpStatus.NOT_FOUND.getReasonPhrase(), "404", exception), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({InvalidRequestException.class, UnsupportedLinkException.class, AlreadyExistsException.class})
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> alreadyExists(AlreadyExistsException exception) {
+        return new ResponseEntity<>(
+            new ApiErrorResponse("Already exists", "400", exception), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({InvalidRequestException.class, UnsupportedLinkException.class})
     public ResponseEntity<ApiErrorResponse> invalidRequest(Exception exception) {
         return new ResponseEntity<>(
                 new ApiErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "400", exception),

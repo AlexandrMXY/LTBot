@@ -7,7 +7,7 @@ import java.util.List;
 
 public record LinkDto(String link, List<String> tags, List<String> filters, long id) {
     public LinkDto(AddLinkRequest request) {
-        this(request.url(), request.tags(), request.filters(), 0);
+        this(request.link(), request.tags(), request.filters(), 0);
     }
 
     public LinkDto(TrackedLink trackedLink) {

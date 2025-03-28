@@ -1,11 +1,14 @@
 package backend.academy.bot.telegram.commands;
 
 import backend.academy.bot.service.ScrapperService;
+import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class StartCommand extends AbstractSimpleCommand {
     @Autowired
     private ScrapperService scrapperService;
@@ -14,7 +17,7 @@ public class StartCommand extends AbstractSimpleCommand {
     private void init() {
         setProcessor((state, message, context) -> {
             scrapperService.registerChar(message.chat());
-            return null;
+            return new TelegramResponse(message.chat(), "Welcome");
         });
     }
 
@@ -25,7 +28,7 @@ public class StartCommand extends AbstractSimpleCommand {
 
     @Override
     public String getDescription() {
-        return "";
+        return "start";
     }
 
     @Override

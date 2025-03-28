@@ -6,16 +6,29 @@ import static org.junit.jupiter.api.Assertions.*;
 import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.AddLinkRequest;
 import backend.academy.bot.BotConfig;
+import backend.academy.bot.BotSpringConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.RestClient;
 
+@ExtendWith(MockitoExtension.class)
 class ScrapperServiceTest {
     public static final String SCRAPPER_URL = "http://localhost:8080";
     private static final BotConfig TEST_CONFIG = new BotConfig("", SCRAPPER_URL);
+
+    @Spy
+    private RestClient restClient = new BotSpringConfig().scrapperRestClient(TEST_CONFIG);
+    @InjectMocks
+    private ScrapperService service = new ScrapperService();
+
 
     private WireMockServer wireMock;
 
@@ -28,7 +41,6 @@ class ScrapperServiceTest {
 
     @Test
     public void addLink_whenReceivedErrorResponse_throwApiErrorResponseException() {
-        var service = new ScrapperService(TEST_CONFIG);
         long chat = 888;
         var request = new AddLinkRequest("", List.of(), List.of());
 

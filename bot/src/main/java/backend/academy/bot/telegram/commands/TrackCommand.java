@@ -9,7 +9,9 @@ import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.SessionStateInitializer;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import backend.academy.bot.telegram.session.TelegramSessionState;
-import backend.academy.bot.utils.RegExUtil;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +58,15 @@ public class TrackCommand implements Command {
         private final List<String> tags = new ArrayList<>();
         private final List<String> filters = new ArrayList<>();
 
+        private boolean checkUrl(String url) {
+            try {
+                var ignored = new URI(url).toURL();
+                return true;
+            } catch (URISyntaxException | IllegalArgumentException | MalformedURLException e) {
+                return false;
+            }
+        }
+
         @Override
         public TelegramSessionState.SessionUpdateResult updateState(MessageDto message, SessionContext context) {
             TelegramResponse response = null;
@@ -66,7 +77,7 @@ public class TrackCommand implements Command {
                 }
                 case URL_INPUT -> {
                     url = message.message();
-                    if (RegExUtil.isStringSatisfyRegex(message.message(), context.urlRegEx())) {
+                    if (checkUrl(url)) {
                         response = new TelegramResponse(message.chat(), "Enter tags:");
                         stage = Stage.TAGS_INPUT;
                     } else {

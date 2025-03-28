@@ -1,7 +1,5 @@
 package backend.academy.scrapper.controllers;
 
-import backend.academy.api.exceptions.InvalidRequestException;
-import backend.academy.api.exceptions.NotFoundException;
 import backend.academy.scrapper.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +18,13 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<?> registerChat(@PathVariable("id") long id) {
-        userService.registerUserOrThrow(id, new InvalidRequestException("User already exists"));
+        userService.registerUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteChat(@PathVariable("id") long id) {
-        userService.deleteUserOrThrow(id, new NotFoundException("User not found"));
+        userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

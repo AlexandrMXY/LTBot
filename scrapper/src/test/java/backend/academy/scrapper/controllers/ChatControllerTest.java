@@ -3,8 +3,8 @@ package backend.academy.scrapper.controllers;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
+import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,18 +26,16 @@ public class ChatControllerTest {
         var response = chatController.registerChat(111);
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        verify(userService).registerUserOrThrow(eq(111L), any());
+        verify(userService).registerUser(eq(111L));
     }
 
     @Test
     public void registerChat_requestReceived_shouldThrowIfAlreadyExists() {
-        doAnswer((invocation) -> {
-                    throw (Exception) invocation.getArgument(1);
-                })
+        doThrow(new AlreadyExistsException())
                 .when(userService)
-                .registerUserOrThrow(anyLong(), any());
+                .registerUser(anyLong());
 
-        assertThrows(InvalidRequestException.class, () -> chatController.registerChat(111));
+        assertThrows(AlreadyExistsException.class, () -> chatController.registerChat(111));
     }
 
     @Test
@@ -45,16 +43,14 @@ public class ChatControllerTest {
         var response = chatController.deleteChat(111);
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        verify(userService).deleteUserOrThrow(eq(111L), any());
+        verify(userService).deleteUser(eq(111L));
     }
 
     @Test
     public void deleteChat_requestReceived_shouldThrowIfNotFound() {
-        doAnswer((invocation) -> {
-                    throw (Exception) invocation.getArgument(1);
-                })
+        doThrow(new NotFoundException())
                 .when(userService)
-                .deleteUserOrThrow(anyLong(), any());
+                .deleteUser(anyLong());
 
         assertThrows(NotFoundException.class, () -> chatController.deleteChat(111));
     }
