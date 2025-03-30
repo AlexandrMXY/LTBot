@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "orm")
+@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
 public interface UserRepository extends org.springframework.data.repository.Repository<User, Long> {
     User save(User user);
 

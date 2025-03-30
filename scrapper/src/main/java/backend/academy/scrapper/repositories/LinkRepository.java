@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "orm")
+@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
 public interface LinkRepository extends org.springframework.data.repository.Repository<TrackedLink, Long> {
     boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId);
 

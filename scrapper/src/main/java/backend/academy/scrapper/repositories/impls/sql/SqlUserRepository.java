@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-@ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "sql")
+@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "sql")
 public class SqlUserRepository implements UserRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;

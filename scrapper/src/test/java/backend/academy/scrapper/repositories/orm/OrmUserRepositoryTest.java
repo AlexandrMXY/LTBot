@@ -8,7 +8,7 @@ import backend.academy.scrapper.repositories.impls.sql.SqlUserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = UserRepository.class, properties = "app.db-access-impl=orm")
+@SpringBootTest(classes = UserRepository.class, properties = "app.access-type=orm")
 public class OrmUserRepositoryTest extends UserRepositoryTest {
     @Test
     public void linkRepository_useCorrectImpl() {
