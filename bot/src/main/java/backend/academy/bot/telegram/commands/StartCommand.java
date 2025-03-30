@@ -21,9 +21,9 @@ public class StartCommand extends AbstractSimpleCommand {
                 scrapperService.registerChar(message.chat());
             } catch (ApiErrorResponseException e) {
                 log.atWarn()
-                    .setMessage("An error occurred during message processing")
-                    .setCause(e)
-                    .log();
+                        .setMessage("An error occurred during message processing")
+                        .setCause(e)
+                        .log();
             }
             return new TelegramResponse(message.chat(), "Welcome");
         });
