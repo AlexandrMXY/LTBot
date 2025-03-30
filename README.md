@@ -13,5 +13,10 @@
     - `SO_ACCESS_TOKEN` токен Stackoverflow
     - `PG_USERNAME` логин базы данных
     - `PG_PASSWORD` парол базы данных
+  - Для docker-compose:
+    - `PG_USERNAME` логин базы данных
+    - `PG_PASSWORD` парол базы данных
 
-Запуск: `mvn spring-boot:run` (выполнять в дериктории модуля (scrapper/bot))
+Перед запуском scrapper необходимо запустить docker-compose (`scraper/docker-compose.yaml`)
+
+Запуск приложения: `mvn spring-boot:run` (выполнять в дериктории модуля (scrapper/bot))

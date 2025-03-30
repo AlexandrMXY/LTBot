@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("testDb")
 public abstract class UserRepositoryTest {
     @Autowired
-    UserRepository repository;
+    protected UserRepository repository;
 
     @Autowired
     TestEntityManager entityManager;

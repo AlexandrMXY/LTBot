@@ -116,16 +116,6 @@ public class SqlLinkRepository implements LinkRepository {
 
     @Override
     @Transactional
-    public void deleteByUserAndUrl(User u, String url) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("userId", u.id())
-            .addValue("url", url);
-
-        jdbcTemplate.update("delete from tracked_link where user_id = :userId and url = :url", parameterSource);
-    }
-
-    @Override
-    @Transactional
     public Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(String monitoring, long lastUpdate, Pageable pageable) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
             .addValue("monitoringService", monitoring)

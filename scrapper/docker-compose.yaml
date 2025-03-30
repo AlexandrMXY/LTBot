@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: ${PG_USERNAME}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: tbhw
+    ports:
+      - "5430:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d tbhw" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  liquibase-migrations:
+    container_name: migrations
+    image: liquibase/liquibase:4.29
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - --searchPath=/migrations
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgres:5432/tbhw
+      - --username=${PG_USERNAME}
+      - --password=${PG_PASSWORD}
+      - --logLevel=debug
+      - update
+    volumes:
+      - ../migrations:/migrations
+
+
+volumes:
+  db-data:
+

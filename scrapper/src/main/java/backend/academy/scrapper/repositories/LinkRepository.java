@@ -21,8 +21,6 @@ public interface LinkRepository extends org.springframework.data.repository.Repo
 
     void deleteById(long id);
 
-    void deleteByUserAndUrl(User u, String url);
-
     Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(String monitoring, long lastUpdate, Pageable pageable);
 
     @Modifying

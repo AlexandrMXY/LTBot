@@ -10,7 +10,7 @@ app:
   bot-url: http://localhost:8080
   github-api-url: https://api.github.com
   stackoverflow-api-url: https://api.stackexchange.com/2.2
-  db-access-impl: orm
+  db-access-impl: orm # sql or orm
 
 
 
@@ -24,11 +24,11 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     open-in-view: false
     show-sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/tbhw
+    url: jdbc:postgresql://localhost:5430/tbhw
     username: ${PG_USERNAME}
     password: ${PG_PASSWORD}
 

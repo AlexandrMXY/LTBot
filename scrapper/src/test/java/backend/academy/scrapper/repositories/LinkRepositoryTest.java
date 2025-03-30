@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("testDb")
 public abstract class LinkRepositoryTest {
     @Autowired
-    LinkRepository repository;
+    protected LinkRepository repository;
     @Autowired
     UserRepository userRepository;
 
