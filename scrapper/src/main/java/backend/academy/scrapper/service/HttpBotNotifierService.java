@@ -1,6 +1,5 @@
 package backend.academy.scrapper.service;
 
-import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.util.RequestErrorHandlers;
@@ -13,11 +12,12 @@ import org.springframework.web.client.RestClient;
 
 @Service
 @Slf4j
-public class BotService {
+public class HttpBotNotifierService implements BotNotifierService {
     @Autowired
     @Qualifier("botRestClient")
     private RestClient client;
 
+    @Override
     public void sendUpdates(Updates updates) {
         if (updates == null) return;
         for (Update update : updates.getUpdates()) {

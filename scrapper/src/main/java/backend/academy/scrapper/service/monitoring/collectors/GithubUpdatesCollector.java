@@ -6,6 +6,7 @@ import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.model.github.Issue;
 import backend.academy.scrapper.util.RequestErrorHandlers;
+import backend.academy.scrapper.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
@@ -54,7 +55,7 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
                     tl.user().id(),
                     convertDate(i.createdAt()),
                     i.htmlUrl(),
-                    i.body(),
+                    StringUtils.clamp(i.body(), MAX_PREVIEW_LENGTH),
                     i.user().login()))
                 .toList());
     }

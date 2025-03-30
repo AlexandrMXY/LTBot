@@ -12,7 +12,6 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import java.util.List;
-import java.util.Objects;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,17 +20,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class BotServiceTest {
+class HttpBotNotifierServiceTest {
     private static final String BOT_URL = "http://localhost:8080";
 
     @Spy
     private RestClient botClient = RestClient.builder().baseUrl(BOT_URL).build();
 
     @InjectMocks
-    private BotService service;
+    private HttpBotNotifierService service;
 
     private WireMockServer wireMock;
 

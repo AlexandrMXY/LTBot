@@ -27,7 +27,7 @@ public interface LinkRepository extends org.springframework.data.repository.Repo
 
     @Modifying
     @Transactional
-    @Query("update TrackedLink set lastUpdate = ?1 where monitoringService = ?2 and serviceId in (?3)")
+    @Query("update TrackedLink set lastUpdate = ?1 where monitoringService = ?2 and serviceId in ?3")
     void updateAllByMonitoringServiceAndServiceIdIsIn(Long newLastUpdate, String monitoringService, List<String> sIds);
 }
 

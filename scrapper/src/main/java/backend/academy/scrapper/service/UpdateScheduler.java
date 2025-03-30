@@ -15,7 +15,7 @@ public class UpdateScheduler {
     private LinkDistributionService linkDistributionService;
 
     @Autowired
-    private BotService botService;
+    private BotNotifierService botNotifierService;
 
     @Scheduled(fixedDelayString = "${app.update-delay}") // TODO
     public void checkForUpdates() {
@@ -36,6 +36,6 @@ public class UpdateScheduler {
     }
 
     private void updatesConsumer(Updates updates) {
-        botService.sendUpdates(updates);
+        botNotifierService.sendUpdates(updates);
     }
 }

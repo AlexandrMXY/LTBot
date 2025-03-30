@@ -9,9 +9,9 @@ import backend.academy.scrapper.model.stackoverflow.CommentResponse;
 import backend.academy.scrapper.model.stackoverflow.CommentsResponse;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.util.RequestErrorHandlers;
+import backend.academy.scrapper.util.StringUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatusCode;
@@ -67,7 +67,7 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
                     link.user().id(),
                     ans.creationDate(),
                     link.url(),
-                    ans.body(),
+                    StringUtils.clamp(ans.body(), MAX_PREVIEW_LENGTH),
                     ans.owner().displayName()
                 ));
             });
@@ -78,7 +78,7 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
                 link.user().id(),
                 comment.creationDate(),
                 link.url(),
-                comment.body(),
+                StringUtils.clamp(comment.body(), MAX_PREVIEW_LENGTH),
                 comment.owner().displayName()
             ));
         });

@@ -5,5 +5,7 @@ import backend.academy.scrapper.entities.TrackedLink;
 import java.util.stream.Stream;
 
 public interface LinkUpdatesCollector {
+    int MAX_PREVIEW_LENGTH = 200;
+
     Updates getUpdates(Stream<TrackedLink> links);
 }
