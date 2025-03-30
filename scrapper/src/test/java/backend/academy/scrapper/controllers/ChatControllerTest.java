@@ -31,9 +31,7 @@ public class ChatControllerTest {
 
     @Test
     public void registerChat_requestReceived_shouldThrowIfAlreadyExists() {
-        doThrow(new AlreadyExistsException())
-                .when(userService)
-                .registerUser(anyLong());
+        doThrow(new AlreadyExistsException()).when(userService).registerUser(anyLong());
 
         assertThrows(AlreadyExistsException.class, () -> chatController.registerChat(111));
     }
@@ -48,9 +46,7 @@ public class ChatControllerTest {
 
     @Test
     public void deleteChat_requestReceived_shouldThrowIfNotFound() {
-        doThrow(new NotFoundException())
-                .when(userService)
-                .deleteUser(anyLong());
+        doThrow(new NotFoundException()).when(userService).deleteUser(anyLong());
 
         assertThrows(NotFoundException.class, () -> chatController.deleteChat(111));
     }

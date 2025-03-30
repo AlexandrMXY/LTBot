@@ -4,7 +4,6 @@ import static org.mockito.Mockito.*;
 
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.bot.service.telegram.TelegramService;
-import java.util.List;
 import backend.academy.bot.telegram.formatters.UpdateFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,12 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class UpdatesControllerTest {
     @Mock
     TelegramService telegramService;
+
     @Spy
     UpdateFormatter formatter = new UpdateFormatter();
 
     @InjectMocks
     UpdatesController controller;
-
 
     @Test
     void updates_requestReceived_sendMessagesToCorrectUser() {

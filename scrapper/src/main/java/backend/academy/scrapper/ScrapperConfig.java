@@ -18,6 +18,7 @@ public record ScrapperConfig(
         DBAccessImpl dbAccessImpl) {
 
     public record StackOverflowCredentials(@NotEmpty String key, @NotEmpty String accessToken) {}
+
     public enum DBAccessImpl {
         SQL,
         ORM

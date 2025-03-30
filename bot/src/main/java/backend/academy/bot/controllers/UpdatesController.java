@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UpdatesController {
     @Autowired
     private TelegramService telegramService;
+
     @Autowired
     private UpdateFormatter formatter;
 

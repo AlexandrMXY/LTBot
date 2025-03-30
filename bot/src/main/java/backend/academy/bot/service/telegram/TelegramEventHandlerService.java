@@ -30,9 +30,9 @@ public class TelegramEventHandlerService {
                     }
                 } catch (Throwable t) {
                     log.atWarn()
-                        .setMessage("An error occurred during message processing")
-                        .setCause(t)
-                        .log();
+                            .setMessage("An error occurred during message processing")
+                            .setCause(t)
+                            .log();
                 }
             });
 

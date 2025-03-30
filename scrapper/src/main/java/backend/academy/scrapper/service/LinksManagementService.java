@@ -63,9 +63,15 @@ public class LinksManagementService {
             throw new AlreadyExistsException("Link already exists");
         }
 
-        TrackedLink trackedLink =
-                new TrackedLink(0, user, link.link(), linkMonitor, link.tags(), link.filters(), serviceId,
-                    System.currentTimeMillis() / 1000L);
+        TrackedLink trackedLink = new TrackedLink(
+                0,
+                user,
+                link.link(),
+                linkMonitor,
+                link.tags(),
+                link.filters(),
+                serviceId,
+                System.currentTimeMillis() / 1000L);
 
         user.links().add(trackedLink);
         trackedLink = linkRepository.save(trackedLink);
@@ -82,7 +88,7 @@ public class LinksManagementService {
         if (linkOpt.isEmpty()) {
             throw new NotFoundException("Link not found");
         }
-        user.links().remove(linkOpt.get());
+        user.links().remove(linkOpt.orElseThrow());
         userRepository.save(user);
         linkRepository.deleteById(linkOpt.orElseThrow().id());
         return new LinkDto(linkOpt.orElseThrow());

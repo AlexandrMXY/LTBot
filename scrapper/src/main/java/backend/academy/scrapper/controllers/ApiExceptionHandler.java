@@ -22,8 +22,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ApiErrorResponse> alreadyExists(AlreadyExistsException exception) {
-        return new ResponseEntity<>(
-            new ApiErrorResponse("Already exists", "400", exception), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiErrorResponse("Already exists", "400", exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({InvalidRequestException.class, UnsupportedLinkException.class})

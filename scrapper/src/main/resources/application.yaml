@@ -24,11 +24,11 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
     show-sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5430/tbhw
+    url: jdbc:postgresql://localhost:5432/tbhw
     username: ${PG_USERNAME}
     password: ${PG_PASSWORD}
 

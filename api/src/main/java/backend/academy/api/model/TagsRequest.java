@@ -1,7 +1,3 @@
 package backend.academy.api.model;
 
-public record TagsRequest(
-    long userId,
-    String tag
-) {
-}
+public record TagsRequest(long userId, String tag) {}

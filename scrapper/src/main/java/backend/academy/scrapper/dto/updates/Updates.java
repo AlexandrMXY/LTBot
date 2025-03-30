@@ -25,9 +25,4 @@ public class Updates {
     public List<Update> getUpdates() {
         return updateDetails;
     }
-
-    public boolean hasUpdates() {
-        return !updateDetails.isEmpty();
-    }
-
 }

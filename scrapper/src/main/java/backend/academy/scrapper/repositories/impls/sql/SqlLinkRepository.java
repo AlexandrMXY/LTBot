@@ -4,6 +4,8 @@ import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.impls.sql.mappers.TrackedLinkMapper;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
@@ -13,11 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-
 
 @Repository
 @ConditionalOnProperty(prefix = "app", name = "db-access-impl", havingValue = "sql")
@@ -28,38 +26,41 @@ public class SqlLinkRepository implements LinkRepository {
     @Autowired
     private TrackedLinkMapper mapper;
 
-
     @Override
+    @SuppressWarnings("ConstantConditions")
     public boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("usedId", user.id())
-            .addValue("monitoringService", monitoringService)
-            .addValue("serviceId", serviceId);
-        int res = jdbcTemplate.queryForObject(
-            "select count(1) from tracked_link tl where " +
-                "tl.user_id = :usedId and tl.monitoring_service = :monitoringService and tl.service_id = :serviceId",
-            parameterSource, Integer.class);
-        return res > 0;
+                .addValue("usedId", user.id())
+                .addValue("monitoringService", monitoringService)
+                .addValue("serviceId", serviceId);
+        Integer res = jdbcTemplate.queryForObject(
+                "select count(1) from tracked_link tl where "
+                        + "tl.user_id = :usedId and tl.monitoring_service = :monitoringService and tl.service_id = :serviceId",
+                parameterSource,
+                Integer.class);
+        return res != null && res > 0;
     }
 
+    @SuppressWarnings("ConstantConditions")
     TrackedLink saveLinkOnly(TrackedLink link) {
-        long id = jdbcTemplate.queryForObject("select nextval('tracked_link_seq')",
-            new MapSqlParameterSource(), Long.class);
+        Long id = jdbcTemplate.queryForObject(
+                "select nextval('tracked_link_seq')", new MapSqlParameterSource(), Long.class);
+        if (id == null) return null;
 
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("id", id)
-            .addValue("userId", link.user().id())
-            .addValue("url", link.url())
-            .addValue("monitoringService", link.monitoringService())
-            .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
-            .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
-            .addValue("serviceId", link.serviceId())
-            .addValue("lastUpdate", link.lastUpdate());
-
+                .addValue("id", id)
+                .addValue("userId", link.user().id())
+                .addValue("url", link.url())
+                .addValue("monitoringService", link.monitoringService())
+                .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
+                .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
+                .addValue("serviceId", link.serviceId())
+                .addValue("lastUpdate", link.lastUpdate());
 
         jdbcTemplate.update(
-            "insert into tracked_link (id, user_id, monitoring_service, service_id, tags, url, filters, last_update) " +
-                "values (:id, :userId, :monitoringService, :serviceId, :tags, :url, :filters, :lastUpdate)", parameterSource);
+                "insert into tracked_link (id, user_id, monitoring_service, service_id, tags, url, filters, last_update) "
+                        + "values (:id, :userId, :monitoringService, :serviceId, :tags, :url, :filters, :lastUpdate)",
+                parameterSource);
 
         link.id(id);
         return link;
@@ -68,39 +69,41 @@ public class SqlLinkRepository implements LinkRepository {
     @Transactional
     public void update(TrackedLink link) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
-            .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
-            .addValue("lastUpdate", link.lastUpdate())
-            .addValue("monitoringService", link.monitoringService())
-            .addValue("url", link.url())
-            .addValue("serviceId", link.serviceId())
-            .addValue("id", link.id())
-            .addValue("userId", link.user().id());
-        jdbcTemplate.update("update tracked_link " +
-            "set filters = :filters, " +
-            "    tags = :tags, " +
-            "    last_update = :lastUpdate, " +
-            "    monitoring_service = :monitoringService, " +
-            "    url = :url, " +
-            "    user_id = :userId, " +
-            "    service_id = :serviceId " +
-            "where id = :id", parameterSource);
+                .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
+                .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
+                .addValue("lastUpdate", link.lastUpdate())
+                .addValue("monitoringService", link.monitoringService())
+                .addValue("url", link.url())
+                .addValue("serviceId", link.serviceId())
+                .addValue("id", link.id())
+                .addValue("userId", link.user().id());
+        jdbcTemplate.update(
+                "update tracked_link " + "set filters = :filters, "
+                        + "    tags = :tags, "
+                        + "    last_update = :lastUpdate, "
+                        + "    monitoring_service = :monitoringService, "
+                        + "    url = :url, "
+                        + "    user_id = :userId, "
+                        + "    service_id = :serviceId "
+                        + "where id = :id",
+                parameterSource);
     }
 
     @Override
     @Transactional
+    @SuppressWarnings("ConstantConditions")
     public TrackedLink save(TrackedLink link) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("userId", link.user().id())
-            .addValue("linkId", link.id());
+        SqlParameterSource parameterSource =
+                new MapSqlParameterSource().addValue("userId", link.user().id()).addValue("linkId", link.id());
 
-        if (jdbcTemplate.queryForObject("select count(1) from users where id = :userId;",
-            parameterSource, Integer.class) == 0)
+        Integer userExistsQueryResult = jdbcTemplate.queryForObject(
+                "select count(1) from users where id = :userId;", parameterSource, Integer.class);
+        if (userExistsQueryResult == null || userExistsQueryResult == 0)
             jdbcTemplate.update("insert into users (id) values (:userId)", parameterSource);
 
-        if (jdbcTemplate.queryForObject("select count(1) from tracked_link where id = :linkId",
-            parameterSource, Integer.class) == 0)
-            return saveLinkOnly(link);
+        Integer linkExistsQueryResult = jdbcTemplate.queryForObject(
+                "select count(1) from tracked_link where id = :linkId", parameterSource, Integer.class);
+        if (linkExistsQueryResult == null || linkExistsQueryResult == 0) return saveLinkOnly(link);
 
         update(link);
         return link;
@@ -109,49 +112,53 @@ public class SqlLinkRepository implements LinkRepository {
     @Override
     @Transactional
     public void deleteById(long id) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("id", id);
+        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue("id", id);
         jdbcTemplate.update("delete from tracked_link where id = :id", parameterSource);
     }
 
     @Override
     @Transactional
-    public Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(String monitoring, long lastUpdate, Pageable pageable) {
+    @SuppressWarnings("ConstantConditions")
+    public Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(
+            String monitoring, long lastUpdate, Pageable pageable) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("monitoringService", monitoring)
-            .addValue("lastUpdate", lastUpdate)
-            .addValue("offset", pageable.getOffset())
-            .addValue("pageSize", pageable.getPageSize());
+                .addValue("monitoringService", monitoring)
+                .addValue("lastUpdate", lastUpdate)
+                .addValue("offset", pageable.getOffset())
+                .addValue("pageSize", pageable.getPageSize());
 
         var res = jdbcTemplate.queryForStream(
-            "select * from tracked_link tl inner join public.users u on u.id = tl.user_id " +
-                "where tl.monitoring_service = :monitoringService and tl.last_update < :lastUpdate " +
-                "order by tl.id " +
-                "offset :offset " +
-                "fetch first :pageSize rows only",
-            parameterSource, mapper);
+                "select * from tracked_link tl inner join public.users u on u.id = tl.user_id "
+                        + "where tl.monitoring_service = :monitoringService and tl.last_update < :lastUpdate "
+                        + "order by tl.id "
+                        + "offset :offset "
+                        + "fetch first :pageSize rows only",
+                parameterSource,
+                mapper);
 
-        int totalCnt = jdbcTemplate.queryForObject(
-            "select count(*) from tracked_link tl " +
-                "where tl.monitoring_service = :monitoringService and tl.last_update < :lastUpdate",
-            parameterSource, Integer.class);
+        Integer totalCnt = jdbcTemplate.queryForObject(
+                "select count(*) from tracked_link tl "
+                        + "where tl.monitoring_service = :monitoringService and tl.last_update < :lastUpdate",
+                parameterSource,
+                Integer.class);
+        if (totalCnt == null) return new PageImpl<>(new ArrayList<>(), pageable, 0);
 
         return new PageImpl<>(res.toList(), pageable, totalCnt);
     }
 
     @Override
-    public void updateAllByMonitoringServiceAndServiceIdIsIn(Long newLastUpdate, String monitoringService, List<String> sIds) {
-        if (sIds == null || sIds.isEmpty())
-            return;
+    public void updateAllByMonitoringServiceAndServiceIdIsIn(
+            Long newLastUpdate, String monitoringService, List<String> sIds) {
+        if (sIds == null || sIds.isEmpty()) return;
 
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-            .addValue("monitoringService", monitoringService)
-            .addValue("newLastUpdate", newLastUpdate)
-            .addValue("ids", sIds);
+                .addValue("monitoringService", monitoringService)
+                .addValue("newLastUpdate", newLastUpdate)
+                .addValue("ids", sIds);
 
         jdbcTemplate.update(
-            "update tracked_link tl set last_update = :newLastUpdate " +
-                "where tl.monitoring_service = :monitoringService and tl.service_id in (:ids)",
-            parameterSource);
+                "update tracked_link tl set last_update = :newLastUpdate "
+                        + "where tl.monitoring_service = :monitoringService and tl.service_id in (:ids)",
+                parameterSource);
     }
 }

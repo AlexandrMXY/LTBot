@@ -1,6 +1,5 @@
 package backend.academy.scrapper.controllers;
 
-import backend.academy.api.model.TagsListRequest;
 import backend.academy.api.model.TagsListResponse;
 import backend.academy.api.model.TagsRequest;
 import backend.academy.scrapper.service.TagsService;

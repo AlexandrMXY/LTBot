@@ -1,14 +1,16 @@
 package backend.academy.scrapper.repositories;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.scrapper.SpringDBTestConfig;
 import backend.academy.scrapper.entities.User;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,8 +19,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.ArrayList;
-import static org.junit.jupiter.api.Assertions.*;
 @Import({SpringDBTestConfig.class})
 @Testcontainers
 @AutoConfigureTestDatabase
@@ -32,19 +32,16 @@ public abstract class UserRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-
     @Container
     @ServiceConnection
-    private static final PostgreSQLContainer<?> postgres
-        = new PostgreSQLContainer<>("postgres:16-alpine");
-
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
 
     @Test
     @Transactional
     void save_whenCalled_shouldSave() {
         User u = new User(0, new ArrayList<>());
         User saved = repository.save(u);
-        assertEquals(saved, entityManager.find(User.class,  saved.id()));
+        assertEquals(saved, entityManager.find(User.class, saved.id()));
     }
 
     @Test

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
@@ -21,12 +20,11 @@ public interface LinkRepository extends org.springframework.data.repository.Repo
 
     void deleteById(long id);
 
-    Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(String monitoring, long lastUpdate, Pageable pageable);
+    Page<TrackedLink> findAllByMonitoringServiceAndLastUpdateLessThanOrderById(
+            String monitoring, long lastUpdate, Pageable pageable);
 
     @Modifying
     @Transactional
     @Query("update TrackedLink set lastUpdate = ?1 where monitoringService = ?2 and serviceId in ?3")
     void updateAllByMonitoringServiceAndServiceIdIsIn(Long newLastUpdate, String monitoringService, List<String> sIds);
 }
-
-

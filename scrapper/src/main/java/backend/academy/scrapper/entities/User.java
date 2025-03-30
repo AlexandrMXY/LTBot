@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,7 +43,6 @@ public class User {
     @Convert(converter = StringListConverter.class)
     @Column(length = 1024)
     private List<String> inactiveTags;
-
 
     @Override
     public boolean equals(Object o) {

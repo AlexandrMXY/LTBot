@@ -3,26 +3,25 @@ package backend.academy.scrapper.service.monitoring;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.service.monitoring.collectors.LinkUpdatesCollector;
-import jakarta.annotation.PostConstruct;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
+@SuppressFBWarnings("REDOS")
 public class StackoverflowMonitor extends AbstractMonitor {
     public static final String MONITOR_NAME = "stackoverflowMonitor";
 
     public static final Pattern STACKOVERFLOW_LINK_PATTERN =
-        Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/[\\w\\-]*$");
-
+            Pattern.compile("^(http(s)?://)?stackoverflow\\.com/questions/(?<id>\\d{1,})/[\\w\\-]*$");
 
     @Autowired
     public StackoverflowMonitor(
-        @Qualifier("stackoverflowUpdatesCollector")
-        LinkUpdatesCollector linkUpdatesCollector,
-        LinkRepository linkRepository) {
+            @Qualifier("stackoverflowUpdatesCollector") LinkUpdatesCollector linkUpdatesCollector,
+            LinkRepository linkRepository) {
         super(MONITOR_NAME, linkUpdatesCollector, linkRepository);
     }
 
@@ -37,5 +36,4 @@ public class StackoverflowMonitor extends AbstractMonitor {
         if (!matcher.matches()) return null;
         return matcher.group("id");
     }
-
 }

@@ -31,28 +31,28 @@ public class ScrapperService {
 
     public void deactivateTag(long chatId, String tag) {
         client.post()
-            .uri("/tags/deactivate")
-            .body(new TagsRequest(chatId, tag))
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
-            .toBodilessEntity();
+                .uri("/tags/deactivate")
+                .body(new TagsRequest(chatId, tag))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .toBodilessEntity();
     }
 
     public void reactivateTag(long chatId, String tag) {
         client.post()
-            .uri("/tags/reactivate")
-            .body(new TagsRequest(chatId, tag))
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
-            .toBodilessEntity();
+                .uri("/tags/reactivate")
+                .body(new TagsRequest(chatId, tag))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .toBodilessEntity();
     }
 
     public TagsListResponse getTagsList(long chatId) {
         return client.get()
-            .uri("/tags/" + chatId)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
-            .body(TagsListResponse.class);
+                .uri("/tags/" + chatId)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .body(TagsListResponse.class);
     }
 
     public LinkResponse addLink(long chatId, AddLinkRequest request) {

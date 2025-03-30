@@ -1,30 +1,29 @@
 package backend.academy.scrapper.repositories;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import backend.academy.scrapper.SpringDBTestConfig;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
 
 @Import({SpringDBTestConfig.class})
 @Testcontainers
@@ -35,6 +34,7 @@ import static org.assertj.core.api.Assertions.*;
 public abstract class LinkRepositoryTest {
     @Autowired
     protected LinkRepository repository;
+
     @Autowired
     UserRepository userRepository;
 
@@ -43,22 +43,13 @@ public abstract class LinkRepositoryTest {
 
     @Container
     @ServiceConnection
-    private static final PostgreSQLContainer<?> postgres
-        = new PostgreSQLContainer<>("postgres:16-alpine");
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
 
     @Test
     @Transactional
     public void save_newLink_savedSuccessfully() {
         TrackedLink link = new TrackedLink(
-            0,
-            new User(0, new ArrayList<>()),
-            "https://localhost",
-            "AAA",
-            List.of(),
-            List.of(),
-            "1010",
-            10L
-        );
+                0, new User(0, new ArrayList<>()), "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
         link.user().links().add(link);
 
         TrackedLink saved = repository.save(link);
@@ -70,29 +61,13 @@ public abstract class LinkRepositoryTest {
     @Transactional
     public void save_addAnotherLinkToUser_savedSuccessfully() {
         User u = new User(1, new ArrayList<>());
-        TrackedLink link = new TrackedLink(
-            0,
-            u,
-            "https://localhost",
-            "AAA",
-            List.of(),
-            List.of(),
-            "1010",
-            10L);
+        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
         u.links().add(link);
 
         entityManager.persist(u);
         entityManager.persistAndFlush(link);
 
-        TrackedLink link2 = new TrackedLink(
-            0,
-            u,
-            "https://localhost:2",
-            "BBB",
-            List.of(),
-            List.of(),
-            "01",
-            100L);
+        TrackedLink link2 = new TrackedLink(0, u, "https://localhost:2", "BBB", List.of(), List.of(), "01", 100L);
         u.links().add(link2);
 
         TrackedLink saved = repository.save(link2);
@@ -104,15 +79,7 @@ public abstract class LinkRepositoryTest {
     @Transactional
     public void existsByUserAndMonitoringServiceAndServiceId_exists_returnTrue() {
         User u = new User(1, new ArrayList<>());
-        TrackedLink link = new TrackedLink(
-            0,
-            u,
-            "https://localhost",
-            "AAA",
-            List.of(),
-            List.of(),
-            "1010",
-            10L);
+        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
         u.links().add(link);
 
         entityManager.persist(u);
@@ -123,23 +90,14 @@ public abstract class LinkRepositoryTest {
 
     @Test
     public void existsByUserAndMonitoringServiceAndServiceId_dontExists_returnFalse() {
-        assertFalse(repository.existsByUserAndMonitoringServiceAndServiceId(new User(44, List.of()),
-            "AAA", "1010"));
+        assertFalse(repository.existsByUserAndMonitoringServiceAndServiceId(new User(44, List.of()), "AAA", "1010"));
     }
 
     @Test
     @Transactional()
     public void deleteById_whenCalled_shouldDelete() {
         User u = new User(1, new ArrayList<>());
-        TrackedLink link = new TrackedLink(
-            0,
-            u,
-            "https://localhost",
-            "AAA",
-            List.of(),
-            List.of(),
-            "1010",
-            10L);
+        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
         u.links().add(link);
 
         entityManager.persist(u);
@@ -170,14 +128,13 @@ public abstract class LinkRepositoryTest {
         entityManager.persist(u2);
         entityManager.flush();
 
-        Page<TrackedLink> res = repository.findAllByMonitoringServiceAndLastUpdateLessThanOrderById(
-            "a", 145L, Pageable.ofSize(10));
+        Page<TrackedLink> res =
+                repository.findAllByMonitoringServiceAndLastUpdateLessThanOrderById("a", 145L, Pageable.ofSize(10));
 
-        assertThatIterable(res.toList())
-            .allSatisfy((l) -> {
-                assertEquals("a", l.monitoringService());
-                assertThat(l.lastUpdate()).isLessThan(145);
-            });
+        assertThatIterable(res.toList()).allSatisfy((l) -> {
+            assertEquals("a", l.monitoringService());
+            assertThat(l.lastUpdate()).isLessThan(145);
+        });
 
         var resList = res.toList();
         for (int i = 1; i < resList.size(); i++) {
@@ -210,27 +167,18 @@ public abstract class LinkRepositoryTest {
             pageable = pageable.next();
         } while (pageable.getPageNumber() <= page.getTotalPages());
 
-        for (int i = 0; i < 3; i++)
-            assertEquals(2, result.get(i).size());
+        for (int i = 0; i < 3; i++) assertEquals(2, result.get(i).size());
         assertEquals(1, result.get(3).size());
 
         List<TrackedLink> flatRes = result.stream().flatMap(Collection::stream).toList();
 
         for (int i = 1; i < flatRes.size(); i++)
             assertThat(flatRes.get(i - 1).id()).isLessThan(flatRes.get(i).id());
-
     }
 
     private void addLinkToUser(User u, String monitor, long lastUpdate) {
-        TrackedLink link = new TrackedLink(
-            0,
-            u,
-            "https://localhost",
-            monitor,
-            List.of(),
-            List.of(),
-            "1010",
-            lastUpdate);
+        TrackedLink link =
+                new TrackedLink(0, u, "https://localhost", monitor, List.of(), List.of(), "1010", lastUpdate);
         u.links().add(link);
         entityManager.persist(link);
     }

@@ -62,8 +62,8 @@ class HttpBotNotifierServiceTest {
     @Test
     public void sendUpdates_updatesPassed_requestSent() throws JsonProcessingException {
         Updates u = new Updates();
-        u.addUpdate(new UpdateImpl(1L,11, "A", "A", "B"));
-        u.addUpdate(new UpdateImpl(2L,11, "AA", "AA", "BB"));
+        u.addUpdate(new UpdateImpl(1L, 11, "A", "A", "B"));
+        u.addUpdate(new UpdateImpl(2L, 11, "AA", "AA", "BB"));
 
         stubFor(post("/updates").willReturn(aResponse()));
 
@@ -77,12 +77,9 @@ class HttpBotNotifierServiceTest {
         LinkUpdate l1 = new ObjectMapper().readValue(body1, LinkUpdate.class);
         LinkUpdate l2 = new ObjectMapper().readValue(body2, LinkUpdate.class);
 
-        LinkUpdate expected1 = new LinkUpdate(1L,11, "A", "A", "B");
-        LinkUpdate expected2 = new LinkUpdate(2L,11, "AA", "AA", "BB");
+        LinkUpdate expected1 = new LinkUpdate(1L, 11, "A", "A", "B");
+        LinkUpdate expected2 = new LinkUpdate(2L, 11, "AA", "AA", "BB");
 
-
-        assertThatIterable(List.of(l1, l2))
-            .containsExactlyInAnyOrderElementsOf(List.of(expected1, expected2));
-
+        assertThatIterable(List.of(l1, l2)).containsExactlyInAnyOrderElementsOf(List.of(expected1, expected2));
     }
 }

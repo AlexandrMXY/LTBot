@@ -1,8 +1,8 @@
 package backend.academy.scrapper.service;
 
+import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
-import backend.academy.scrapper.dto.updates.Updates;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,12 +19,9 @@ public class UpdateScheduler {
 
     @Scheduled(fixedDelayString = "${app.update-delay}") // TODO
     public void checkForUpdates() {
-        linkDistributionService.getMonitors()
-                .forEach(this::tryCheckForUpdates);
+        linkDistributionService.getMonitors().forEach(this::tryCheckForUpdates);
 
-        log.atInfo()
-                .setMessage("Checking for updates complete")
-                .log();
+        log.atInfo().setMessage("Checking for updates complete").log();
     }
 
     private void tryCheckForUpdates(LinkMonitor monitor) {

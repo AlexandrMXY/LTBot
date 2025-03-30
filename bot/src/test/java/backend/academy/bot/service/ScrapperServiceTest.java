@@ -26,9 +26,9 @@ class ScrapperServiceTest {
 
     @Spy
     private RestClient restClient = new BotSpringConfig().scrapperRestClient(TEST_CONFIG);
+
     @InjectMocks
     private ScrapperService service = new ScrapperService();
-
 
     private WireMockServer wireMock;
 
