@@ -1,5 +1,6 @@
 package backend.academy.bot.telegram.commands;
 
+import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
@@ -16,7 +17,14 @@ public class StartCommand extends AbstractSimpleCommand {
     @PostConstruct
     private void init() {
         setProcessor((state, message, context) -> {
-            scrapperService.registerChar(message.chat());
+            try {
+                scrapperService.registerChar(message.chat());
+            } catch (ApiErrorResponseException e) {
+                log.atWarn()
+                    .setMessage("An error occurred during message processing")
+                    .setCause(e)
+                    .log();
+            }
             return new TelegramResponse(message.chat(), "Welcome");
         });
     }
