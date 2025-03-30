@@ -22,6 +22,8 @@ public class SpringDBTestConfig {
                 "http://localhost:8080",
                 "http://localhost:8082",
                 "http://localhost:8083",
-                ScrapperConfig.DBAccessImpl.ORM);
+                ScrapperConfig.DBAccessImpl.ORM,
+                10,
+                10);
     }
 }

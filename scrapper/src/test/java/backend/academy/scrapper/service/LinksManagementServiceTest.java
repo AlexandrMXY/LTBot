@@ -30,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class LinksManagementServiceTest {
     @Spy
-    private ScrapperConfig scrapperConfig = new ScrapperConfig("", null, "f*", "", "", "", null);
+    private ScrapperConfig scrapperConfig = new ScrapperConfig("", null, "f*", "", "", "", null, 10, 10);
 
     @Mock
     private LinkRepository linkRepository;

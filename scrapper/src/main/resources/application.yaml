@@ -12,6 +12,9 @@ app:
   stackoverflow-api-url: https://api.stackexchange.com/2.2
   access-type: orm # sql or orm
 
+  update-threads-cnt: 10
+  update-thread-batch-size: 100
+
 
 
 spring:

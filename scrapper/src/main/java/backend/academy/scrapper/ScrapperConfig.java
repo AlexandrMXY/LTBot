@@ -1,5 +1,6 @@
 package backend.academy.scrapper;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,7 +16,9 @@ public record ScrapperConfig(
         @NotEmpty String botUrl,
         @NotEmpty String githubApiUrl,
         @NotEmpty String stackoverflowApiUrl,
-        DBAccessImpl accessType) {
+        DBAccessImpl accessType,
+        @Min(1) int updateThreadsCnt,
+        @Min(1) int updateThreadBatchSize) {
 
     public record StackOverflowCredentials(@NotEmpty String key, @NotEmpty String accessToken) {}
 

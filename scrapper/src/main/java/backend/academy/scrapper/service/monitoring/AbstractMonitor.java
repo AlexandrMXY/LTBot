@@ -1,5 +1,6 @@
 package backend.academy.scrapper.service.monitoring;
 
+import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.repositories.LinkRepository;
@@ -12,31 +13,41 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-// TODO so ignores since update date
-@RequiredArgsConstructor
 @Slf4j
 public abstract class AbstractMonitor implements LinkMonitor {
-    private static final int BATCH_SIZE = 1;
-    private static final int BATCHES_CNT = 2;
-    private static final int PAGE_SIZE = BATCH_SIZE * BATCHES_CNT;
+    private final int batchSize;
+    private final int batchesCnt;
+    private final int pageSize;
 
     public final String MONITOR_NAME;
     protected final LinkUpdatesCollector linkUpdatesCollector;
     protected final LinkRepository linkRepository;
 
+    public AbstractMonitor(
+            String MONITOR_NAME,
+            LinkUpdatesCollector linkUpdatesCollector,
+            LinkRepository linkRepository,
+            ScrapperConfig config) {
+        batchSize = config.updateThreadBatchSize();
+        batchesCnt = config.updateThreadsCnt();
+        pageSize = batchSize * batchesCnt;
+        this.MONITOR_NAME = MONITOR_NAME;
+        this.linkUpdatesCollector = linkUpdatesCollector;
+        this.linkRepository = linkRepository;
+    }
+
     @Override
     public void checkForUpdates(Consumer<Updates> updatesConsumer) {
         long updateBeginTime = System.currentTimeMillis() / 1000L;
 
-        Pageable page = Pageable.ofSize(PAGE_SIZE);
+        Pageable page = Pageable.ofSize(pageSize);
         Page<TrackedLink> links;
 
-        try (ExecutorService executorService = Executors.newFixedThreadPool(BATCHES_CNT)) {
+        try (ExecutorService executorService = Executors.newFixedThreadPool(batchesCnt)) {
             do {
                 links = linkRepository.findAllByMonitoringServiceAndLastUpdateLessThanOrderById(
                         MONITOR_NAME, updateBeginTime, page);
@@ -74,8 +85,8 @@ public abstract class AbstractMonitor implements LinkMonitor {
 
     private List<Callable<Void>> createCallables(List<TrackedLink> links, Consumer<Updates> updatesConsumer) {
         List<Callable<Void>> result = new ArrayList<>();
-        for (int i = 0; i < links.size(); i += BATCH_SIZE) {
-            result.add(new LinksProcessor(links.subList(i, Math.min(i + BATCH_SIZE, links.size())), updatesConsumer));
+        for (int i = 0; i < links.size(); i += batchSize) {
+            result.add(new LinksProcessor(links.subList(i, Math.min(i + batchSize, links.size())), updatesConsumer));
         }
         return result;
     }

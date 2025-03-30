@@ -1,5 +1,6 @@
 package backend.academy.scrapper.service.monitoring;
 
+import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.service.monitoring.collectors.LinkUpdatesCollector;
@@ -21,8 +22,9 @@ public class GithubMonitor extends AbstractMonitor {
     @Autowired
     public GithubMonitor(
             @Qualifier("githubUpdatesCollector") LinkUpdatesCollector linkUpdatesCollector,
-            LinkRepository linkRepository) {
-        super(MONITOR_NAME, linkUpdatesCollector, linkRepository);
+            LinkRepository linkRepository,
+            ScrapperConfig config) {
+        super(MONITOR_NAME, linkUpdatesCollector, linkRepository, config);
     }
 
     @Override
