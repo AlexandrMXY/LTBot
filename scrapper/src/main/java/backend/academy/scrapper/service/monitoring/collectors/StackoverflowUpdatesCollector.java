@@ -7,18 +7,15 @@ import backend.academy.scrapper.model.stackoverflow.AnswerResponse;
 import backend.academy.scrapper.model.stackoverflow.AnswersResponse;
 import backend.academy.scrapper.model.stackoverflow.CommentResponse;
 import backend.academy.scrapper.model.stackoverflow.CommentsResponse;
-import backend.academy.scrapper.util.RequestErrorHandlers;
 import backend.academy.scrapper.util.StringUtils;
+import backend.academy.scrapper.web.clients.StackoverflowRestClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 @Service
 @Slf4j
@@ -26,8 +23,7 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
     private static final int MAX_IDS_PER_REQUEST = 100;
 
     @Autowired
-    @Qualifier("stackoverflowRestClient")
-    private RestClient client;
+    private StackoverflowRestClient client;
 
     @Override
     public Updates getUpdates(Stream<TrackedLink> links) {
@@ -41,7 +37,8 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
         ArrayList<CommentResponse> comments = new ArrayList<>();
         StringBuilder idsBuilder = new StringBuilder();
         for (int i = 0; i < answers.size(); i++) {
-            if (!idsBuilder.isEmpty()) idsBuilder.append(";");
+            if (!idsBuilder.isEmpty())
+                idsBuilder.append(";");
             idsBuilder.append(answers.get(i).answerId());
 
             if (i % MAX_IDS_PER_REQUEST == MAX_IDS_PER_REQUEST - 1 || i == answers.size() - 1) {
@@ -78,19 +75,14 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
     @SuppressWarnings("ConstantConditions")
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     private List<AnswerResponse> getAllAnswers(String id) {
-        String baseRequestStr = String.format("/questions/%s/answers?site=stackoverflow&page={page}", id);
-
         List<AnswerResponse> result = new ArrayList<>();
         AnswersResponse response;
+
         int pageId = 1;
 
         do {
-            response = client.get()
-                    .uri(baseRequestStr, pageId++)
-                    .retrieve()
-                    .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
-                    .toEntity(AnswersResponse.class)
-                    .getBody();
+            String baseRequestStr = String.format("/questions/%s/answers?site=stackoverflow&page=%d", id, pageId);
+            response = client.getRequest(baseRequestStr, AnswersResponse.class);
             if (response != null && response.items() != null) result.addAll(response.items());
         } while (response.hasMore());
 
@@ -100,20 +92,14 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
     @SuppressWarnings("ConstantConditions")
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH")
     private List<CommentResponse> getAllComments(String idsStr, long since) {
-        String baseRequestStr =
-                String.format("/answers/%s/comments?site=stackoverflow&since=%d&page={page}", idsStr, since);
-
         List<CommentResponse> result = new ArrayList<>();
         CommentsResponse response;
         int pageId = 1;
 
         do {
-            response = client.get()
-                    .uri(baseRequestStr, pageId++)
-                    .retrieve()
-                    .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
-                    .toEntity(CommentsResponse.class)
-                    .getBody();
+            String requestUri =
+                String.format("/answers/%s/comments?site=stackoverflow&since=%d&page=%d", idsStr, since, pageId);
+            response = client.getRequest(requestUri, CommentsResponse.class);
             if (response != null && response.items() != null) result.addAll(response.items());
         } while (response.hasMore());
 

@@ -4,8 +4,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
 
 import backend.academy.api.model.LinkUpdate;
+import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
+import backend.academy.scrapper.web.clients.BotRestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -19,16 +21,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.RestClient;
 
-@ExtendWith(MockitoExtension.class)
+//@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {
+    HttpBotNotifierService.class,
+    BotRestClient.class
+})
+@EnableConfigurationProperties(value = ScrapperConfig.class)
 class HttpBotNotifierServiceTest {
-    private static final String BOT_URL = "http://localhost:8080";
-
-    @Spy
-    private RestClient botClient = RestClient.builder().baseUrl(BOT_URL).build();
-
-    @InjectMocks
+    @Autowired
     private HttpBotNotifierService service;
 
     private WireMockServer wireMock;

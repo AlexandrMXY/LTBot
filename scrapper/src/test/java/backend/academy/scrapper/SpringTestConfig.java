@@ -30,13 +30,13 @@ public class SpringTestConfig {
 
     @Bean
     @Primary
-    public UserRepository userRepository() {
+    public UserRepository mockUserRepository() {
         return Mockito.mock(UserRepository.class);
     }
 
     @Bean
     @Primary
-    public LinkRepository linkRepository() {
+    public LinkRepository mockLinkRepository() {
         return Mockito.mock(LinkRepository.class);
     }
 

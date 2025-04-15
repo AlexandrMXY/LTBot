@@ -12,6 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class SqlLinkRepositoryTest extends LinkRepositoryTest {
     @Test
     public void linkRepository_useCorrectImpl() {
-        assertThat(repository).isInstanceOf(SqlLinkRepository.class);
+        assertThat(SqlLinkRepository.class).isAssignableFrom(repository.getClass());
     }
 }

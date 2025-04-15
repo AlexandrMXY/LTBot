@@ -8,12 +8,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
-public interface LinkRepository extends org.springframework.data.repository.Repository<TrackedLink, Long> {
+//@Repository
+//@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
+//@NoRepositoryBean
+public interface LinkRepository {
     boolean existsByUserAndMonitoringServiceAndServiceId(User user, String monitoringService, String serviceId);
 
     TrackedLink save(TrackedLink link);

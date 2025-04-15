@@ -12,6 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class SqlUserRepositoryTest extends UserRepositoryTest {
     @Test
     public void linkRepository_useCorrectImpl() {
-        assertThat(repository).isInstanceOf(SqlUserRepository.class);
+        assertThat(SqlUserRepository.class).isAssignableFrom(repository.getClass());
     }
 }

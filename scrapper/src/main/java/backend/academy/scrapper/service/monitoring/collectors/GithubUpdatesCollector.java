@@ -5,7 +5,6 @@ import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.model.github.Issue;
-import backend.academy.scrapper.util.RequestErrorHandlers;
 import backend.academy.scrapper.util.StringUtils;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -19,12 +18,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import backend.academy.scrapper.web.clients.GithubRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 @Service
 public class GithubUpdatesCollector implements LinkUpdatesCollector {
@@ -36,8 +33,7 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
     private static final String ISSUES_ENDPOINT = "issues";
 
     @Autowired
-    @Qualifier("githubRestClient")
-    private RestClient client;
+    private GithubRestClient client;
 
     @Override
     public Updates getUpdates(Stream<TrackedLink> links) {
@@ -69,7 +65,7 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
 
         List<T> result = new ArrayList<>();
         do {
-            ResponseEntity<T[]> response = sendRequest(nextURL, responseType);
+            ResponseEntity<T[]> response = client.getRequestForArray(nextURL, responseType);
             nextURL = getNextRequestUrl(response.getHeaders().getFirst("Link"));
             var body = response.getBody();
             if (body != null) Collections.addAll(result, body);
@@ -78,13 +74,7 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
         return result;
     }
 
-    private <T> ResponseEntity<T[]> sendRequest(String url, Class<T[]> responseType) {
-        return client.get()
-                .uri(url)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
-                .toEntity(responseType);
-    }
+
 
     private static String repoUrl(String serviceId) {
         return "repos/" + serviceId;

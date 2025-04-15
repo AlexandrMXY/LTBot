@@ -7,13 +7,13 @@ services:
     environment:
       POSTGRES_USER: ${PG_USERNAME}
       POSTGRES_PASSWORD: ${PG_PASSWORD}
-      POSTGRES_DB: tbhw
+      POSTGRES_DB: scrapper
     ports:
       - "5430:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d tbhw" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d scrapper" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,7 +28,7 @@ services:
       - --searchPath=/migrations
       - --changelog-file=master.xml
       - --driver=org.postgresql.Driver
-      - --url=jdbc:postgresql://postgres:5432/tbhw
+      - --url=jdbc:postgresql://postgres:5432/scrapper
       - --username=${PG_USERNAME}
       - --password=${PG_PASSWORD}
       - --logLevel=debug

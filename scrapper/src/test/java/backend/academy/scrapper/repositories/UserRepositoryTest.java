@@ -2,6 +2,7 @@ package backend.academy.scrapper.repositories;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import backend.academy.scrapper.AbstractDatabaseTest;
 import backend.academy.scrapper.SpringDBTestConfig;
 import backend.academy.scrapper.entities.User;
 import java.util.ArrayList;
@@ -19,13 +20,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Import({SpringDBTestConfig.class})
-@Testcontainers
-@AutoConfigureTestDatabase
-@AutoConfigureTestEntityManager
-@AutoConfigureDataJpa
-@ActiveProfiles("testDb")
-public abstract class UserRepositoryTest {
+
+public abstract class UserRepositoryTest extends AbstractDatabaseTest {
     @Autowired
     protected UserRepository repository;
 

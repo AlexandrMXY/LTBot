@@ -8,14 +8,17 @@ import backend.academy.scrapper.repositories.impls.sql.mappers.UserMapper;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Component
 @ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "sql")
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SqlUserRepository implements UserRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
@@ -27,7 +30,7 @@ public class SqlUserRepository implements UserRepository {
     private TrackedLinkMapper linkMapper;
 
     @Autowired
-    private SqlLinkRepository linkRepository;
+    private ISqlLinkRepository linkRepository;
 
     @Override
     @Transactional

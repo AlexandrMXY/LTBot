@@ -8,18 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Component
 @ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "sql")
-public class SqlLinkRepository implements LinkRepository {
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class SqlLinkRepository implements ISqlLinkRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -42,7 +47,7 @@ public class SqlLinkRepository implements LinkRepository {
     }
 
     @SuppressWarnings("ConstantConditions")
-    TrackedLink saveLinkOnly(TrackedLink link) {
+    public TrackedLink saveLinkOnly(TrackedLink link) {
         Long id = jdbcTemplate.queryForObject(
                 "select nextval('tracked_link_seq')", new MapSqlParameterSource(), Long.class);
         if (id == null) return null;

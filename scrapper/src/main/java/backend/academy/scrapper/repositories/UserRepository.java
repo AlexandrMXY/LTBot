@@ -3,11 +3,13 @@ package backend.academy.scrapper.repositories;
 import backend.academy.scrapper.entities.User;
 import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.Repository;
 
-@Repository
-@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
-public interface UserRepository extends org.springframework.data.repository.Repository<User, Long> {
+//@Repository
+//@ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
+//@NoRepositoryBean
+public interface UserRepository {
     User save(User user);
 
     boolean existsById(long id);

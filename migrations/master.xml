@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1" author="">
-        <sqlFile path="migration.sql" relativeToChangelogFile="true"/>
+        <sqlFile path="create-traced-link-and-users-tables.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.scrapper.RestClientsConfiguration;
 import backend.academy.scrapper.SpringTestConfig;
 import backend.academy.scrapper.TestUtils;
 import backend.academy.scrapper.dto.updates.UpdateImpl;
@@ -28,7 +27,7 @@ import org.springframework.context.annotation.Import;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = {GithubUpdatesCollector.class})
-@Import({SpringTestConfig.class, RestClientsConfiguration.class})
+@Import({SpringTestConfig.class})
 class StackoverflowUpdatesCollectorTest {
     @Autowired
     private StackoverflowUpdatesCollector collector;

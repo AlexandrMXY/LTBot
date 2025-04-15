@@ -3,6 +3,7 @@ package backend.academy.scrapper.repositories;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import backend.academy.scrapper.AbstractDatabaseTest;
 import backend.academy.scrapper.SpringDBTestConfig;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
@@ -25,13 +26,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Import({SpringDBTestConfig.class})
-@Testcontainers
-@AutoConfigureTestDatabase
-@AutoConfigureTestEntityManager
-@AutoConfigureDataJpa
-@ActiveProfiles("testDb")
-public abstract class LinkRepositoryTest {
+public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
     @Autowired
     protected LinkRepository repository;
 

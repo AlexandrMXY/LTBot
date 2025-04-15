@@ -8,9 +8,9 @@ app:
   update-delay: 3600000 # milliseconds
 
   bot-url: http://localhost:8080
-  github-api-url: https://api.github.com
-  stackoverflow-api-url: https://api.stackexchange.com/2.2
-  access-type: orm # sql or orm
+  github-api-url: http://localhost:8082
+  stackoverflow-api-url: http://localhost:8083
+  access-type: sql # sql or orm
 
   update-threads-cnt: 10
   update-thread-batch-size: 100
@@ -18,8 +18,8 @@ app:
 
 
 spring:
-  profiles:
-    default: prod
+#  profiles:
+#    default: prod
   application:
     name: Scrapper
 
@@ -30,10 +30,10 @@ spring:
       ddl-auto: validate
     open-in-view: false
     show-sql: true
-  datasource:
-    url: jdbc:postgresql://localhost:5430/scrapper
-    username: ${PG_USERNAME}
-    password: ${PG_PASSWORD}
+#  datasource:
+#    url: jdbc:postgresql://localhost:5430/scrapper
+#    username: ${PG_USERNAME}
+#    password: ${PG_PASSWORD}
 
 
 logging:
@@ -43,7 +43,6 @@ logging:
   level:
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
-    root: debug
 
 
 server:

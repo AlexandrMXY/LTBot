@@ -3,6 +3,7 @@ package backend.academy.scrapper.service;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.util.RequestErrorHandlers;
+import backend.academy.scrapper.web.clients.BotRestClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,8 +15,7 @@ import org.springframework.web.client.RestClient;
 @Slf4j
 public class HttpBotNotifierService implements BotNotifierService {
     @Autowired
-    @Qualifier("botRestClient")
-    private RestClient client;
+    private BotRestClient client;
 
     @Override
     public void sendUpdates(Updates updates) {
@@ -23,12 +23,7 @@ public class HttpBotNotifierService implements BotNotifierService {
         for (Update update : updates.getUpdates()) {
             var request = update.createRequest();
 
-            client.post()
-                    .uri("/updates")
-                    .body(request)
-                    .retrieve()
-                    .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
-                    .toBodilessEntity();
+            client.postRequest("/updates", request);
         }
     }
 }

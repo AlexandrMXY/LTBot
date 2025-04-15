@@ -41,7 +41,7 @@ public class User {
     private List<TrackedLink> links;
 
     @Convert(converter = StringListConverter.class)
-    @Column(length = 1024)
+    @Column(length = 1024, name = "inactive_tags")
     private List<String> inactiveTags;
 
     @Override
