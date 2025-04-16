@@ -2,7 +2,7 @@ package backend.academy.bot.controllers;
 
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.api.model.ApiErrorResponse;
+import backend.academy.api.model.responses.ApiErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

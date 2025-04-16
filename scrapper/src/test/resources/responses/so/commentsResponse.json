@@ -7,7 +7,7 @@
             },
             "creation_date": 1000,
             "comment_id": 0,
-            "body": "Comment 1"
+            "body_markdown": "Comment 1"
         },
         {
             "owner": {
@@ -16,7 +16,7 @@
             },
             "creation_date": 1000,
             "comment_id": 0,
-            "body": "Comment 2"
+            "body_markdown": "Comment 2"
         }
     ],
     "hasMore" : false,

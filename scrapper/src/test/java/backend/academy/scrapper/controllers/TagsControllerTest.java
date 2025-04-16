@@ -1,39 +1,31 @@
 package backend.academy.scrapper.controllers;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.api.model.TagsRequest;
-import backend.academy.scrapper.SpringDBTestConfig;
+import backend.academy.api.model.requests.TagsRequest;
+import backend.academy.scrapper.AbstractDatabaseTest;
+import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
+import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest()
-@Import({SpringDBTestConfig.class})
-@Testcontainers
-@AutoConfigureTestDatabase
-@ActiveProfiles("testDb")
-class TagsControllerTest {
+@SpringBootTest
+class TagsControllerTest extends AbstractDatabaseTest {
     @Autowired
     TagsController tagsController;
 
     @Autowired
     UserRepository userRepository;
 
-    @Container
-    @ServiceConnection
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+    @Autowired
+    LinkRepository linkRepository;
 
     @Test
     void deactivate_userNotFound_shouldThrow() {
@@ -78,5 +70,34 @@ class TagsControllerTest {
                 .getStatusCode()
                 .is2xxSuccessful());
         assertFalse(userRepository.findById(3).orElseThrow().inactiveTags().contains("tag"));
+    }
+
+    @Test
+    void getLinksWithTag_userNotFound_shouldThrow() {
+        assertThrows(NotFoundException.class, () -> tagsController.getLinksWithTag(new TagsRequest(777, "tag")));
+    }
+
+    @Test
+    void getLinksWithTag_tagNotFound_shouldReturnEmptyList() {
+        userRepository.save(new User(4, List.of(), List.of("tag")));
+        var result = tagsController.getLinksWithTag(new TagsRequest(4, "qrwq"));
+        assertEquals(0, result.size());
+        assertTrue(result.links().isEmpty());
+    }
+
+    @Test
+    void getLinksWithTag_linksFound_shouldReturnListOfAllLinks() {
+        User u = new User(5, new ArrayList<>(), List.of());
+        TrackedLink l1 = new TrackedLink(0, u, "a", "ms", List.of("tag"), List.of(), "sid", 777);
+        TrackedLink l2 = new TrackedLink(0, u, "aa", "ms", List.of("tag"), List.of(), "sid", 777);
+        TrackedLink l3 = new TrackedLink(0, u, "aaa", "ms", List.of("tag1"), List.of(), "sid", 777);
+        u.links().add(l1);
+        u.links().add(l2);
+        u.links().add(l3);
+        userRepository.save(u);
+
+        var result = tagsController.getLinksWithTag(new TagsRequest(5, "tag"));
+        assertThat(result.links())
+                .satisfiesExactlyInAnyOrder(l -> assertEquals("a", l.url()), l -> assertEquals("aa", l.url()));
     }
 }

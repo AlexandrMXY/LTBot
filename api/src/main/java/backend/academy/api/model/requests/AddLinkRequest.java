@@ -1,4 +1,4 @@
-package backend.academy.api.model;
+package backend.academy.api.model.requests;
 
 import java.util.List;
 

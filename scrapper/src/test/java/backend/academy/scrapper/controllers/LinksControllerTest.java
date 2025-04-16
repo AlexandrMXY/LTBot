@@ -3,10 +3,10 @@ package backend.academy.scrapper.controllers;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import backend.academy.api.model.AddLinkRequest;
-import backend.academy.api.model.LinkResponse;
-import backend.academy.api.model.ListLinksResponse;
-import backend.academy.api.model.RemoveLinkRequest;
+import backend.academy.api.model.requests.AddLinkRequest;
+import backend.academy.api.model.requests.RemoveLinkRequest;
+import backend.academy.api.model.responses.LinkResponse;
+import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.LinksManagementService;
 import java.util.List;

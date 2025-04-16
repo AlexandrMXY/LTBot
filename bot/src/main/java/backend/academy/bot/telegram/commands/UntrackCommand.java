@@ -1,8 +1,8 @@
 package backend.academy.bot.telegram.commands;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
-import backend.academy.api.model.ApiErrorResponse;
-import backend.academy.api.model.RemoveLinkRequest;
+import backend.academy.api.model.requests.RemoveLinkRequest;
+import backend.academy.api.model.responses.ApiErrorResponse;
 import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;

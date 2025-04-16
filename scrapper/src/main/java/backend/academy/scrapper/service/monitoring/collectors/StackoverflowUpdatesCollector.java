@@ -1,6 +1,6 @@
 package backend.academy.scrapper.service.monitoring.collectors;
 
-import backend.academy.scrapper.dto.updates.UpdateImpl;
+import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.model.stackoverflow.AnswerResponse;
@@ -37,8 +37,7 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
         ArrayList<CommentResponse> comments = new ArrayList<>();
         StringBuilder idsBuilder = new StringBuilder();
         for (int i = 0; i < answers.size(); i++) {
-            if (!idsBuilder.isEmpty())
-                idsBuilder.append(";");
+            if (!idsBuilder.isEmpty()) idsBuilder.append(";");
             idsBuilder.append(answers.get(i).answerId());
 
             if (i % MAX_IDS_PER_REQUEST == MAX_IDS_PER_REQUEST - 1 || i == answers.size() - 1) {
@@ -51,22 +50,24 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
 
         answers.stream()
                 .filter((ans) -> ans.creationDate() >= link.lastUpdate())
-                .forEach((ans) -> updates.addUpdate(new UpdateImpl(
+                .forEach((ans) -> updates.addUpdate(new Update(
                         link.user().id(),
                         ans.creationDate(),
                         link.url(),
                         StringUtils.clamp(ans.body(), MAX_PREVIEW_LENGTH),
-                        ans.owner().displayName())));
+                        ans.owner().displayName(),
+                        Update.Types.ANSWER)));
 
         comments.stream()
                 .filter((comment) -> comment.creationDate() >= link.lastUpdate())
                 .forEach((comment) -> {
-                    updates.addUpdate(new UpdateImpl(
+                    updates.addUpdate(new Update(
                             link.user().id(),
                             comment.creationDate(),
                             link.url(),
                             StringUtils.clamp(comment.body(), MAX_PREVIEW_LENGTH),
-                            comment.owner().displayName()));
+                            comment.owner().displayName(),
+                            Update.Types.COMMENT));
                 });
 
         return updates;
@@ -81,9 +82,11 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
         int pageId = 1;
 
         do {
-            String baseRequestStr = String.format("/questions/%s/answers?site=stackoverflow&page=%d", id, pageId);
+            String baseRequestStr =
+                    String.format("/questions/%s/answers?site=stackoverflow&filter=!nNPvSNe7Gv&page=%d", id, pageId);
             response = client.getRequest(baseRequestStr, AnswersResponse.class);
             if (response != null && response.items() != null) result.addAll(response.items());
+            pageId++;
         } while (response.hasMore());
 
         return result;
@@ -97,10 +100,12 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
         int pageId = 1;
 
         do {
-            String requestUri =
-                String.format("/answers/%s/comments?site=stackoverflow&since=%d&page=%d", idsStr, since, pageId);
+            String requestUri = String.format(
+                    "/answers/%s/comments?site=stackoverflow&filter=!nNPvSN_LEO&fromdate=%d&page=%d",
+                    idsStr, since, pageId);
             response = client.getRequest(requestUri, CommentsResponse.class);
             if (response != null && response.items() != null) result.addAll(response.items());
+            pageId++;
         } while (response.hasMore());
 
         return result;

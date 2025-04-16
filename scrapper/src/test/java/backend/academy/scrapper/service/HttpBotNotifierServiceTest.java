@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.ScrapperConfig;
-import backend.academy.scrapper.dto.updates.UpdateImpl;
+import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.web.clients.BotRestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,20 +17,12 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.RestClient;
 
-//@ExtendWith(MockitoExtension.class)
-@SpringBootTest(classes = {
-    HttpBotNotifierService.class,
-    BotRestClient.class
-})
+// @ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {HttpBotNotifierService.class, BotRestClient.class})
 @EnableConfigurationProperties(value = ScrapperConfig.class)
 class HttpBotNotifierServiceTest {
     @Autowired
@@ -67,8 +59,8 @@ class HttpBotNotifierServiceTest {
     @Test
     public void sendUpdates_updatesPassed_requestSent() throws JsonProcessingException {
         Updates u = new Updates();
-        u.addUpdate(new UpdateImpl(1L, 11, "A", "A", "B"));
-        u.addUpdate(new UpdateImpl(2L, 11, "AA", "AA", "BB"));
+        u.addUpdate(new Update(1L, 11, "A", "A", "B", Update.Types.ISSUE));
+        u.addUpdate(new Update(2L, 11, "AA", "AA", "BB", Update.Types.ISSUE));
 
         stubFor(post("/updates").willReturn(aResponse()));
 
@@ -82,8 +74,8 @@ class HttpBotNotifierServiceTest {
         LinkUpdate l1 = new ObjectMapper().readValue(body1, LinkUpdate.class);
         LinkUpdate l2 = new ObjectMapper().readValue(body2, LinkUpdate.class);
 
-        LinkUpdate expected1 = new LinkUpdate(1L, 11, "A", "A", "B");
-        LinkUpdate expected2 = new LinkUpdate(2L, 11, "AA", "AA", "BB");
+        LinkUpdate expected1 = new LinkUpdate(1L, 11, "A", "A", "B", LinkUpdate.Types.ISSUE);
+        LinkUpdate expected2 = new LinkUpdate(2L, 11, "AA", "AA", "BB", LinkUpdate.Types.ISSUE);
 
         assertThatIterable(List.of(l1, l2)).containsExactlyInAnyOrderElementsOf(List.of(expected1, expected2));
     }

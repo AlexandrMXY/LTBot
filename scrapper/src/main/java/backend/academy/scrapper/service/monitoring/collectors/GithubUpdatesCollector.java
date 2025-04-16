@@ -1,11 +1,11 @@
 package backend.academy.scrapper.service.monitoring.collectors;
 
 import backend.academy.scrapper.dto.updates.Update;
-import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.model.github.Issue;
 import backend.academy.scrapper.util.StringUtils;
+import backend.academy.scrapper.web.clients.GithubRestClient;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import backend.academy.scrapper.web.clients.GithubRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,12 +44,13 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
 
         return new Updates()
                 .addUpdates(issues.stream()
-                        .map(i -> (Update) new UpdateImpl(
+                        .map(i -> new Update(
                                 tl.user().id(),
                                 convertDate(i.createdAt()),
                                 i.htmlUrl(),
                                 StringUtils.clamp(i.body(), MAX_PREVIEW_LENGTH),
-                                i.user().login()))
+                                i.user().login(),
+                                i.pullRequest() == null ? Update.Types.ISSUE : Update.Types.PULL_REQUEST))
                         .toList());
     }
 
@@ -73,8 +73,6 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
 
         return result;
     }
-
-
 
     private static String repoUrl(String serviceId) {
         return "repos/" + serviceId;

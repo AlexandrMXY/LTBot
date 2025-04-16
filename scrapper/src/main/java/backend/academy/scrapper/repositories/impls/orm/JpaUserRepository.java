@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "orm")
-public interface JpaUserRepository extends UserRepository, JpaRepository<User, Long> {
-}
+public interface JpaUserRepository extends UserRepository, JpaRepository<User, Long> {}

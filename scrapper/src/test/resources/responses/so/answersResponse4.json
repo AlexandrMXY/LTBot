@@ -9,7 +9,7 @@
             "question_id": 100,
             "answer_id": 100,
             "last_activity_date": 50,
-            "body": "Ans 1"
+            "body_markdown": "Ans 1"
         }
     ],
     "has_more" : false,

@@ -1,7 +1,7 @@
 package backend.academy.scrapper.dto;
 
-import backend.academy.api.model.AddLinkRequest;
-import backend.academy.api.model.LinkResponse;
+import backend.academy.api.model.requests.AddLinkRequest;
+import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.scrapper.entities.TrackedLink;
 import java.util.List;
 

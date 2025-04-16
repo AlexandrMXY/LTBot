@@ -4,28 +4,23 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.scrapper.AbstractDatabaseTest;
-import backend.academy.scrapper.SpringDBTestConfig;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
+@Slf4j
 public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
     @Autowired
     protected LinkRepository repository;
@@ -171,9 +166,84 @@ public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
             assertThat(flatRes.get(i - 1).id()).isLessThan(flatRes.get(i).id());
     }
 
+    @Test
+    @Transactional
+    public void findAllByUserId_whenCalled_returnAllLinks() {
+        User u = new User(8, new ArrayList<>());
+        addLinkToUser(u, "a");
+        addLinkToUser(u, "aa");
+        addLinkToUser(u, "aaa");
+        addLinkToUser(u, "aaaa");
+        entityManager.persistAndFlush(u);
+
+        assertThat(repository.findAllByUserId(u.id()))
+                .satisfiesExactlyInAnyOrder(
+                        (l) -> {
+                            assertEquals(u.id(), l.user().id());
+                            assertEquals("a", l.url());
+                        },
+                        l -> {
+                            assertEquals(u.id(), l.user().id());
+                            assertEquals("aa", l.url());
+                        },
+                        l -> {
+                            assertEquals(u.id(), l.user().id());
+                            assertEquals("aaa", l.url());
+                        },
+                        l -> {
+                            assertEquals(u.id(), l.user().id());
+                            assertEquals("aaaa", l.url());
+                        });
+    }
+
+    @Test
+    @Transactional
+    public void findAllByUserId_whenNoLinks_returnEmptyList() {
+        User u = new User(9, new ArrayList<>());
+        entityManager.persistAndFlush(u);
+
+        assertThat(repository.findAllByUserId(u.id())).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void findByUserIdAndUrl_whenLinkExists_returnLink() {
+        User u = new User(10, new ArrayList<>());
+        addLinkToUser(u, "a");
+        addLinkToUser(u, "aa");
+        addLinkToUser(u, "aaa");
+        entityManager.persistAndFlush(u);
+
+        assertThat(repository.findByUserIdAndUrl(u.id(), "aa"))
+                .isNotEmpty()
+                .get()
+                .satisfies(l -> {
+                    assertEquals(u.id(), l.user().id());
+                    assertEquals("aa", l.url());
+                });
+    }
+
+    @Test
+    @Transactional
+    public void findByUserIdAndUrl_whenLinkNotExists_returnLink() {
+        User u = new User(11, new ArrayList<>());
+        addLinkToUser(u, "a");
+        addLinkToUser(u, "aa");
+        addLinkToUser(u, "aaa");
+        entityManager.persistAndFlush(u);
+
+        assertThat(repository.findByUserIdAndUrl(u.id(), "aaaa")).isEmpty();
+    }
+
     private void addLinkToUser(User u, String monitor, long lastUpdate) {
         TrackedLink link =
                 new TrackedLink(0, u, "https://localhost", monitor, List.of(), List.of(), "1010", lastUpdate);
+        u.links().add(link);
+        entityManager.persist(link);
+    }
+
+    private void addLinkToUser(User u, String url) {
+        TrackedLink link = new TrackedLink(0, u, url, "monitor", List.of(), List.of(), "1010", 10L);
         u.links().add(link);
         entityManager.persist(link);
     }

@@ -1,13 +1,14 @@
 package backend.academy.bot.service;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
-import backend.academy.api.model.AddLinkRequest;
-import backend.academy.api.model.ApiErrorResponse;
-import backend.academy.api.model.LinkResponse;
-import backend.academy.api.model.ListLinksResponse;
-import backend.academy.api.model.RemoveLinkRequest;
-import backend.academy.api.model.TagsListResponse;
-import backend.academy.api.model.TagsRequest;
+import backend.academy.api.model.requests.AddLinkRequest;
+import backend.academy.api.model.requests.LinkTagRequest;
+import backend.academy.api.model.requests.RemoveLinkRequest;
+import backend.academy.api.model.requests.TagsRequest;
+import backend.academy.api.model.responses.ApiErrorResponse;
+import backend.academy.api.model.responses.LinkResponse;
+import backend.academy.api.model.responses.ListLinksResponse;
+import backend.academy.api.model.responses.TagsListResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -90,6 +91,33 @@ public class ScrapperService {
                 .uri("/links")
                 .header("Tg-Chat-Id", String.valueOf(chatId))
                 .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .body(ListLinksResponse.class);
+    }
+
+    public void addTagToLink(long charId, String link, String tag) {
+        client.post()
+                .uri("/links/tags")
+                .body(new LinkTagRequest(charId, tag, link))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .toBodilessEntity();
+    }
+
+    public void removeTagFromLink(long charId, String link, String tag) {
+        client.method(HttpMethod.DELETE)
+                .uri("/links/tags")
+                .body(new LinkTagRequest(charId, tag, link))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
+                .toBodilessEntity();
+    }
+
+    public ListLinksResponse getLinksWithTag(long chatId, String tag) {
+        return client.method(HttpMethod.GET)
+                .uri("/tags/linksWithTag")
+                .body(new TagsRequest(chatId, tag))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, ScrapperService::handleErrorResponse)
                 .body(ListLinksResponse.class);

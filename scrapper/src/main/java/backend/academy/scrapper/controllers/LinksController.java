@@ -1,11 +1,13 @@
 package backend.academy.scrapper.controllers;
 
-import backend.academy.api.model.AddLinkRequest;
-import backend.academy.api.model.LinkResponse;
-import backend.academy.api.model.ListLinksResponse;
-import backend.academy.api.model.RemoveLinkRequest;
+import backend.academy.api.model.requests.AddLinkRequest;
+import backend.academy.api.model.requests.LinkTagRequest;
+import backend.academy.api.model.requests.RemoveLinkRequest;
+import backend.academy.api.model.responses.LinkResponse;
+import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.LinksManagementService;
+import backend.academy.scrapper.service.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/links")
 public class LinksController {
-
     @Autowired
     private LinksManagementService linksService;
+
+    @Autowired
+    private TagsService tagsService;
 
     @GetMapping
     public ListLinksResponse getLinks(@RequestHeader("Tg-Chat-Id") long chatId) {
@@ -36,5 +40,15 @@ public class LinksController {
     @DeleteMapping
     public LinkResponse deleteLinks(@RequestHeader("Tg-Chat-Id") long chatId, @RequestBody RemoveLinkRequest request) {
         return linksService.deleteLink(chatId, request.link()).asResponse();
+    }
+
+    @PostMapping("/tags")
+    public void addTag(@RequestBody LinkTagRequest request) {
+        tagsService.addTagToLink(request.userId(), request.link(), request.tag());
+    }
+
+    @DeleteMapping("/tags")
+    public void removeTag(@RequestBody LinkTagRequest request) {
+        tagsService.removeTagFromLink(request.userId(), request.link(), request.tag());
     }
 }

@@ -8,10 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import java.util.List;
-import java.util.Objects;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.util.List;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +37,7 @@ public class TrackedLink {
     private User user;
 
     private String url;
+
     @Column(name = "monitoring_service")
     private String monitoringService;
 
@@ -71,6 +72,7 @@ public class TrackedLink {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user == null ? null : user.id(), url, monitoringService, tags, filters, serviceId, lastUpdate);
+        return Objects.hash(
+                id, user == null ? null : user.id(), url, monitoringService, tags, filters, serviceId, lastUpdate);
     }
 }

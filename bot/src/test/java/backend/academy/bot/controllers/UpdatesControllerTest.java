@@ -25,7 +25,7 @@ class UpdatesControllerTest {
 
     @Test
     void updates_requestReceived_sendMessagesToCorrectUser() {
-        var request = new LinkUpdate(0, 1000, "A", "B", "C");
+        var request = new LinkUpdate(0, 1000, "A", "B", "C", LinkUpdate.Types.COMMENT);
         controller.updates(request);
         verify(telegramService).sendMessage(eq(0L), anyString());
     }

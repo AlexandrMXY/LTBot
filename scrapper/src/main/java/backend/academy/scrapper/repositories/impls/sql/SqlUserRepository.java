@@ -5,7 +5,9 @@ import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.repositories.impls.sql.mappers.TrackedLinkMapper;
 import backend.academy.scrapper.repositories.impls.sql.mappers.UserMapper;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
@@ -30,7 +32,7 @@ public class SqlUserRepository implements UserRepository {
     private TrackedLinkMapper linkMapper;
 
     @Autowired
-    private ISqlLinkRepository linkRepository;
+    private SqlLinkRepository linkRepository;
 
     @Override
     @Transactional
@@ -45,7 +47,9 @@ public class SqlUserRepository implements UserRepository {
                 new MapSqlParameterSource()
                         .addValue("id", user.id())
                         .addValue("inactiveTags", mapper.converter().convertToDatabaseColumn(user.inactiveTags())));
-        user.links().replaceAll(linkRepository::saveLinkOnly);
+        user.links(user.links().stream()
+                .map(linkRepository::saveLinkOnly)
+                .collect(Collectors.toCollection(ArrayList::new)));
         return user;
     }
 

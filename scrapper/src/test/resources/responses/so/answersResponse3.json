@@ -9,7 +9,7 @@
             "question_id": 777,
             "answer_id": 100,
             "last_activity_date": 1000,
-            "body": "Lorem ipsum 8"
+            "body_markdown": "Lorem ipsum 8"
         },
         {
             "owner": {
@@ -20,7 +20,7 @@
             "question_id": 778,
             "answer_id": 101,
             "last_activity_date": 1010,
-            "body": "Lorem ipsum 9"
+            "body_markdown": "Lorem ipsum 9"
         },
         {
             "owner": {
@@ -31,7 +31,7 @@
             "question_id": 779,
             "answer_id": 102,
             "last_activity_date": 1020,
-            "body": "Lorem ipsum 10"
+            "body_markdown": "Lorem ipsum 10"
         }
     ],
     "has_more" : false,

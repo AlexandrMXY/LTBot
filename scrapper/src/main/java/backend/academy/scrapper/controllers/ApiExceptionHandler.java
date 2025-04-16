@@ -2,7 +2,7 @@ package backend.academy.scrapper.controllers;
 
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.api.model.ApiErrorResponse;
+import backend.academy.api.model.responses.ApiErrorResponse;
 import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import lombok.extern.slf4j.Slf4j;

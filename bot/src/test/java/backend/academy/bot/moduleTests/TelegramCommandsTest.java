@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import backend.academy.api.model.LinkResponse;
-import backend.academy.api.model.ListLinksResponse;
+import backend.academy.api.model.responses.LinkResponse;
+import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.bot.dto.MessageDto;
 import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.service.telegram.TelegramService;
@@ -59,8 +59,8 @@ public class TelegramCommandsTest {
                 .thenReturn(new ListLinksResponse(List.of(
                         new LinkResponse(
                                 0, "https://github.com/ESCOMP/atmospheric_physics", List.of("A"), List.of("A")),
-                        new LinkResponse(0, "https://github.com/topics/3b-yp-1tri-2025", List.of("A"), List.of("A")),
-                        new LinkResponse(0, "https://github.com/frappe/erpnext", List.of("A"), List.of("A")),
+                        new LinkResponse(0, "https://github.com/topics/3b-yp-1tri-2025", List.of("B"), List.of("A")),
+                        new LinkResponse(0, "https://github.com/frappe/erpnext", List.of("B"), List.of("B")),
                         new LinkResponse(
                                 0,
                                 "https://stackoverflow.com/questions/14938748/how-to-lazy-load-collection-when-using-spring-data-jpa-with-hibernate-from-an",
@@ -79,10 +79,10 @@ public class TelegramCommandsTest {
         assertThatCharSequence(response.messages().getFirst())
                 .isEqualTo(
                         """
-                https://github.com/ESCOMP/atmospheric_physics
-                https://github.com/topics/3b-yp-1tri-2025
-                https://github.com/frappe/erpnext
-                https://stackoverflow.com/questions/14938748/how-to-lazy-load-collection-when-using-spring-data-jpa-with-hibernate-from-an
+                https://github.com/ESCOMP/atmospheric_physics A
+                https://github.com/topics/3b-yp-1tri-2025 B
+                https://github.com/frappe/erpnext B
+                https://stackoverflow.com/questions/14938748/how-to-lazy-load-collection-when-using-spring-data-jpa-with-hibernate-from-an A
                 """);
     }
 

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.scrapper.SpringTestConfig;
 import backend.academy.scrapper.TestUtils;
-import backend.academy.scrapper.dto.updates.UpdateImpl;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
@@ -79,28 +78,28 @@ class GithubUpdatesCollectorTest {
         assertThatIterable(updates.getUpdates())
                 .satisfiesExactlyInAnyOrder(
                         u -> {
-                            assertEquals("https://localhost/qwerty2A", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2A", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AA", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAA", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAAA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAAA", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAAAA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAAAA", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAAAAA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAAAAA", u.url());
+                            assertEquals(10L, u.user());
                         });
     }
 
@@ -147,28 +146,28 @@ class GithubUpdatesCollectorTest {
         assertThatIterable(updates.getUpdates())
                 .satisfiesExactlyInAnyOrder(
                         u -> {
-                            assertEquals("https://localhost/qwerty2A", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2A", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AA", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAA", ((UpdateImpl) u).url());
-                            assertEquals(10L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAA", u.url());
+                            assertEquals(10L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAAA", ((UpdateImpl) u).url());
-                            assertEquals(20L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAAA", u.url());
+                            assertEquals(20L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAAAA", ((UpdateImpl) u).url());
-                            assertEquals(20L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAAAA", u.url());
+                            assertEquals(20L, u.user());
                         },
                         u -> {
-                            assertEquals("https://localhost/qwerty2AAAAAA", ((UpdateImpl) u).url());
-                            assertEquals(20L, ((UpdateImpl) u).user());
+                            assertEquals("https://localhost/qwerty2AAAAAA", u.url());
+                            assertEquals(20L, u.user());
                         });
     }
 }

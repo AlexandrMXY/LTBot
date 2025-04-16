@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.SpringTestConfig;
 import backend.academy.scrapper.TestUtils;
-import backend.academy.scrapper.dto.updates.UpdateImpl;
+import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
@@ -92,7 +92,7 @@ class StackoverflowUpdatesCollectorTest {
                         u -> assertEquals("Lorem ipsum 5", u.createRequest().content()),
                         u -> assertEquals("Lorem ipsum 7", u.createRequest().content()))
                 .allSatisfy(upd -> {
-                    UpdateImpl u = (UpdateImpl) upd;
+                    Update u = (Update) upd;
                     assertEquals(10, u.user());
                     assertThat(u.date()).isGreaterThan(100);
                 });

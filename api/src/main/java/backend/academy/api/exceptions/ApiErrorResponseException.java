@@ -1,6 +1,6 @@
 package backend.academy.api.exceptions;
 
-import backend.academy.api.model.ApiErrorResponse;
+import backend.academy.api.model.responses.ApiErrorResponse;
 import lombok.Getter;
 
 @Getter

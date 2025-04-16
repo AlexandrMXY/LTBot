@@ -1,7 +1,9 @@
 package backend.academy.scrapper.controllers;
 
-import backend.academy.api.model.TagsListResponse;
-import backend.academy.api.model.TagsRequest;
+import backend.academy.api.model.requests.TagsRequest;
+import backend.academy.api.model.responses.ListLinksResponse;
+import backend.academy.api.model.responses.TagsListResponse;
+import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +33,12 @@ public class TagsController {
     @GetMapping("/tags/{id}")
     public TagsListResponse getDeactivatedTagsList(@PathVariable long id) {
         return new TagsListResponse(id, tagsService.getDeactivatedTagsList(id));
+    }
+
+    @GetMapping("/tags/linksWithTag")
+    public ListLinksResponse getLinksWithTag(@RequestBody TagsRequest request) {
+        return new ListLinksResponse(tagsService.getLinksWithTag(request.userId(), request.tag()).stream()
+                .map(LinkDto::asResponse)
+                .toList());
     }
 }

@@ -1,4 +1,4 @@
-package backend.academy.api.model;
+package backend.academy.api.model.responses;
 
 import java.util.List;
 

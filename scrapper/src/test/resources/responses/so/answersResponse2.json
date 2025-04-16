@@ -9,7 +9,7 @@
             "question_id": 777,
             "answer_id": 100,
             "last_activity_date": 1000,
-            "body": "Lorem ipsum 4"
+            "body_markdown": "Lorem ipsum 4"
         },
         {
             "owner": {
@@ -20,7 +20,7 @@
             "question_id": 778,
             "answer_id": 101,
             "last_activity_date": 1010,
-            "body": "Lorem ipsum 5"
+            "body_markdown": "Lorem ipsum 5"
         },
         {
             "owner": {
@@ -31,7 +31,7 @@
             "question_id": 779,
             "answer_id": 102,
             "last_activity_date": 1020,
-            "body": "Lorem ipsum 7"
+            "body_markdown": "Lorem ipsum 7"
         },
         {
             "owner": {
@@ -42,7 +42,7 @@
             "question_id": 7791,
             "answer_id": 1021,
             "last_activity_date": 50,
-            "body": "Lorem ipsum 6"
+            "body_markdown": "Lorem ipsum 6"
         }
     ],
     "has_more" : false,

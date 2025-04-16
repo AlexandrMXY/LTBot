@@ -1,9 +1,9 @@
 package backend.academy.bot.telegram.commands;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
-import backend.academy.api.model.ApiErrorResponse;
-import backend.academy.api.model.LinkResponse;
-import backend.academy.api.model.ListLinksResponse;
+import backend.academy.api.model.responses.ApiErrorResponse;
+import backend.academy.api.model.responses.LinkResponse;
+import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class ListCommand extends AbstractSimpleCommand {
-
     @Autowired
     private ScrapperService scrapperService;
 
@@ -25,7 +24,11 @@ public class ListCommand extends AbstractSimpleCommand {
                 ListLinksResponse links = scrapperService.getTrackedLinks(message.chat());
                 StringBuilder result = new StringBuilder();
                 for (LinkResponse link : links.links()) {
-                    result.append(link.url()).append("\n");
+                    result.append(link.url());
+                    for (var tag : link.tags()) {
+                        result.append(" ").append(tag);
+                    }
+                    result.append("\n");
                 }
                 if (links.links().isEmpty()) {
                     result.append("No tracked links");

@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 // import static org.mockito.Mockito.*;
 
 import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.api.model.AddLinkRequest;
-import backend.academy.api.model.RemoveLinkRequest;
+import backend.academy.api.model.requests.AddLinkRequest;
+import backend.academy.api.model.requests.RemoveLinkRequest;
 import backend.academy.scrapper.controllers.LinksController;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
@@ -14,36 +14,15 @@ import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
-import backend.academy.scrapper.service.LinksManagementService;
-import backend.academy.scrapper.service.monitoring.GithubMonitor;
-import backend.academy.scrapper.service.monitoring.LinkDistributionService;
-import backend.academy.scrapper.service.monitoring.StackoverflowMonitor;
-import backend.academy.scrapper.service.monitoring.collectors.GithubUpdatesCollector;
-import backend.academy.scrapper.service.monitoring.collectors.StackoverflowUpdatesCollector;
-import backend.academy.scrapper.web.clients.GithubRestClient;
-import backend.academy.scrapper.web.clients.StackoverflowRestClient;
-import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-
-//@SpringBootTest(classes = {
+// @SpringBootTest(classes = {
 //    LinksController.class,
 //    LinksManagementService.class,
 //    LinkDistributionService.class,
@@ -53,7 +32,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 //    StackoverflowMonitor.class,
 //    StackoverflowUpdatesCollector.class,
 //    StackoverflowRestClient.class
-//})
+// })
 @SpringBootTest
 @EnableWebMvc
 public class LinksAddRemoveTest extends AbstractDatabaseTest {

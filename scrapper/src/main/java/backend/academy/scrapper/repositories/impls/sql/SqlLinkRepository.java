@@ -6,6 +6,8 @@ import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.impls.sql.mappers.TrackedLinkMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Scope;
@@ -17,14 +19,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @ConditionalOnProperty(prefix = "app", name = "access-type", havingValue = "sql")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class SqlLinkRepository implements ISqlLinkRepository {
+public class SqlLinkRepository implements LinkRepository {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -47,7 +47,7 @@ public class SqlLinkRepository implements ISqlLinkRepository {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public TrackedLink saveLinkOnly(TrackedLink link) {
+    TrackedLink saveLinkOnly(TrackedLink link) {
         Long id = jdbcTemplate.queryForObject(
                 "select nextval('tracked_link_seq')", new MapSqlParameterSource(), Long.class);
         if (id == null) return null;
@@ -83,14 +83,15 @@ public class SqlLinkRepository implements ISqlLinkRepository {
                 .addValue("id", link.id())
                 .addValue("userId", link.user().id());
         jdbcTemplate.update(
-                "update tracked_link " + "set filters = :filters, "
-                        + "    tags = :tags, "
-                        + "    last_update = :lastUpdate, "
-                        + "    monitoring_service = :monitoringService, "
-                        + "    url = :url, "
-                        + "    user_id = :userId, "
-                        + "    service_id = :serviceId "
-                        + "where id = :id",
+                """
+                update tracked_link set filters = :filters, \
+                    tags = :tags, \
+                    last_update = :lastUpdate, \
+                    monitoring_service = :monitoringService, \
+                    url = :url, \
+                    user_id = :userId, \
+                    service_id = :serviceId \
+                where id = :id""",
                 parameterSource);
     }
 
@@ -133,11 +134,12 @@ public class SqlLinkRepository implements ISqlLinkRepository {
                 .addValue("pageSize", pageable.getPageSize());
 
         var res = jdbcTemplate.queryForStream(
-                "select * from tracked_link tl inner join public.users u on u.id = tl.user_id "
-                        + "where tl.monitoring_service = :monitoringService and tl.last_update < :lastUpdate "
-                        + "order by tl.id "
-                        + "offset :offset "
-                        + "fetch first :pageSize rows only",
+                """
+                select * from tracked_link tl inner join public.users u on u.id = tl.user_id \
+                where tl.monitoring_service = :monitoringService and tl.last_update < :lastUpdate \
+                order by tl.id \
+                offset :offset \
+                fetch first :pageSize rows only""",
                 parameterSource,
                 mapper);
 
@@ -152,6 +154,7 @@ public class SqlLinkRepository implements ISqlLinkRepository {
     }
 
     @Override
+    @Transactional
     public void updateAllByMonitoringServiceAndServiceIdIsIn(
             Long newLastUpdate, String monitoringService, List<String> sIds) {
         if (sIds == null || sIds.isEmpty()) return;
@@ -165,5 +168,28 @@ public class SqlLinkRepository implements ISqlLinkRepository {
                 "update tracked_link tl set last_update = :newLastUpdate "
                         + "where tl.monitoring_service = :monitoringService and tl.service_id in (:ids)",
                 parameterSource);
+    }
+
+    @Override
+    public List<TrackedLink> findAllByUserId(long userId) {
+        SqlParameterSource parameterSource = new MapSqlParameterSource().addValue("userId", userId);
+
+        var res = jdbcTemplate.queryForStream(
+                "select * from tracked_link tl where tl.user_id = :userId", parameterSource, mapper);
+
+        return res.toList();
+    }
+
+    @Override
+    public Optional<TrackedLink> findByUserIdAndUrl(long userId, String url) {
+        SqlParameterSource parameterSource =
+                new MapSqlParameterSource().addValue("userId", userId).addValue("url", url);
+
+        Stream<TrackedLink> res = jdbcTemplate.queryForStream(
+                "select * from tracked_link tl where tl.user_id = :userId and url like :url limit 1",
+                parameterSource,
+                mapper);
+        List<TrackedLink> resList = res.toList();
+        return resList.isEmpty() ? Optional.empty() : Optional.of(resList.getFirst());
     }
 }

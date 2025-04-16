@@ -15,16 +15,16 @@ public class GithubRestClient {
     @Autowired
     public GithubRestClient(ScrapperConfig config) {
         this.client = RestClient.builder()
-            .baseUrl(config.githubApiUrl())
-            .defaultHeader("Authorization", "Bearer " + config.githubToken())
-            .build();
+                .baseUrl(config.githubApiUrl())
+                .defaultHeader("Authorization", "Bearer " + config.githubToken())
+                .build();
     }
 
     public <T> ResponseEntity<T[]> getRequestForArray(String url, Class<T[]> responseType) {
         return client.get()
-            .uri(url)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
-            .toEntity(responseType);
+                .uri(url)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
+                .toEntity(responseType);
     }
 }

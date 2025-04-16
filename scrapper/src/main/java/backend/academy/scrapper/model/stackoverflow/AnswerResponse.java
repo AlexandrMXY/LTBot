@@ -8,4 +8,4 @@ public record AnswerResponse(
         @JsonProperty("question_id") long questionId,
         @JsonProperty("answer_id") long answerId,
         @JsonProperty("last_activity_date") long lastActivity,
-        @JsonProperty("body") String body) {}
+        @JsonProperty("body_markdown") String body) {}

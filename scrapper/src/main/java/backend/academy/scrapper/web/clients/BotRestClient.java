@@ -11,15 +11,15 @@ public class BotRestClient {
     private final RestClient client;
 
     public BotRestClient(ScrapperConfig config) {
-        this.client = RestClient.builder().baseUrl(config.botUrl()).build();;
+        this.client = RestClient.builder().baseUrl(config.botUrl()).build();
     }
 
     public <T> void postRequest(String url, T request) {
         client.post()
-            .uri(url)
-            .body(request)
-            .retrieve()
-            .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
-            .toBodilessEntity();
+                .uri(url)
+                .body(request)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, RequestErrorHandlers::logAndThrow)
+                .toBodilessEntity();
     }
 }
