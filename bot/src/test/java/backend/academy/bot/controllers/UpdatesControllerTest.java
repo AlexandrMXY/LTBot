@@ -29,4 +29,11 @@ class UpdatesControllerTest {
         controller.updates(request);
         verify(telegramService).sendMessage(eq(0L), anyString());
     }
+
+    @Test
+    void updates_requestReceived_sendFormattedToCorrectUser() {
+        var request = new LinkUpdate(0, 1000, "A", "B", "C", LinkUpdate.Types.COMMENT);
+        controller.updates(request);
+        verify(formatter).format(eq(request));
+    }
 }
