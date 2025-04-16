@@ -31,9 +31,10 @@ class UpdatesControllerTest {
     }
 
     @Test
-    void updates_requestReceived_sendFormattedToCorrectUser() {
+    void updates_requestReceived_sendFormattedMessage() {
         var request = new LinkUpdate(0, 1000, "A", "B", "C", LinkUpdate.Types.COMMENT);
         controller.updates(request);
-        verify(formatter).format(eq(request));
+        String formatted = formatter.format(request);
+        verify(telegramService).sendMessage(anyLong(), eq(formatted));
     }
 }
