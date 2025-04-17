@@ -22,7 +22,8 @@ import org.springframework.web.client.RestClient;
 @ExtendWith(MockitoExtension.class)
 class ScrapperServiceTest {
     public static final String SCRAPPER_URL = "http://localhost:8080";
-    private static final BotConfig TEST_CONFIG = new BotConfig("", SCRAPPER_URL);
+    private static final BotConfig TEST_CONFIG = new BotConfig("", SCRAPPER_URL,
+        new BotConfig.KafkaTopics("updates", "dead-letters"));
 
     @Spy
     private RestClient restClient = new BotSpringConfig().scrapperRestClient(TEST_CONFIG);

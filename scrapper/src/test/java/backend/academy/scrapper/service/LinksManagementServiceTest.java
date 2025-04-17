@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
@@ -30,7 +30,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class LinksManagementServiceTest {
     @Spy
-    private ScrapperConfig scrapperConfig = new ScrapperConfig("", null, "f*", "", "", "", null, 10, 10);
+    private ScrapperConfig scrapperConfig = new ScrapperConfig(
+        "",
+        null,
+        ".*",
+        "",
+        "",
+        "",
+        null,
+        null,
+        10,
+        10,
+        new ScrapperConfig.KafkaTopics("updates", "dead-letters"));
 
     @Mock
     private LinkRepository linkRepository;

@@ -2,7 +2,7 @@ package backend.academy.scrapper.service;
 
 import backend.academy.api.exceptions.InvalidRequestException;
 import backend.academy.api.exceptions.NotFoundException;
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;

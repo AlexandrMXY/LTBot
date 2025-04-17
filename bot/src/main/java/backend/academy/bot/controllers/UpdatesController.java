@@ -1,8 +1,7 @@
 package backend.academy.bot.controllers;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.bot.service.telegram.TelegramService;
-import backend.academy.bot.telegram.formatters.UpdateFormatter;
+import backend.academy.bot.service.UpdatesService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -15,15 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 public class UpdatesController {
     @Autowired
-    private TelegramService telegramService;
-
-    @Autowired
-    private UpdateFormatter formatter;
+    private UpdatesService updatesService;
 
     @PostMapping("/updates")
     public ResponseEntity<?> updates(@RequestBody LinkUpdate update) {
-        telegramService.sendMessage(update.chatId(), formatter.format(update));
-
+        updatesService.processUpdate(update);
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
 }

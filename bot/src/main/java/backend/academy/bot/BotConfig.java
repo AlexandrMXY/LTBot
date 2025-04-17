@@ -6,4 +6,13 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app")
-public record BotConfig(@NotEmpty String telegramToken, @NotEmpty String scrapperUrl) {}
+public record BotConfig(
+    @NotEmpty String telegramToken,
+    @NotEmpty String scrapperUrl,
+    KafkaTopics kafkaTopics) {
+
+    public record KafkaTopics (
+        @NotEmpty String updates,
+        @NotEmpty String deadLettersQueue
+    ) { }
+}

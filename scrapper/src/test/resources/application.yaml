@@ -15,6 +15,9 @@ app:
   update-threads-cnt: 10
   update-thread-batch-size: 100
 
+  kafka-topics:
+    updates: updates
+    dead-letters-queue: dead-letters
 
 
 spring:

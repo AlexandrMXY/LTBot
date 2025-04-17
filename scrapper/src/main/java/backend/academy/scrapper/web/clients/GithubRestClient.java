@@ -1,6 +1,6 @@
 package backend.academy.scrapper.web.clients;
 
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.util.RequestErrorHandlers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;

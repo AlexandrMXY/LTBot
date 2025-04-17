@@ -4,9 +4,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
+import backend.academy.scrapper.service.notification.HttpBotNotifierService;
 import backend.academy.scrapper.web.clients.BotRestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,5 +1,6 @@
 package backend.academy.scrapper;
 
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import org.mockito.Mockito;
@@ -51,7 +52,9 @@ public class SpringTestConfig {
                 "http://localhost:8082",
                 "http://localhost:8083",
                 ScrapperConfig.DBAccessImpl.ORM,
+                ScrapperConfig.MessageTransport.HTTP,
                 10,
-                10);
+                10,
+                new ScrapperConfig.KafkaTopics("updates", "dead-letters"));
     }
 }

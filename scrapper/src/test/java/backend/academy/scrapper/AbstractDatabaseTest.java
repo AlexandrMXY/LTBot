@@ -1,5 +1,6 @@
 package backend.academy.scrapper;
 
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Properties;
 import javax.sql.DataSource;

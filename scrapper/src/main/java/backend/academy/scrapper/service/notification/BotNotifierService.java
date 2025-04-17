@@ -1,4 +1,4 @@
-package backend.academy.scrapper.service;
+package backend.academy.scrapper.service.notification;
 
 import backend.academy.scrapper.dto.updates.Updates;
 

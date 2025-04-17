@@ -1,6 +1,6 @@
 package backend.academy.scrapper.service.monitoring;
 
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.repositories.LinkRepository;
