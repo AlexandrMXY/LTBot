@@ -1,6 +1,10 @@
 package backend.academy.bot.service.telegram;
 
 import backend.academy.bot.dto.MessageDto;
+import backend.academy.bot.telegram.command.Command;
+import backend.academy.bot.telegram.command.session.SessionStateManager;
+import backend.academy.bot.telegram.command.session.events.MessageEvent;
+import backend.academy.bot.telegram.formatters.LinksListFormatter;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import jakarta.annotation.PostConstruct;
@@ -15,9 +19,10 @@ import org.springframework.stereotype.Service;
 public class TelegramEventHandlerService {
     @Autowired
     private TelegramService telegramService;
-
     @Autowired
-    private UserSessionManagementService userSessionManagementService;
+    private SessionStateManager sessionStateManager;
+    @Autowired
+    private CommandProcessorService commandProcessorService;
 
     @PostConstruct
     private void initListener() {
@@ -26,7 +31,7 @@ public class TelegramEventHandlerService {
                 try {
                     Message message = update.message();
                     if (message != null) {
-                        userSessionManagementService.processMessage(new MessageDto(message));
+                        processMessage(new MessageDto(message));
                     }
                 } catch (Throwable t) {
                     log.atWarn()
@@ -38,5 +43,18 @@ public class TelegramEventHandlerService {
 
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
+    }
+
+    private void processMessage(MessageDto message) {
+        if (commandProcessorService.isCommand(message)) {
+            Command command = commandProcessorService.getCommand(message);
+            if (command == null) {
+                telegramService.sendMessage(message.chat(), "Unknown command");
+                return;
+            }
+            sessionStateManager.onCommand(message.chat(), command, new MessageEvent(message));
+            return;
+        }
+        sessionStateManager.onUpdate(message.chat(), new MessageEvent(message));
     }
 }

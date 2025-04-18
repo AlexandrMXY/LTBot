@@ -2,6 +2,8 @@ app:
   telegram-token: ${TELEGRAM_TOKEN} # env variable
   scrapper-url: 'http://localhost:8081'
 
+  session-timeout: 600000 # ms
+
   kafka-topics:
     updates: updates
     dead-letters-queue: dead-letters
@@ -39,6 +41,8 @@ logging:
   structured:
     format:
       console: ecs
+  level:
+    backend.academy: debug
 
 server:
   port: 8080

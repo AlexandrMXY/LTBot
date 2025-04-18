@@ -10,4 +10,9 @@ public class ApiErrorResponseException extends RuntimeException {
     public ApiErrorResponseException(ApiErrorResponse details) {
         this.details = details;
     }
+
+    @Override
+    public String getMessage() {
+        return details == null ? super.getMessage() : details.description();
+    }
 }

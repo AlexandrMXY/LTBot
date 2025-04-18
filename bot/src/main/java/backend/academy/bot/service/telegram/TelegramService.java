@@ -25,6 +25,9 @@ public class TelegramService {
     }
 
     public void sendMessage(long chatId, String message) {
+        if (message == null || message.isEmpty()) {
+            return;
+        }
         SendMessage request = new SendMessage(chatId, message);
         var response = bot.execute(request);
         if (!response.isOk()) {

@@ -1,5 +1,6 @@
 package backend.academy.bot;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -9,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 public record BotConfig(
     @NotEmpty String telegramToken,
     @NotEmpty String scrapperUrl,
+    @Min(1000) long sessionTimeout,
     KafkaTopics kafkaTopics) {
 
     public record KafkaTopics (

@@ -1,7 +1,7 @@
 package backend.academy.bot.service.telegram;
 
 import backend.academy.bot.dto.MessageDto;
-import backend.academy.bot.telegram.commands.Command;
+import backend.academy.bot.telegram.command.Command;
 import backend.academy.bot.telegram.session.SessionContext;
 import backend.academy.bot.telegram.session.SessionStateInitializer;
 import backend.academy.bot.telegram.session.TelegramResponse;
@@ -26,9 +26,6 @@ public class CommandProcessorService {
     private final Map<String, Command> commands;
     private final TelegramBot bot;
 
-    @Autowired
-    @Qualifier("unknownCommandSessionStateInitializer")
-    private SessionStateInitializer unknownCommandSessionStateInitializer;
 
     @Autowired
     public CommandProcessorService(List<Command> commands, TelegramBot bot) {
@@ -56,7 +53,7 @@ public class CommandProcessorService {
         return message.message().startsWith(COMMAND_PREFIX);
     }
 
-    public SessionStateInitializer getSessionStateInitializer(MessageDto messageDto) {
+    public Command getCommand(MessageDto messageDto) {
         if (isCommand(messageDto)) {
             int delimIndex = messageDto.message().indexOf(' ');
             var commandName = messageDto
@@ -64,19 +61,8 @@ public class CommandProcessorService {
                     .substring(
                             COMMAND_PREFIX.length(),
                             delimIndex == -1 ? messageDto.message().length() : delimIndex);
-            if (commands.containsKey(commandName)) {
-                return commands.get(commandName).getSessionStateInitializer();
-            }
-            return unknownCommandSessionStateInitializer;
+            return commands.get(commandName);
         }
-
-        return () -> new TelegramSessionState() {
-            @Override
-            public SessionUpdateResult updateState(MessageDto message, SessionContext context) {
-                return new SessionUpdateResult(
-                        null,
-                        new TelegramResponse(message.chat(), "Invalid message. Type /help for list of all commands"));
-            }
-        };
+        return null;
     }
 }
