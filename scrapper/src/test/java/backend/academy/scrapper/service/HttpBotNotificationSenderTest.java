@@ -7,7 +7,7 @@ import backend.academy.api.model.LinkUpdate;
 import backend.academy.scrapper.configuration.ScrapperConfig;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
-import backend.academy.scrapper.service.notification.HttpBotNotifierService;
+import backend.academy.scrapper.service.notification.HttpBotNotificationSender;
 import backend.academy.scrapper.web.clients.BotRestClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,11 +23,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 
 // @ExtendWith(MockitoExtension.class)
-@SpringBootTest(classes = {HttpBotNotifierService.class, BotRestClient.class})
+@SpringBootTest(classes = {HttpBotNotificationSender.class, BotRestClient.class})
 @EnableConfigurationProperties(value = ScrapperConfig.class)
-class HttpBotNotifierServiceTest {
+class HttpBotNotificationSenderTest {
     @Autowired
-    private HttpBotNotifierService service;
+    private HttpBotNotificationSender service;
 
     private WireMockServer wireMock;
 

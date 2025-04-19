@@ -55,6 +55,10 @@ spring:
   cloud.zookeeper:
     config.enabled: false
     connect-string: localhost:2181
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 
 logging:
@@ -74,3 +78,4 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+debug:

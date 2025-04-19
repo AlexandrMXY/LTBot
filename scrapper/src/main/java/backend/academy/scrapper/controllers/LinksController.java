@@ -6,7 +6,7 @@ import backend.academy.api.model.requests.RemoveLinkRequest;
 import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.scrapper.dto.LinkDto;
-import backend.academy.scrapper.service.LinksManagementService;
+import backend.academy.scrapper.service.LinksService;
 import backend.academy.scrapper.service.TagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 public class LinksController {
     @Autowired
-    private LinksManagementService linksService;
+    private LinksService linksService;
 
     @Autowired
     private TagsService tagsService;

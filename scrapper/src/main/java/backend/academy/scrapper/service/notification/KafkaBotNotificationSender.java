@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @ConditionalOnProperty(prefix = "app", name = "message-transport", havingValue = "kafka")
-public class KafkaBotNotifierService implements BotNotifierService {
+public class KafkaBotNotificationSender implements BotNotificationSender {
     @Autowired
     @Qualifier(KafkaConfig.KafkaBeans.KAFKA_TEMPLATE_BEAN)
     private KafkaTemplate kafkaTemplate;

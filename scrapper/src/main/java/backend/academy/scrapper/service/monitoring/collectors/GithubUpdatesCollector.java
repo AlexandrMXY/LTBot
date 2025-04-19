@@ -3,6 +3,7 @@ package backend.academy.scrapper.service.monitoring.collectors;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
+import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.model.github.Issue;
 import backend.academy.scrapper.util.StringUtils;
 import backend.academy.scrapper.web.clients.GithubRestClient;
@@ -50,7 +51,8 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
                                 i.htmlUrl(),
                                 StringUtils.clamp(i.body(), MAX_PREVIEW_LENGTH),
                                 i.user().login(),
-                                i.pullRequest() == null ? Update.Types.ISSUE : Update.Types.PULL_REQUEST))
+                                i.pullRequest() == null ? Update.Types.ISSUE : Update.Types.PULL_REQUEST,
+                                tl.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : tl.user().notificationTime()))
                         .toList());
     }
 

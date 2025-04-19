@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.requests.AddLinkRequest;
-import backend.academy.bot.BotConfig;
-import backend.academy.bot.BotSpringConfig;
+import backend.academy.bot.config.BotConfig;
+import backend.academy.bot.config.BotSpringConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.List;

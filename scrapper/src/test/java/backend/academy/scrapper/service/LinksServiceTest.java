@@ -28,7 +28,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class LinksManagementServiceTest {
+class LinksServiceTest {
     @Spy
     private ScrapperConfig scrapperConfig = new ScrapperConfig(
         "",
@@ -53,14 +53,14 @@ class LinksManagementServiceTest {
     private LinkDistributionService linkDistributionService;
 
     @InjectMocks
-    private LinksManagementService linksManagementService;
+    private LinksService linksService;
 
     @BeforeEach
     public void init() {
         try {
-            var m = linksManagementService.getClass().getDeclaredMethod("init");
+            var m = linksService.getClass().getDeclaredMethod("init");
             m.setAccessible(true);
-            m.invoke(linksManagementService);
+            m.invoke(linksService);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -70,7 +70,7 @@ class LinksManagementServiceTest {
     public void addLink_invalidTags_shouldThrow() {
         LinkDto link = new LinkDto("", List.of("q"), List.of(""), 0);
 
-        assertThrows(InvalidRequestException.class, () -> linksManagementService.addLink(0, link));
+        assertThrows(InvalidRequestException.class, () -> linksService.addLink(0, link));
     }
 
     @Test
@@ -79,7 +79,7 @@ class LinksManagementServiceTest {
 
         LinkDto link = new LinkDto("", List.of("f"), List.of(""), 0);
 
-        assertThrows(UnsupportedLinkException.class, () -> linksManagementService.addLink(0, link));
+        assertThrows(UnsupportedLinkException.class, () -> linksService.addLink(0, link));
     }
 
     @Test
@@ -98,7 +98,7 @@ class LinksManagementServiceTest {
 
         LinkDto link = new LinkDto("", List.of("f"), List.of(""), 0);
 
-        linksManagementService.addLink(id, link);
+        linksService.addLink(id, link);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         ArgumentCaptor<TrackedLink> linkCaptor = ArgumentCaptor.forClass(TrackedLink.class);
@@ -124,7 +124,7 @@ class LinksManagementServiceTest {
 
         LinkDto link = new LinkDto("", List.of("f"), List.of(""), 0);
 
-        linksManagementService.addLink(id, link);
+        linksService.addLink(id, link);
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         ArgumentCaptor<TrackedLink> linkCaptor = ArgumentCaptor.forClass(TrackedLink.class);
@@ -149,14 +149,14 @@ class LinksManagementServiceTest {
     public void deleteLink_userDoesntExists_throwNotFoundException() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> linksManagementService.deleteLink(0, ""));
+        assertThrows(NotFoundException.class, () -> linksService.deleteLink(0, ""));
     }
 
     @Test
     public void deleteLink_linkDoesntExists_throwNotFoundException() {
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(new User(0, List.of())));
 
-        assertThrows(NotFoundException.class, () -> linksManagementService.deleteLink(0, "qwerty"));
+        assertThrows(NotFoundException.class, () -> linksService.deleteLink(0, "qwerty"));
     }
 
     @Test
@@ -165,7 +165,7 @@ class LinksManagementServiceTest {
         User user = new User(0, listOf(link));
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(user));
 
-        assertEquals(new LinkDto(link), linksManagementService.deleteLink(0, "qwerty"));
+        assertEquals(new LinkDto(link), linksService.deleteLink(0, "qwerty"));
     }
 
     @Test
@@ -174,7 +174,7 @@ class LinksManagementServiceTest {
         User user = new User(0, listOf(link));
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(user));
 
-        linksManagementService.deleteLink(0, "qwerty");
+        linksService.deleteLink(0, "qwerty");
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
         ArgumentCaptor<Long> linkIdCaptor = ArgumentCaptor.forClass(Long.class);
@@ -193,7 +193,7 @@ class LinksManagementServiceTest {
 
         when(userRepository.findById(eq(0L))).thenReturn(Optional.of(new User(0, List.of(link1, link2, link3))));
 
-        var res = linksManagementService.getLinks(0);
+        var res = linksService.getLinks(0);
         var expected = List.of(new LinkDto(link1), new LinkDto(link2), new LinkDto(link3));
 
         assertIterableEquals(expected, res);

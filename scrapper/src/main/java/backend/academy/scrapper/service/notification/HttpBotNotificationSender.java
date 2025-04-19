@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @ConditionalOnProperty(prefix = "app", name = "message-transport", havingValue = "http")
-public class HttpBotNotifierService implements BotNotifierService {
+public class HttpBotNotificationSender implements BotNotificationSender {
     @Autowired
     private BotRestClient client;
 

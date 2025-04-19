@@ -1,7 +1,6 @@
 package backend.academy.bot.telegram.command.session;
 
-import backend.academy.api.model.responses.LinkResponse;
-import backend.academy.bot.BotConfig;
+import backend.academy.bot.config.BotConfig;
 import backend.academy.bot.telegram.command.Command;
 import backend.academy.bot.telegram.command.session.events.MessageEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Service

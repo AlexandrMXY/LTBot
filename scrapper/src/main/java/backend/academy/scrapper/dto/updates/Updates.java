@@ -1,28 +1,55 @@
 package backend.academy.scrapper.dto.updates;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
 
 @ToString
-public class Updates {
-    private final List<Update> updateDetails = new ArrayList<>();
+@NoArgsConstructor
+public class Updates implements Iterable<Update> {
+    private List<Update> updates = new ArrayList<>();
+
+    public Updates(List<Update> updates) {
+        this.updates = updates;
+    }
 
     public void addUpdate(Update details) {
-        updateDetails.add(details);
+        updates.add(details);
     }
 
     public Updates addUpdates(List<Update> updates) {
-        updateDetails.addAll(updates);
+        updates.addAll(updates);
         return this;
     }
 
     public Updates mergeResult(Updates result) {
-        updateDetails.addAll(result.updateDetails);
+        updates.addAll(result.updates);
         return this;
     }
 
+    public Updates extractDelayed() {
+        Updates delayed = new Updates();
+        List<Update> notDelayed = new ArrayList<>();
+        for (Update update : updates) {
+            if (update.delayedNotification()) {
+                delayed.addUpdate(update);
+            } else {
+                notDelayed.add(update);
+            }
+        }
+        this.updates = notDelayed;
+        return delayed;
+    }
+
     public List<Update> getUpdates() {
-        return updateDetails;
+        return updates;
+    }
+
+    @Override
+    public @NotNull Iterator<Update> iterator() {
+        return updates.iterator();
     }
 }

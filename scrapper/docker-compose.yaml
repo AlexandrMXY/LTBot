@@ -73,6 +73,13 @@ services:
     volumes:
       - ./kui/config.yml:/etc/kafkaui/config.yaml
       - ./kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+
+  redis:
+    image: "redis:7.4"
+    container_name: redis
+    ports:
+      - '6379:6379'
+
 volumes:
   db-data:
 

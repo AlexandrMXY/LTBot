@@ -1,7 +1,7 @@
 package backend.academy.bot.kafka;
 
 import backend.academy.api.model.LinkUpdate;
-import backend.academy.bot.BotConfig;
+import backend.academy.bot.config.BotConfig;
 import backend.academy.bot.config.KafkaConfig;
 import backend.academy.bot.service.UpdatesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.BatchAcknowledgingMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 @Component
 public class UpdatesListener {

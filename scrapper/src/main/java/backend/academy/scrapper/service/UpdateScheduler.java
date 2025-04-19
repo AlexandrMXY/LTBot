@@ -3,7 +3,7 @@ package backend.academy.scrapper.service;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
-import backend.academy.scrapper.service.notification.BotNotifierService;
+import backend.academy.scrapper.service.notification.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,7 +16,7 @@ public class UpdateScheduler {
     private LinkDistributionService linkDistributionService;
 
     @Autowired
-    private BotNotifierService botNotifierService;
+    private NotificationService notificationService;
 
     @Scheduled(fixedDelayString = "${app.update-delay}")
     public void checkForUpdates() {
@@ -34,6 +34,6 @@ public class UpdateScheduler {
     }
 
     private void updatesConsumer(Updates updates) {
-        botNotifierService.sendUpdates(updates);
+        notificationService.sendUpdates(updates);
     }
 }

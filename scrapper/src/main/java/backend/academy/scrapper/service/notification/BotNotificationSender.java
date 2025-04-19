@@ -2,6 +2,6 @@ package backend.academy.scrapper.service.notification;
 
 import backend.academy.scrapper.dto.updates.Updates;
 
-public interface BotNotifierService {
+public interface BotNotificationSender {
     void sendUpdates(Updates updates);
 }

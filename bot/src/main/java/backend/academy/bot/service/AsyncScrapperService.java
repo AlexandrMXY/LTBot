@@ -1,6 +1,7 @@
 package backend.academy.bot.service;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
+import backend.academy.api.model.NotificationPolicy;
 import backend.academy.api.model.requests.AddLinkRequest;
 import backend.academy.api.model.requests.LinkTagRequest;
 import backend.academy.api.model.requests.RemoveLinkRequest;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @Service
@@ -125,6 +128,22 @@ public class AsyncScrapperService {
             .bodyToMono(ListLinksResponse.class);
     }
 
+    public Mono<ResponseEntity<Void>> setNotificationPolicy(long chatId, NotificationPolicy policy) {
+        return client.post()
+            .uri("notifications/{user}/policy", Map.of("user", chatId))
+            .bodyValue(policy)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, this::errorResponseHandler)
+            .toBodilessEntity();
+    }
+
+    public Mono<NotificationPolicy> getNotificationPolicy(long chatId) {
+        return client.get()
+            .uri("notifications/{user}/policy", Map.of("user", chatId))
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, this::errorResponseHandler)
+            .bodyToMono(NotificationPolicy.class);
+    }
 
     private Mono<Throwable> errorResponseHandler(ClientResponse clientResponse) {
         return clientResponse.bodyToMono(String.class)

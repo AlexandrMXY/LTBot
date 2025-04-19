@@ -5,8 +5,9 @@ app:
   session-timeout: 600000 # ms
 
   kafka-topics:
-    updates: updates
     dead-letters-queue: dead-letters
+    updates: updates
+
 
 spring:
   profiles:

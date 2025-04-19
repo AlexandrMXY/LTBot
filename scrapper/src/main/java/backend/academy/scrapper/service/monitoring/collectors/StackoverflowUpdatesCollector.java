@@ -3,6 +3,7 @@ package backend.academy.scrapper.service.monitoring.collectors;
 import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
+import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.model.stackoverflow.AnswerResponse;
 import backend.academy.scrapper.model.stackoverflow.AnswersResponse;
 import backend.academy.scrapper.model.stackoverflow.CommentResponse;
@@ -56,7 +57,8 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
                         link.url(),
                         StringUtils.clamp(ans.body(), MAX_PREVIEW_LENGTH),
                         ans.owner().displayName(),
-                        Update.Types.ANSWER)));
+                        Update.Types.ANSWER,
+                        link.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : link.user().notificationTime())));
 
         comments.stream()
                 .filter((comment) -> comment.creationDate() >= link.lastUpdate())
@@ -67,7 +69,8 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
                             link.url(),
                             StringUtils.clamp(comment.body(), MAX_PREVIEW_LENGTH),
                             comment.owner().displayName(),
-                            Update.Types.COMMENT));
+                            Update.Types.COMMENT,
+                            link.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : link.user().notificationTime()));
                 });
 
         return updates;

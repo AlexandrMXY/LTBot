@@ -8,7 +8,7 @@ import backend.academy.api.model.requests.RemoveLinkRequest;
 import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.scrapper.dto.LinkDto;
-import backend.academy.scrapper.service.LinksManagementService;
+import backend.academy.scrapper.service.LinksService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class LinksControllerTest {
     @Mock
-    public LinksManagementService linksManagementService;
+    public LinksService linksService;
 
     @InjectMocks
     public LinksController linksController;
@@ -31,7 +31,7 @@ public class LinksControllerTest {
                 new LinkDto("1", List.of("B"), List.of("BB", "BBB"), 1L),
                 new LinkDto("2", List.of("C"), List.of("CC", "CCC"), 2L));
 
-        when(linksManagementService.getLinks(anyLong())).thenReturn(results);
+        when(linksService.getLinks(anyLong())).thenReturn(results);
 
         assertEquals(
                 new ListLinksResponse(List.of(
@@ -43,7 +43,7 @@ public class LinksControllerTest {
 
     @Test
     public void addLink_requestReceived_shouldReturnLinkResponse() {
-        when(linksManagementService.addLink(anyLong(), any())).thenAnswer((i) -> {
+        when(linksService.addLink(anyLong(), any())).thenAnswer((i) -> {
             var dto = i.getArgument(1, LinkDto.class);
             return new LinkDto(dto.link(), dto.tags(), dto.filters(), i.getArgument(0));
         });
@@ -55,7 +55,7 @@ public class LinksControllerTest {
 
     @Test
     public void deleteLink_requestReceived_shouldReturnLinkResponse() {
-        when(linksManagementService.deleteLink(anyLong(), any()))
+        when(linksService.deleteLink(anyLong(), any()))
                 .thenAnswer((i) -> new LinkDto(i.getArgument(1), List.of("A"), List.of("AA", "AAA"), i.getArgument(0)));
 
         var response = linksController.deleteLinks(11, new RemoveLinkRequest("qwerty"));
