@@ -12,6 +12,7 @@ import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import backend.academy.scrapper.service.monitoring.LinkMonitor;
+import backend.academy.scrapper.util.FiltersConverter;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinksService {
     @Autowired
     private LinkRepository linkRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private ScrapperConfig config;
-
     @Autowired
     private LinkDistributionService linkDistributionService;
 
@@ -69,7 +67,7 @@ public class LinksService {
                 link.link(),
                 linkMonitor,
                 link.tags(),
-                link.filters(),
+                FiltersConverter.parseFilters(link.filters()),
                 serviceId,
                 System.currentTimeMillis() / 1000L);
 

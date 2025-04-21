@@ -57,7 +57,7 @@ public class User {
     private NotificationStrategy notificationStrategy;
 
     @Column(name = "notification_time")
-    private int notificationTime;
+    private Integer notificationTime;
 
     public List<TrackedLink> links() {
         return links;

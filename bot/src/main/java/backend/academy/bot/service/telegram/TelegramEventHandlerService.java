@@ -4,7 +4,6 @@ import backend.academy.bot.dto.MessageDto;
 import backend.academy.bot.telegram.command.Command;
 import backend.academy.bot.telegram.command.session.SessionStateManager;
 import backend.academy.bot.telegram.command.session.events.MessageEvent;
-import backend.academy.bot.telegram.formatters.LinksListFormatter;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import jakarta.annotation.PostConstruct;
@@ -20,9 +19,7 @@ public class TelegramEventHandlerService {
     @Autowired
     private TelegramService telegramService;
     @Autowired
-    private SessionStateManager sessionStateManager;
-    @Autowired
-    private CommandProcessorService commandProcessorService;
+    private MessageProcessorService messageProcessorService;
 
     @PostConstruct
     private void initListener() {
@@ -31,7 +28,7 @@ public class TelegramEventHandlerService {
                 try {
                     Message message = update.message();
                     if (message != null) {
-                        processMessage(new MessageDto(message));
+                        messageProcessorService.processMessage(new MessageDto(message));
                     }
                 } catch (Throwable t) {
                     log.atWarn()
@@ -45,16 +42,5 @@ public class TelegramEventHandlerService {
         });
     }
 
-    private void processMessage(MessageDto message) {
-        if (commandProcessorService.isCommand(message)) {
-            Command command = commandProcessorService.getCommand(message);
-            if (command == null) {
-                telegramService.sendMessage(message.chat(), "Unknown command");
-                return;
-            }
-            sessionStateManager.onCommand(message.chat(), command, new MessageEvent(message));
-            return;
-        }
-        sessionStateManager.onUpdate(message.chat(), new MessageEvent(message));
-    }
+
 }

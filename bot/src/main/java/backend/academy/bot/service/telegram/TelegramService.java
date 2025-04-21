@@ -14,16 +14,6 @@ public class TelegramService {
     @Autowired
     private TelegramBot bot;
 
-    public void sendResponse(TelegramResponse response) {
-        if (response == null) {
-            return;
-        }
-
-        for (String message : response.messages()) {
-            sendMessage(response.userId(), message);
-        }
-    }
-
     public void sendMessage(long chatId, String message) {
         if (message == null || message.isEmpty()) {
             return;

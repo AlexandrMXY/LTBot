@@ -1,0 +1,54 @@
+app:
+  telegram-token: ${TELEGRAM_TOKEN} # env variable
+  scrapper-url: 'http://localhost:8081'
+
+  session-timeout: 600000 # ms
+
+  kafka-topics:
+    dead-letters-queue: dead-letters
+    updates: updates
+
+
+spring:
+  profiles:
+    default: prod
+  application:
+    name: Bot
+  liquibase:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  kafka:
+#    bootstrap-servers: localhost:19092
+    consumer.properties:
+      enable.auto.commit: false
+      auto.offset.reset: earliest
+      isolation.level: read_committed
+      fetch.min.bytes: 1024
+      fetch.max.bytes: 1048576
+      fetch.max.wait.ms: 10000
+      max.poll.interval.ms: 10000
+      max.poll.records: 10
+  #      schema.registry.url: http://localhost:8083
+  cloud.zookeeper:
+    config.enabled: false
+#    connect-string: localhost:2181
+
+
+logging:
+  structured:
+    format:
+      console: ecs
+  level:
+    backend.academy: debug
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui

@@ -5,19 +5,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.api.exceptions.NotFoundException;
 import backend.academy.api.model.requests.TagsRequest;
-import backend.academy.scrapper.AbstractDatabaseTest;
+import backend.academy.scrapper.AbstractAppTest;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
+import backend.academy.scrapper.entities.filters.Filters;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TagsControllerTest extends AbstractDatabaseTest {
+class TagsControllerTest extends AbstractAppTest {
     @Autowired
     TagsController tagsController;
 
@@ -88,9 +91,9 @@ class TagsControllerTest extends AbstractDatabaseTest {
     @Test
     void getLinksWithTag_linksFound_shouldReturnListOfAllLinks() {
         User u = new User(5, new ArrayList<>(), List.of());
-        TrackedLink l1 = new TrackedLink(0, u, "a", "ms", List.of("tag"), List.of(), "sid", 777);
-        TrackedLink l2 = new TrackedLink(0, u, "aa", "ms", List.of("tag"), List.of(), "sid", 777);
-        TrackedLink l3 = new TrackedLink(0, u, "aaa", "ms", List.of("tag1"), List.of(), "sid", 777);
+        TrackedLink l1 = new TrackedLink(0, u, "a", "ms", List.of("tag"), new Filters(), "sid", 777);
+        TrackedLink l2 = new TrackedLink(0, u, "aa", "ms", List.of("tag"), new Filters(), "sid", 777);
+        TrackedLink l3 = new TrackedLink(0, u, "aaa", "ms", List.of("tag1"), new Filters(), "sid", 777);
         u.links().add(l1);
         u.links().add(l2);
         u.links().add(l3);

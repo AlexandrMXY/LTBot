@@ -11,6 +11,7 @@ import backend.academy.scrapper.dto.updates.Update;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
+import backend.academy.scrapper.entities.filters.Filters;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -76,7 +77,7 @@ class StackoverflowUpdatesCollectorTest {
                 "http://127.0.0.1",
                 "stackoverflowMonitor",
                 List.of(),
-                List.of(),
+                new Filters(),
                 "321",
                 100L)));
 
@@ -128,7 +129,7 @@ class StackoverflowUpdatesCollectorTest {
                         "http://127.0.0.1",
                         "stackoverflowMonitor",
                         List.of(),
-                        List.of(),
+                        new Filters(),
                         "1",
                         100L),
                 new TrackedLink(
@@ -137,7 +138,7 @@ class StackoverflowUpdatesCollectorTest {
                         "http://127.0.0.1",
                         "stackoverflowMonitor",
                         List.of(),
-                        List.of(),
+                        new Filters(),
                         "2",
                         100L)));
 
@@ -194,7 +195,7 @@ class StackoverflowUpdatesCollectorTest {
                 "http://127.0.0.1",
                 "stackoverflowMonitor",
                 List.of(),
-                List.of(),
+                new Filters(),
                 "1",
                 100L)));
 
@@ -231,7 +232,7 @@ class StackoverflowUpdatesCollectorTest {
                 "http://127.0.0.1",
                 "stackoverflowMonitor",
                 List.of(),
-                List.of(),
+                new Filters(),
                 "1",
                 10L)));
 
@@ -265,7 +266,7 @@ class StackoverflowUpdatesCollectorTest {
                 "http://127.0.0.1",
                 "stackoverflowMonitor",
                 List.of(),
-                List.of(),
+                new Filters(),
                 "1",
                 100L)));
 

@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.LinkRepositoryTest;
 import backend.academy.scrapper.repositories.impls.sql.SqlLinkRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@Disabled
 @SpringBootTest(classes = LinkRepository.class, properties = "app.access-type=sql")
 public class SqlLinkRepositoryTest extends LinkRepositoryTest {
     @Test

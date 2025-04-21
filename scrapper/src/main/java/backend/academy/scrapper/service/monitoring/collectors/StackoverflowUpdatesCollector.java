@@ -29,7 +29,9 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
     @Override
     public Updates getUpdates(Stream<TrackedLink> links) {
         return links.reduce(
-                new Updates(), (updates, link) -> updates.mergeResult(getLinkUpdates(link)), Updates::mergeResult);
+            new Updates(),
+            (updates, link) ->
+                    updates.mergeResult(getLinkUpdates(link)), Updates::mergeResult);
     }
 
     private Updates getLinkUpdates(TrackedLink link) {
@@ -51,27 +53,29 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
 
         answers.stream()
                 .filter((ans) -> ans.creationDate() >= link.lastUpdate())
-                .forEach((ans) -> updates.addUpdate(new Update(
+                .map((ans) -> new Update(
                         link.user().id(),
                         ans.creationDate(),
                         link.url(),
                         StringUtils.clamp(ans.body(), MAX_PREVIEW_LENGTH),
                         ans.owner().displayName(),
                         Update.Types.ANSWER,
-                        link.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : link.user().notificationTime())));
+                        link.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : link.user().notificationTime()))
+                .filter(link.filters()::validate)
+                .forEach(updates::addUpdate);
 
         comments.stream()
                 .filter((comment) -> comment.creationDate() >= link.lastUpdate())
-                .forEach((comment) -> {
-                    updates.addUpdate(new Update(
+                .map((comment) ->  new Update(
                             link.user().id(),
                             comment.creationDate(),
                             link.url(),
                             StringUtils.clamp(comment.body(), MAX_PREVIEW_LENGTH),
                             comment.owner().displayName(),
                             Update.Types.COMMENT,
-                            link.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : link.user().notificationTime()));
-                });
+                            link.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : link.user().notificationTime()))
+                .filter(link.filters()::validate)
+                .forEach(updates::addUpdate);
 
         return updates;
     }
@@ -113,4 +117,5 @@ public class StackoverflowUpdatesCollector implements LinkUpdatesCollector {
 
         return result;
     }
+
 }

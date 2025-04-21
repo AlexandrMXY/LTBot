@@ -3,12 +3,13 @@ package backend.academy.scrapper.repositories;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import backend.academy.scrapper.AbstractDatabaseTest;
+import backend.academy.scrapper.AbstractAppTest;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import backend.academy.scrapper.entities.filters.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 @Slf4j
-public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
+public abstract class LinkRepositoryTest extends AbstractAppTest {
     @Autowired
     protected LinkRepository repository;
 
@@ -39,7 +40,7 @@ public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
     @Transactional
     public void save_newLink_savedSuccessfully() {
         TrackedLink link = new TrackedLink(
-                0, new User(0, new ArrayList<>()), "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
+                0, new User(0, new ArrayList<>()), "https://localhost", "AAA", List.of(), new Filters(), "1010", 10L);
         link.user().links().add(link);
 
         TrackedLink saved = repository.save(link);
@@ -51,13 +52,13 @@ public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
     @Transactional
     public void save_addAnotherLinkToUser_savedSuccessfully() {
         User u = new User(1, new ArrayList<>());
-        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
+        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), new Filters(), "1010", 10L);
         u.links().add(link);
 
         entityManager.persist(u);
         entityManager.persistAndFlush(link);
 
-        TrackedLink link2 = new TrackedLink(0, u, "https://localhost:2", "BBB", List.of(), List.of(), "01", 100L);
+        TrackedLink link2 = new TrackedLink(0, u, "https://localhost:2", "BBB", List.of(), new Filters(), "01", 100L);
         u.links().add(link2);
 
         TrackedLink saved = repository.save(link2);
@@ -69,7 +70,7 @@ public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
     @Transactional
     public void existsByUserAndMonitoringServiceAndServiceId_exists_returnTrue() {
         User u = new User(1, new ArrayList<>());
-        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
+        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), new Filters(), "1010", 10L);
         u.links().add(link);
 
         entityManager.persist(u);
@@ -87,7 +88,7 @@ public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
     @Transactional()
     public void deleteById_whenCalled_shouldDelete() {
         User u = new User(1, new ArrayList<>());
-        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), List.of(), "1010", 10L);
+        TrackedLink link = new TrackedLink(0, u, "https://localhost", "AAA", List.of(), new Filters(), "1010", 10L);
         u.links().add(link);
 
         entityManager.persist(u);
@@ -237,13 +238,13 @@ public abstract class LinkRepositoryTest extends AbstractDatabaseTest {
 
     private void addLinkToUser(User u, String monitor, long lastUpdate) {
         TrackedLink link =
-                new TrackedLink(0, u, "https://localhost", monitor, List.of(), List.of(), "1010", lastUpdate);
+                new TrackedLink(0, u, "https://localhost", monitor, List.of(), new Filters(), "1010", lastUpdate);
         u.links().add(link);
         entityManager.persist(link);
     }
 
     private void addLinkToUser(User u, String url) {
-        TrackedLink link = new TrackedLink(0, u, url, "monitor", List.of(), List.of(), "1010", 10L);
+        TrackedLink link = new TrackedLink(0, u, url, "monitor", List.of(), new Filters(), "1010", 10L);
         u.links().add(link);
         entityManager.persist(link);
     }

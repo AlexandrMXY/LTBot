@@ -2,10 +2,8 @@ package backend.academy.bot.service.telegram;
 
 import backend.academy.bot.dto.MessageDto;
 import backend.academy.bot.telegram.command.Command;
-import backend.academy.bot.telegram.session.SessionContext;
-import backend.academy.bot.telegram.session.SessionStateInitializer;
-import backend.academy.bot.telegram.session.TelegramResponse;
-import backend.academy.bot.telegram.session.TelegramSessionState;
+import backend.academy.bot.telegram.command.session.SessionStateManager;
+import backend.academy.bot.telegram.command.session.events.MessageEvent;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.request.SetMyCommands;
@@ -15,22 +13,24 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class CommandProcessorService {
+public class MessageProcessorService {
     public static final String COMMAND_PREFIX = "/";
 
     private final Map<String, Command> commands;
     private final TelegramBot bot;
-
+    private final TelegramService telegramService;
+    private final SessionStateManager sessionStateManager;
 
     @Autowired
-    public CommandProcessorService(List<Command> commands, TelegramBot bot) {
+    public MessageProcessorService(List<Command> commands, TelegramBot bot, TelegramService telegramService, SessionStateManager sessionStateManager) {
         this.bot = bot;
         this.commands = commands.stream().collect(Collectors.toMap(Command::getName, command -> command));
+        this.telegramService = telegramService;
+        this.sessionStateManager = sessionStateManager;
     }
 
     @PostConstruct
@@ -64,5 +64,18 @@ public class CommandProcessorService {
             return commands.get(commandName);
         }
         return null;
+    }
+
+    public void processMessage(MessageDto message) {
+        if (isCommand(message)) {
+            Command command = getCommand(message);
+            if (command == null) {
+                telegramService.sendMessage(message.chat(), "Unknown command");
+                return;
+            }
+            sessionStateManager.onCommand(message.chat(), command, new MessageEvent(message));
+            return;
+        }
+        sessionStateManager.onUpdate(message.chat(), new MessageEvent(message));
     }
 }

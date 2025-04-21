@@ -9,6 +9,7 @@ import backend.academy.scrapper.TestUtils;
 import backend.academy.scrapper.dto.updates.Updates;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
+import backend.academy.scrapper.entities.filters.Filters;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -70,7 +71,7 @@ class GithubUpdatesCollectorTest {
                 "http://127.0.0.1",
                 "githubMonitor",
                 List.of(),
-                List.of(),
+                new Filters(),
                 "qwe/rty",
                 100L)));
 
@@ -129,7 +130,7 @@ class GithubUpdatesCollectorTest {
                         "http://127.0.0.1",
                         "githubMonitor",
                         List.of(),
-                        List.of(),
+                        new Filters(),
                         "qwe/rty",
                         100L),
                 new TrackedLink(
@@ -138,7 +139,7 @@ class GithubUpdatesCollectorTest {
                         "http://127.0.0.1/1",
                         "githubMonitor",
                         List.of(),
-                        List.of(),
+                        new Filters(),
                         "aaa/bbb",
                         100L)));
 

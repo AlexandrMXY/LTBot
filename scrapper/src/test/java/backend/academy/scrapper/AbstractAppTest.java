@@ -1,9 +1,12 @@
 package backend.academy.scrapper;
 
 import backend.academy.scrapper.configuration.ScrapperConfig;
+import io.lettuce.core.RedisURI;
 import jakarta.persistence.EntityManagerFactory;
+import java.time.Duration;
 import java.util.Properties;
 import javax.sql.DataSource;
+import org.junit.jupiter.api.TestInstance;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -15,6 +18,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -24,6 +29,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -31,30 +37,57 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ActiveProfiles("testDb")
 @EnableJpaRepositories
-@AutoConfigureTestEntityManager
+//@AutoConfigureTestEntityManager
 @EnableConfigurationProperties(value = ScrapperConfig.class)
-@Import(AbstractDatabaseTest.DatabaseTestConfiguration.class)
+@Import(AbstractAppTest.TestConfig.class)
 @EnableTransactionManagement
 @AutoConfigureDataJpa
-public abstract class AbstractDatabaseTest {
+public abstract class AbstractAppTest {
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
+            .withMinimumRunningDuration(Duration.ofSeconds(5L))
             .withDatabaseName("scrapper")
             .withUsername("test")
             .withPassword("test")
             .withInitScript("test-db-init.sql");
+
+    @Container
+    @ServiceConnection
+    static GenericContainer<?> redis = new GenericContainer<>("redis:7.4")
+        .withMinimumRunningDuration(Duration.ofSeconds(5L))
+        .withExposedPorts(6379);
+
+    static {
+        postgres.start();
+        redis.start();
+    }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
+        registry.add("spring.data.redis.host", () -> redis.getHost());
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
     }
 
     @TestConfiguration
     @ComponentScan("backend")
-    public static class DatabaseTestConfiguration {
+    public static class TestConfig {
+        @Bean
+        @Primary
+        RedisConnectionFactory redisConnectionFactory() {
+            var cfg =  LettuceConnectionFactory.createRedisConfiguration(new RedisURI(
+                redis.getHost(),
+                redis.getMappedPort(6379),
+                Duration.ofSeconds(2)
+            ));
+            return new LettuceConnectionFactory(cfg);
+
+        }
+
         @Bean
         @Primary
         public DataSource dataSource() {

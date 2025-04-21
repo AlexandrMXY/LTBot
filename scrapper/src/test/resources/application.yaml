@@ -10,7 +10,9 @@ app:
   bot-url: http://localhost:8080
   github-api-url: http://localhost:8082
   stackoverflow-api-url: http://localhost:8083
+
   access-type: sql # sql or orm
+  message-transport: http # kafka, http
 
   update-threads-cnt: 10
   update-thread-batch-size: 100
@@ -30,14 +32,13 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     open-in-view: false
     show-sql: true
 #  datasource:
 #    url: jdbc:postgresql://localhost:5430/scrapper
 #    username: ${PG_USERNAME}
 #    password: ${PG_PASSWORD}
-
 
 logging:
   structured:

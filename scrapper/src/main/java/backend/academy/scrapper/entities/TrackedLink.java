@@ -1,5 +1,7 @@
 package backend.academy.scrapper.entities;
 
+import backend.academy.scrapper.entities.filters.Filters;
+import backend.academy.scrapper.util.FiltersConverter;
 import backend.academy.scrapper.util.StringListConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -45,9 +47,9 @@ public class TrackedLink {
     @Column(length = 1024)
     private List<String> tags;
 
-    @Convert(converter = StringListConverter.class)
+    @Convert(converter = FiltersConverter.class)
     @Column(length = 1024)
-    private List<String> filters;
+    private Filters filters;
 
     @Column(name = "service_id")
     private String serviceId;
@@ -66,7 +68,7 @@ public class TrackedLink {
                 && Objects.equals(url, link.url)
                 && Objects.equals(monitoringService, link.monitoringService)
                 && ListUtils.isEqualList(tags, link.tags)
-                && ListUtils.isEqualList(filters, link.filters)
+                && Objects.equals(filters, link.filters)
                 && Objects.equals(serviceId, link.serviceId);
     }
 

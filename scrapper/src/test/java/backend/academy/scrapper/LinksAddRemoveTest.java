@@ -35,7 +35,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 // })
 @SpringBootTest
 @EnableWebMvc
-public class LinksAddRemoveTest extends AbstractDatabaseTest {
+public class LinksAddRemoveTest extends AbstractAppTest {
     @MockitoSpyBean
     public UserRepository userRepository;
 

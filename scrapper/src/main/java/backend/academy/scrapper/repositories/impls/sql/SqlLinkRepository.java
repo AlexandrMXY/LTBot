@@ -58,7 +58,7 @@ public class SqlLinkRepository implements LinkRepository {
                 .addValue("url", link.url())
                 .addValue("monitoringService", link.monitoringService())
                 .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
-                .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
+                .addValue("filters", mapper.filtersConverter().convertToDatabaseColumn(link.filters()))
                 .addValue("serviceId", link.serviceId())
                 .addValue("lastUpdate", link.lastUpdate());
 
@@ -74,7 +74,7 @@ public class SqlLinkRepository implements LinkRepository {
     @Transactional
     public void update(TrackedLink link) {
         SqlParameterSource parameterSource = new MapSqlParameterSource()
-                .addValue("filters", mapper.converter().convertToDatabaseColumn(link.filters()))
+                .addValue("filters", mapper.filtersConverter().convertToDatabaseColumn(link.filters()))
                 .addValue("tags", mapper.converter().convertToDatabaseColumn(link.tags()))
                 .addValue("lastUpdate", link.lastUpdate())
                 .addValue("monitoringService", link.monitoringService())
@@ -84,13 +84,13 @@ public class SqlLinkRepository implements LinkRepository {
                 .addValue("userId", link.user().id());
         jdbcTemplate.update(
                 """
-                update tracked_link set filters = :filters, \
-                    tags = :tags, \
-                    last_update = :lastUpdate, \
-                    monitoring_service = :monitoringService, \
-                    url = :url, \
-                    user_id = :userId, \
-                    service_id = :serviceId \
+                update tracked_link set filters = :filters,
+                    tags = :tags,
+                    last_update = :lastUpdate,
+                    monitoring_service = :monitoringService,
+                    url = :url,
+                    user_id = :userId,
+                    service_id = :serviceId
                 where id = :id""",
                 parameterSource);
     }

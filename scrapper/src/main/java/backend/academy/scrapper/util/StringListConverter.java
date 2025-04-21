@@ -1,11 +1,13 @@
 package backend.academy.scrapper.util;
 
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Converter
 public class StringListConverter implements AttributeConverter<List<String>, String> {
     public static final String SEPARATOR = ";";
 

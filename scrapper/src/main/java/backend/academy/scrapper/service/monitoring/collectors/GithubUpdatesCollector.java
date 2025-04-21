@@ -45,15 +45,16 @@ public class GithubUpdatesCollector implements LinkUpdatesCollector {
 
         return new Updates()
                 .addUpdates(issues.stream()
-                        .map(i -> new Update(
-                                tl.user().id(),
-                                convertDate(i.createdAt()),
-                                i.htmlUrl(),
-                                StringUtils.clamp(i.body(), MAX_PREVIEW_LENGTH),
-                                i.user().login(),
-                                i.pullRequest() == null ? Update.Types.ISSUE : Update.Types.PULL_REQUEST,
-                                tl.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : tl.user().notificationTime()))
-                        .toList());
+                    .map(i -> new Update(
+                            tl.user().id(),
+                            convertDate(i.createdAt()),
+                            i.htmlUrl(),
+                            StringUtils.clamp(i.body(), MAX_PREVIEW_LENGTH),
+                            i.user().login(),
+                            i.pullRequest() == null ? Update.Types.ISSUE : Update.Types.PULL_REQUEST,
+                            tl.user().notificationStrategy() == User.NotificationStrategy.INSTANT ? -1 : tl.user().notificationTime()))
+                    .filter(tl.filters()::validate)
+                    .toList());
     }
 
     private <T> List<T> receiveAllPages(String serviceId, String endpoint, long since, Class<T[]> responseType) {

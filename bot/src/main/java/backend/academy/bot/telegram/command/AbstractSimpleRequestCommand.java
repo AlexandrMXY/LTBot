@@ -24,11 +24,9 @@ public abstract class AbstractSimpleRequestCommand implements Command {
 
         initHandler = ((state, event) -> {
             if (event instanceof MessageEvent messageEvent) {
-                boolean stillActive = commandHandler.test(messageEvent);
-                if (!stillActive) {
-                    return false;
-                }
                 state.stateHandler(responseHandler);
+                boolean stillActive = commandHandler.test(messageEvent);
+                return stillActive;
             }
             return true;
         });

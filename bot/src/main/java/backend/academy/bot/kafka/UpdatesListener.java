@@ -5,6 +5,7 @@ import backend.academy.bot.config.BotConfig;
 import backend.academy.bot.config.KafkaConfig;
 import backend.academy.bot.service.UpdatesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class UpdatesListener {
     @Autowired
     private ObjectMapper objectMapper;
@@ -34,7 +36,11 @@ public class UpdatesListener {
         try {
             var update = objectMapper.readValue(data.value(), LinkUpdate.class);
             updatesService.processUpdate(update);
-        } catch (IOException e) {
+        } catch (Throwable e) {
+            log.atWarn()
+                .setMessage("Kafka message processing failed")
+                .setCause(e)
+                .log();
             deadLetterTemplate.send(botConfig.kafkaTopics().deadLettersQueue(), data.key(), data.value());
         }
         acknowledgment.acknowledge();

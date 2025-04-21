@@ -2,7 +2,7 @@ package backend.academy.scrapper.repositories;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import backend.academy.scrapper.AbstractDatabaseTest;
+import backend.academy.scrapper.AbstractAppTest;
 import backend.academy.scrapper.entities.User;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
-public abstract class UserRepositoryTest extends AbstractDatabaseTest {
+public abstract class UserRepositoryTest extends AbstractAppTest {
     @Autowired
     protected UserRepository repository;
 

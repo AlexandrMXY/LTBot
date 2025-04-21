@@ -21,7 +21,7 @@ public class Updates implements Iterable<Update> {
     }
 
     public Updates addUpdates(List<Update> updates) {
-        updates.addAll(updates);
+        this.updates.addAll(updates);
         return this;
     }
 
