@@ -63,7 +63,6 @@ public class User {
         return links;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

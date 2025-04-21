@@ -9,12 +9,9 @@ import backend.academy.scrapper.AbstractAppTest;
 import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.entities.filters.Filters;
-import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +23,6 @@ class TagsControllerTest extends AbstractAppTest {
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    LinkRepository linkRepository;
 
     @Test
     void deactivate_userNotFound_shouldThrow() {

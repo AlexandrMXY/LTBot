@@ -12,7 +12,6 @@ import backend.academy.scrapper.entities.TrackedLink;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
-import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -38,9 +37,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class LinksAddRemoveTest extends AbstractAppTest {
     @MockitoSpyBean
     public UserRepository userRepository;
-
-    @MockitoSpyBean
-    public LinkRepository linkRepository;
 
     @Autowired
     private LinksController linksController;

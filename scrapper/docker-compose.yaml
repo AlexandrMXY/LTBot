@@ -44,7 +44,8 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
 
   kafka-1:
     image: confluentinc/cp-kafka:latest
@@ -62,6 +63,8 @@ services:
       KAFKA_MIN_IN_SYNC_REPLICAS: 1
     depends_on:
       - zookeeper
+    volumes:
+      - kafka-data:/var/lib/kafka/data
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -82,4 +85,6 @@ services:
 
 volumes:
   db-data:
+  kafka-data:
+  zookeeper-data:
 

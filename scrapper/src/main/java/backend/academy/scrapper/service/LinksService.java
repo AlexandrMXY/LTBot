@@ -27,10 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class LinksService {
     @Autowired
     private LinkRepository linkRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private ScrapperConfig config;
+
     @Autowired
     private LinkDistributionService linkDistributionService;
 

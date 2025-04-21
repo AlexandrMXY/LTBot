@@ -42,13 +42,16 @@ public class SqlUserRepository implements UserRepository {
             return user;
         }
 
-        jdbcTemplate.update( """
+        jdbcTemplate.update(
+                """
                 insert into users (id, inactive_tags, notification_policy, notification_time) \
                 values (:id, :inactiveTags, :notificationPolicy, :notificationTime)""",
                 new MapSqlParameterSource()
                         .addValue("id", user.id())
                         .addValue("inactiveTags", mapper.converter().convertToDatabaseColumn(user.inactiveTags()))
-                        .addValue("notificationPolicy", user.notificationStrategy().toString())
+                        .addValue(
+                                "notificationPolicy",
+                                user.notificationStrategy().toString())
                         .addValue("notificationTime", user.notificationTime()));
         user.links(user.links().stream()
                 .map(linkRepository::saveLinkOnly)
@@ -64,13 +67,15 @@ public class SqlUserRepository implements UserRepository {
                 .addValue("notificationPolicy", user.notificationStrategy().toString())
                 .addValue("notificationTime", user.notificationTime());
 
-        jdbcTemplate.update("""
+        jdbcTemplate.update(
+                """
             update users set
                 inactive_tags = :inactiveTags,
                 notification_policy = :notificationPolicy,
                 notification_time = :notificationTime
             where id = :userId
-            """, parameterSource);
+            """,
+                parameterSource);
         if (!user.links().isEmpty())
             jdbcTemplate.update(
                     "delete from tracked_link where user_id = :userId and id not in (:linksIds)", parameterSource);

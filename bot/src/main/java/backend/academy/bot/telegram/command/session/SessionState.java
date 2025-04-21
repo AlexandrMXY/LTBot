@@ -1,17 +1,20 @@
 package backend.academy.bot.telegram.command.session;
 
-import lombok.Getter;
-import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SessionState {
     private final Map<String, Object> table = new HashMap<>();
+
     @Getter
     @Setter
     private SessionStateHandler stateHandler;
+
     @Getter
     private final long chatId;
+
     @Getter
     private final long initTime = System.currentTimeMillis();
 

@@ -4,7 +4,6 @@ import backend.academy.bot.service.telegram.TelegramService;
 import backend.academy.bot.telegram.command.session.SessionState;
 import backend.academy.bot.telegram.command.session.SessionStateHandler;
 import backend.academy.bot.telegram.command.session.events.MessageEvent;
-import backend.academy.bot.telegram.session.TelegramResponse;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ public class HelpCommand implements Command {
     @Autowired
     @Lazy
     private List<Command> commands;
+
     @Autowired
     private TelegramService telegramService;
 
@@ -30,14 +30,15 @@ public class HelpCommand implements Command {
                 continue;
             }
             mb.append("/")
-                .append(command.getName())
-                .append(": ")
-                .append(command.getDescription())
-                .append(System.lineSeparator());
+                    .append(command.getName())
+                    .append(": ")
+                    .append(command.getDescription())
+                    .append(System.lineSeparator());
         }
 
         handler = (state, event) -> {
-            if (event instanceof MessageEvent messageEvent && !"/help".equals(messageEvent.message().trim())) {
+            if (event instanceof MessageEvent messageEvent
+                    && !"/help".equals(messageEvent.message().trim())) {
                 telegramService.sendMessage(state.chatId(), "Invalid command");
                 return false;
             }

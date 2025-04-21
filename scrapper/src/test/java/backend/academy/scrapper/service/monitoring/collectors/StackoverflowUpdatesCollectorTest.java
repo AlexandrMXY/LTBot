@@ -93,7 +93,7 @@ class StackoverflowUpdatesCollectorTest {
                         u -> assertEquals("Lorem ipsum 5", u.createRequest().content()),
                         u -> assertEquals("Lorem ipsum 7", u.createRequest().content()))
                 .allSatisfy(upd -> {
-                    Update u = (Update) upd;
+                    Update u = upd;
                     assertEquals(10, u.user());
                     assertThat(u.date()).isGreaterThan(100);
                 });

@@ -1,31 +1,30 @@
 package backend.academy.scrapper.service;
 
-import backend.academy.api.model.LinkUpdate;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import backend.academy.scrapper.AbstractAppTest;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.entities.User;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
-import org.junit.jupiter.api.Disabled;
+import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import java.util.List;
-import static org.mockito.Mockito.*;
-import static org.assertj.core.api.Assertions.*;
-
-@Disabled
 @SpringBootTest
 public class LinksServiceCacheTest extends AbstractAppTest {
     public static final String VALID_LINK = "https://stackoverflow.com/questions/99999999/q";
     public static final String VALID_LINK_2 = "https://stackoverflow.com/questions/99999998/qq";
+
     @Autowired
     private LinksService linksService;
+
     @MockitoSpyBean
     private LinkRepository linkRepository;
+
     @MockitoSpyBean
     private UserRepository userRepository;
 
@@ -55,14 +54,16 @@ public class LinksServiceCacheTest extends AbstractAppTest {
         linksService.addLink(202, new LinkDto(VALID_LINK_2, List.of("tag2", "tag3"), List.of(), 0));
         List<LinkDto> result = linksService.getLinks(202);
         assertThat(result)
-            .satisfiesExactlyInAnyOrder(e -> {
-                assertThat(e.link()).isEqualTo(VALID_LINK);
-                assertThat(e.tags()).containsExactlyInAnyOrderElementsOf(List.of("tag1", "tag2"));
-                assertThat(e.filters()).isEmpty();
-            }, e -> {
-                assertThat(e.link()).isEqualTo(VALID_LINK_2);
-                assertThat(e.tags()).containsExactlyInAnyOrderElementsOf(List.of("tag2", "tag3"));
-                assertThat(e.filters()).isEmpty();
-            });
+                .satisfiesExactlyInAnyOrder(
+                        e -> {
+                            assertThat(e.link()).isEqualTo(VALID_LINK);
+                            assertThat(e.tags()).containsExactlyInAnyOrderElementsOf(List.of("tag1", "tag2"));
+                            assertThat(e.filters()).isEmpty();
+                        },
+                        e -> {
+                            assertThat(e.link()).isEqualTo(VALID_LINK_2);
+                            assertThat(e.tags()).containsExactlyInAnyOrderElementsOf(List.of("tag2", "tag3"));
+                            assertThat(e.filters()).isEmpty();
+                        });
     }
 }

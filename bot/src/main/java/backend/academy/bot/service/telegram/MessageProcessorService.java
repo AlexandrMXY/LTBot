@@ -26,7 +26,11 @@ public class MessageProcessorService {
     private final SessionStateManager sessionStateManager;
 
     @Autowired
-    public MessageProcessorService(List<Command> commands, TelegramBot bot, TelegramService telegramService, SessionStateManager sessionStateManager) {
+    public MessageProcessorService(
+            List<Command> commands,
+            TelegramBot bot,
+            TelegramService telegramService,
+            SessionStateManager sessionStateManager) {
         this.bot = bot;
         this.commands = commands.stream().collect(Collectors.toMap(Command::getName, command -> command));
         this.telegramService = telegramService;

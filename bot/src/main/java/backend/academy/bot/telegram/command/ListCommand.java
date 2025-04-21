@@ -15,16 +15,21 @@ public class ListCommand extends AbstractSimpleRequestCommand {
             AsyncScrapperService scrapperService,
             SessionStateManager sessionStateManager,
             LinksListFormatter formatter) {
-        super((message) -> {
-            if (!"/list".equals(message.message().trim())) {
-                telegramService.sendMessage(message.chatId(), "Invalid command");
-                return false;
-            }
-            scrapperService.getTrackedLinks(message.chatId()).subscribe(
-                links -> sessionStateManager.onUpdate(message.chatId(), new SuccessResponseEvent(formatter.format(links))),
-                t -> sessionStateManager.onUpdate(message.chatId(), new ErrorResponseEvent(t)));
-            return true;
-        }, telegramService);
+        super(
+                (message) -> {
+                    if (!"/list".equals(message.message().trim())) {
+                        telegramService.sendMessage(message.chatId(), "Invalid command");
+                        return false;
+                    }
+                    scrapperService
+                            .getTrackedLinks(message.chatId())
+                            .subscribe(
+                                    links -> sessionStateManager.onUpdate(
+                                            message.chatId(), new SuccessResponseEvent(formatter.format(links))),
+                                    t -> sessionStateManager.onUpdate(message.chatId(), new ErrorResponseEvent(t)));
+                    return true;
+                },
+                telegramService);
     }
 
     @Override

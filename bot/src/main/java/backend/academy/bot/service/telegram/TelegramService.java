@@ -1,6 +1,5 @@
 package backend.academy.bot.service.telegram;
 
-import backend.academy.bot.telegram.session.TelegramResponse;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.extern.slf4j.Slf4j;

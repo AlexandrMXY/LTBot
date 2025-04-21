@@ -12,32 +12,28 @@ import backend.academy.scrapper.entities.filters.Filters;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
 import backend.academy.scrapper.repositories.LinkRepository;
 import backend.academy.scrapper.repositories.UserRepository;
-import backend.academy.scrapper.service.monitoring.LinkDistributionService;
 import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
+@DirtiesContext
 class LinksServiceTest extends AbstractAppTest {
-    private static final String VALID_LINK = "https://stackoverflow.com/questions/64383424/set-anonymous-dynamic-functions-to-menu";
+    private static final String VALID_LINK =
+            "https://stackoverflow.com/questions/64383424/set-anonymous-dynamic-functions-to-menu";
 
     @Autowired
     private LinkRepository linkRepository;
+
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private LinkDistributionService linkDistributionService;
 
     @Autowired
     private LinksService linksService;
-
 
     @Test
     public void addLink_invalidTags_shouldThrow() {
@@ -100,7 +96,7 @@ class LinksServiceTest extends AbstractAppTest {
         linksService.addLink(103, new LinkDto(VALID_LINK, List.of("f"), List.of(), 0));
         linksService.deleteLink(103, VALID_LINK);
         assertFalse(linkRepository.existsByUserAndMonitoringServiceAndServiceId(
-            new User(103L), "stackoverflowMonitor", "64383424"));
+                new User(103L), "stackoverflowMonitor", "64383424"));
     }
 
     @Test
@@ -117,5 +113,4 @@ class LinksServiceTest extends AbstractAppTest {
 
         assertIterableEquals(expected, res);
     }
-
 }

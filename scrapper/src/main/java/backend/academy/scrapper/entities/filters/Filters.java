@@ -1,15 +1,16 @@
 package backend.academy.scrapper.entities.filters;
 
 import backend.academy.scrapper.dto.updates.Update;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
 public class Filters {
     private final List<Filter> filters = new ArrayList<>();
+
     public void addFilter(Filter filter) {
         if (filter != null) {
             filters.add(filter);

@@ -44,8 +44,7 @@ public class FiltersConverter implements AttributeConverter<Filters, String> {
     }
 
     public static Filter parseFilter(String filterString) {
-        if (filterString.isEmpty())
-            return null;
+        if (filterString.isEmpty()) return null;
         String[] splited = filterString.split("=");
         if (splited.length != 2) {
             throw new IllegalArgumentException("Invalid filter string: " + filterString);

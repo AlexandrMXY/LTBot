@@ -2,7 +2,6 @@ package backend.academy.scrapper.configuration;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.experimental.UtilityClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
@@ -29,13 +28,11 @@ public record ScrapperConfig(
         SQL,
         ORM
     }
+
     public enum MessageTransport {
         KAFKA,
         HTTP
     }
 
-    public record KafkaTopics (
-        @NotEmpty String updates,
-        @NotEmpty String deadLettersQueue
-    ) { }
+    public record KafkaTopics(@NotEmpty String updates, @NotEmpty String deadLettersQueue) {}
 }

@@ -1,5 +1,11 @@
 package backend.academy.bot.config;
 
+import static backend.academy.bot.config.KafkaConfig.KafkaBeans.DEAD_LETTERS_TEMPLATE;
+import static backend.academy.bot.config.KafkaConfig.KafkaBeans.DEFAULT_CONSUMER_FACTORY;
+import static backend.academy.bot.config.KafkaConfig.KafkaBeans.LINK_UPDATE_CONSUMER_TEMPLATE;
+
+import java.util.HashMap;
+import java.util.Map;
 import lombok.experimental.UtilityClass;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -11,7 +17,6 @@ import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,14 +31,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.CommonLoggingErrorHandler;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
-import java.util.HashMap;
-import java.util.Map;
-import static backend.academy.bot.config.KafkaConfig.KafkaBeans.DEAD_LETTERS_TEMPLATE;
-import static backend.academy.bot.config.KafkaConfig.KafkaBeans.DEFAULT_CONSUMER_FACTORY;
-import static backend.academy.bot.config.KafkaConfig.KafkaBeans.LINK_UPDATE_CONSUMER_TEMPLATE;
 
 @Configuration
 @EnableKafka
+@Profile("!noKafka")
 public class KafkaConfig {
     @Autowired
     private BotConfig botConfig;
@@ -64,8 +65,8 @@ public class KafkaConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
 
-//        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, LinkUpdate.class.getName());
-//        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        //        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, LinkUpdate.class.getName());
+        //        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
 
         var factory = new DefaultKafkaProducerFactory<Long, String>(props);
         return new KafkaTemplate<>(factory);
@@ -74,15 +75,9 @@ public class KafkaConfig {
     @Bean(DEAD_LETTERS_TEMPLATE)
     public KafkaTemplate<Long, Object> deadLettersTopicKafkaTemplate() {
         Map<String, Object> props = properties.buildProducerProperties();
-        props.put(
-            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-            properties.getBootstrapServers());
-        props.put(
-            ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-            LongSerializer.class);
-        props.put(
-            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-            ByteArraySerializer.class);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, properties.getBootstrapServers());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
         return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(props));
     }
 
@@ -91,7 +86,8 @@ public class KafkaConfig {
         var consumerFactoryProps = properties.buildConsumerProperties(null);
         consumerFactoryProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class);
         consumerFactoryProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
-        consumerFactoryProps.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName());
+        consumerFactoryProps.put(
+                ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName());
         consumerFactoryProps.put(ConsumerConfig.GROUP_ID_CONFIG, "default-consumer");
         var consumerFactory = new DefaultKafkaConsumerFactory<>(consumerFactoryProps);
 

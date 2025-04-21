@@ -8,13 +8,10 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app")
 public record BotConfig(
-    @NotEmpty String telegramToken,
-    @NotEmpty String scrapperUrl,
-    @Min(1000) long sessionTimeout,
-    KafkaTopics kafkaTopics) {
+        @NotEmpty String telegramToken,
+        @NotEmpty String scrapperUrl,
+        @Min(1000) long sessionTimeout,
+        KafkaTopics kafkaTopics) {
 
-    public record KafkaTopics (
-        @NotEmpty String updates,
-        @NotEmpty String deadLettersQueue
-    ) { }
+    public record KafkaTopics(@NotEmpty String updates, @NotEmpty String deadLettersQueue) {}
 }

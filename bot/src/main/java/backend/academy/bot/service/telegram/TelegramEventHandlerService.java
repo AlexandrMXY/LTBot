@@ -1,9 +1,6 @@
 package backend.academy.bot.service.telegram;
 
 import backend.academy.bot.dto.MessageDto;
-import backend.academy.bot.telegram.command.Command;
-import backend.academy.bot.telegram.command.session.SessionStateManager;
-import backend.academy.bot.telegram.command.session.events.MessageEvent;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import jakarta.annotation.PostConstruct;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class TelegramEventHandlerService {
     @Autowired
     private TelegramService telegramService;
+
     @Autowired
     private MessageProcessorService messageProcessorService;
 
@@ -41,6 +39,4 @@ public class TelegramEventHandlerService {
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         });
     }
-
-
 }

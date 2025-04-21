@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LinksListFormatter {
-    public  String format(ListLinksResponse listLinksResponse) {
+    public String format(ListLinksResponse listLinksResponse) {
         StringBuilder result = new StringBuilder();
         for (LinkResponse link : listLinksResponse.links()) {
             result.append(link.url());

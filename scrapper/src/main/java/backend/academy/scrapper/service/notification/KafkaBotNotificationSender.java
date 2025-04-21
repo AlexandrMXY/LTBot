@@ -22,11 +22,10 @@ public class KafkaBotNotificationSender implements BotNotificationSender {
 
     @Override
     public void sendUpdates(Updates updates) {
-        if (updates == null)
-            return;
+        if (updates == null) return;
         for (Update update : updates.getUpdates()) {
             var request = update.createRequest();
-            var result = kafkaTemplate.send(scrapperConfig.kafkaTopics().updates(), request);
+            kafkaTemplate.send(scrapperConfig.kafkaTopics().updates(), request);
         }
     }
 }

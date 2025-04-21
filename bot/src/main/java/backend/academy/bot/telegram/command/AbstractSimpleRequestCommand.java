@@ -5,8 +5,6 @@ import backend.academy.bot.telegram.command.session.SessionState;
 import backend.academy.bot.telegram.command.session.SessionStateHandler;
 import backend.academy.bot.telegram.command.session.events.MessageEvent;
 import backend.academy.bot.telegram.command.session.events.ServerResponseEvent;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public abstract class AbstractSimpleRequestCommand implements Command {
@@ -14,22 +12,22 @@ public abstract class AbstractSimpleRequestCommand implements Command {
     private final SessionStateHandler responseHandler;
 
     public AbstractSimpleRequestCommand(Predicate<MessageEvent> commandHandler, TelegramService telegramService) {
-        responseHandler = ((state, event0) -> {
+        responseHandler = (state, event0) -> {
             if (!(event0 instanceof ServerResponseEvent event)) {
                 return false;
             }
             telegramService.sendMessage(state.chatId(), event.getUserMessage());
             return false;
-        });
+        };
 
-        initHandler = ((state, event) -> {
+        initHandler = (state, event) -> {
             if (event instanceof MessageEvent messageEvent) {
                 state.stateHandler(responseHandler);
                 boolean stillActive = commandHandler.test(messageEvent);
                 return stillActive;
             }
             return true;
-        });
+        };
     }
 
     @Override

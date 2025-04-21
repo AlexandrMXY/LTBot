@@ -16,6 +16,7 @@ public class NotificationService {
 
     @Autowired
     private BotNotificationSender botNotificationSender;
+
     @Autowired
     @Qualifier(RedisConfig.UPDATES_TEMPLATE)
     public RedisTemplate<String, Update> template;
@@ -35,7 +36,7 @@ public class NotificationService {
     }
 
     @Scheduled(fixedDelay = 60000)
-    private void sendDelayedUpdates() {
+    public void sendDelayedUpdates() {
         int nowMinute = TimeUtils.getMinuteOfDay();
         for (int i = lastTimeSendingDelayedUpdates; i <= nowMinute; i++) {
             sendDelayedUpdates(i);

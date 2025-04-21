@@ -6,16 +6,11 @@ import static org.mockito.Mockito.*;
 
 import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.api.model.responses.ListLinksResponse;
-import backend.academy.bot.config.BotConfig;
-import backend.academy.bot.config.BotSpringConfig;
 import backend.academy.bot.dto.MessageDto;
 import backend.academy.bot.service.AsyncScrapperService;
 import backend.academy.bot.service.telegram.MessageProcessorService;
 import backend.academy.bot.service.telegram.TelegramService;
-import backend.academy.bot.telegram.command.session.SessionStateManager;
-import backend.academy.bot.telegram.session.TelegramResponse;
 import java.util.List;
-import com.pengrad.telegrambot.TelegramBot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,14 +22,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "noKafka"})
 public class TelegramCommandsTest {
     @MockitoSpyBean
     private TelegramService telegramService;
+
     @MockitoBean
     private AsyncScrapperService scrapperService;
-    @Autowired
-    private SessionStateManager sessionStateManager;
+
     @Autowired
     private MessageProcessorService messageProcessorService;
 
@@ -63,7 +58,9 @@ public class TelegramCommandsTest {
         verify(telegramService).sendMessage(eq(0L), responseCaptor.capture());
         String response = responseCaptor.getValue();
 
-        assertThatCharSequence(response) .isEqualTo("""
+        assertThatCharSequence(response)
+                .isEqualTo(
+                        """
                 https://github.com/ESCOMP/atmospheric_physics A
                 https://github.com/topics/3b-yp-1tri-2025 B
                 https://github.com/frappe/erpnext B
@@ -85,7 +82,7 @@ public class TelegramCommandsTest {
     }
 
     private void sendMessageToSessionStateManager(MessageDto messageDto) {
-//        sessionStateManager.onUpdate(messageDto.chat(), new MessageEvent(messageDto));
+        //        sessionStateManager.onUpdate(messageDto.chat(), new MessageEvent(messageDto));
         messageProcessorService.processMessage(messageDto);
     }
 }

@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManagerFactory;
 import java.time.Duration;
 import java.util.Properties;
 import javax.sql.DataSource;
-import org.junit.jupiter.api.TestInstance;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -37,7 +36,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ActiveProfiles("testDb")
 @EnableJpaRepositories
-//@AutoConfigureTestEntityManager
+@AutoConfigureTestEntityManager
 @EnableConfigurationProperties(value = ScrapperConfig.class)
 @Import(AbstractAppTest.TestConfig.class)
 @EnableTransactionManagement
@@ -55,8 +54,8 @@ public abstract class AbstractAppTest {
     @Container
     @ServiceConnection
     static GenericContainer<?> redis = new GenericContainer<>("redis:7.4")
-        .withMinimumRunningDuration(Duration.ofSeconds(5L))
-        .withExposedPorts(6379);
+            .withMinimumRunningDuration(Duration.ofSeconds(5L))
+            .withExposedPorts(6379);
 
     static {
         postgres.start();
@@ -79,13 +78,9 @@ public abstract class AbstractAppTest {
         @Bean
         @Primary
         RedisConnectionFactory redisConnectionFactory() {
-            var cfg =  LettuceConnectionFactory.createRedisConfiguration(new RedisURI(
-                redis.getHost(),
-                redis.getMappedPort(6379),
-                Duration.ofSeconds(2)
-            ));
+            var cfg = LettuceConnectionFactory.createRedisConfiguration(
+                    new RedisURI(redis.getHost(), redis.getMappedPort(6379), Duration.ofSeconds(2)));
             return new LettuceConnectionFactory(cfg);
-
         }
 
         @Bean

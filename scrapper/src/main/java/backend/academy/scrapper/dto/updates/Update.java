@@ -4,13 +4,7 @@ import backend.academy.api.model.LinkUpdate;
 import lombok.RequiredArgsConstructor;
 
 public record Update(
-        long user,
-        long date,
-        String url,
-        String preview,
-        String author,
-        String type,
-        int notificationTime) {
+        long user, long date, String url, String preview, String author, String type, int notificationTime) {
     public LinkUpdate createRequest() {
         return new LinkUpdate(user, date, url, preview, author, type);
     }

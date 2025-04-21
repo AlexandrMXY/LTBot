@@ -18,10 +18,10 @@ public class UserMapper implements RowMapper<User> {
     @Override
     public @NotNull User mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new User(
-            rs.getLong("id"),
-            new ArrayList<>(),
-            converter.convertToEntityAttribute(rs.getString("inactive_tags")),
-            User.NotificationStrategy.fromString(rs.getString("notification_policy")),
-            rs.getInt("notification_time"));
+                rs.getLong("id"),
+                new ArrayList<>(),
+                converter.convertToEntityAttribute(rs.getString("inactive_tags")),
+                User.NotificationStrategy.fromString(rs.getString("notification_policy")),
+                rs.getInt("notification_time"));
     }
 }

@@ -1,10 +1,6 @@
 package backend.academy.bot.telegram.command.session.events;
 
-import backend.academy.bot.telegram.command.session.SessionEvent;
-
-public record ErrorResponseEvent(
-    Throwable error
-) implements ServerResponseEvent {
+public record ErrorResponseEvent(Throwable error) implements ServerResponseEvent {
     @Override
     public boolean isError() {
         return true;
