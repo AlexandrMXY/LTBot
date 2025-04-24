@@ -30,15 +30,21 @@ spring:
 
   liquibase:
     enabled: false
+    change-log: classpath:test-db-init.xml
+    show-summary-output: all
+    drop-first: true
+
   jpa:
     hibernate:
       ddl-auto: none
     open-in-view: false
     show-sql: true
-#  datasource:
-#    url: jdbc:postgresql://localhost:5430/scrapper
-#    username: ${PG_USERNAME}
-#    password: ${PG_PASSWORD}
+
+#liquibase:
+#  sql:
+#    logLevel: FINE
+
+
 
 logging:
   structured:
@@ -47,6 +53,8 @@ logging:
   level:
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
+#    liquibase: DEBUG
+
 
 
 server:

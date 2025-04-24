@@ -2,11 +2,25 @@ package backend.academy.scrapper;
 
 import backend.academy.scrapper.configuration.ScrapperConfig;
 import io.lettuce.core.RedisURI;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
+import java.io.File;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Properties;
 import javax.sql.DataSource;
+import liquibase.Contexts;
+import liquibase.LabelExpression;
+import liquibase.Liquibase;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import lombok.SneakyThrows;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
@@ -28,8 +42,10 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -49,7 +65,11 @@ public abstract class AbstractAppTest {
             .withDatabaseName("scrapper")
             .withUsername("test")
             .withPassword("test")
-            .withInitScript("test-db-init.sql");
+            .withCreateContainerCmdModifier(cmd -> {
+                cmd.getHostConfig()
+                    .withMemory(256 * 1024 * 1024L)
+                    .withMemorySwap(256 * 1024 * 1024L);
+            });
 
     @Container
     @ServiceConnection
@@ -58,8 +78,9 @@ public abstract class AbstractAppTest {
             .withExposedPorts(6379);
 
     static {
-        postgres.start();
+        System.out.println(new File("../migrations").getAbsolutePath());
         redis.start();
+        postgres.start();
     }
 
     @DynamicPropertySource
@@ -70,11 +91,24 @@ public abstract class AbstractAppTest {
         registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
         registry.add("spring.data.redis.host", () -> redis.getHost());
         registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+        registry.add("spring.liquibase.url", postgres::getJdbcUrl);
+        registry.add("spring.liquibase.user", postgres::getUsername);
+        registry.add("spring.liquibase.password", postgres::getPassword);
     }
 
     @TestConfiguration
     @ComponentScan("backend")
     public static class TestConfig {
+        @PostConstruct
+        private void migrate() throws SQLException, LiquibaseException {
+            try (var connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())) {
+                var database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+                var liquibase = new Liquibase("test-db-init.xml", new ClassLoaderResourceAccessor(), database);
+                liquibase.update(new Contexts(), new LabelExpression());
+            }
+        }
+
+
         @Bean
         @Primary
         RedisConnectionFactory redisConnectionFactory() {

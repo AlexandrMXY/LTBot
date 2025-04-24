@@ -5,12 +5,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.requests.AddLinkRequest;
+import backend.academy.bot.config.BotApplicationConfig;
 import backend.academy.bot.config.BotConfig;
-import backend.academy.bot.config.BotSpringConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @ExtendWith(MockitoExtension.class)
 class ScrapperServiceTest {
@@ -26,10 +28,10 @@ class ScrapperServiceTest {
             new BotConfig("", SCRAPPER_URL, 100000, new BotConfig.KafkaTopics("updates", "dead-letters"));
 
     @Spy
-    private RestClient restClient = new BotSpringConfig().scrapperRestClient(TEST_CONFIG);
+    private WebClient restClient = new BotApplicationConfig().scrapperWebClient(TEST_CONFIG);
 
     @InjectMocks
-    private ScrapperService service = new ScrapperService();
+    private AsyncScrapperService service = new AsyncScrapperService();
 
     private WireMockServer wireMock;
 
@@ -54,7 +56,12 @@ class ScrapperServiceTest {
                                         .withBody(
                                                 "{\"description\":\"Bad Request\",\"code\":\"400\",\"exceptionName\":\"backend.academy.scrapper.exceptions.AlreadyExistsException\",\"exceptionMessage\":\"Link already exists\",\"stacktrace\":[\"\"]}")));
 
-        assertThrows(ApiErrorResponseException.class, () -> service.addLink(chat, request));
+
+        assertThrows(RuntimeException.class,
+            () -> service.trackRequest(chat, request).onErrorStop().subscribe(
+                success -> { throw new AssertionError("Unexpected result: error response expected"); },
+                e -> { throw new RuntimeException(e); }
+            ));
     }
 
     @AfterEach

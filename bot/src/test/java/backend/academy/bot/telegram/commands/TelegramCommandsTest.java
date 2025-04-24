@@ -1,7 +1,6 @@
 package backend.academy.bot.telegram.commands;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import backend.academy.api.model.responses.LinkResponse;
