@@ -6,9 +6,11 @@ import lombok.Getter;
 @Getter
 public class ApiErrorResponseException extends RuntimeException {
     private final ApiErrorResponse details;
+    private final int code;
 
-    public ApiErrorResponseException(ApiErrorResponse details) {
+    public ApiErrorResponseException(ApiErrorResponse details, int code) {
         this.details = details;
+        this.code = code;
     }
 
     @Override

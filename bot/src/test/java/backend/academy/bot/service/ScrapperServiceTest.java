@@ -1,7 +1,7 @@
 package backend.academy.bot.service;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 import backend.academy.api.exceptions.ApiErrorResponseException;
 import backend.academy.api.model.requests.AddLinkRequest;
@@ -25,7 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 class ScrapperServiceTest {
     public static final String SCRAPPER_URL = "http://localhost:8080";
     private static final BotConfig TEST_CONFIG =
-            new BotConfig("", SCRAPPER_URL, 100000, new BotConfig.KafkaTopics("updates", "dead-letters"));
+            new BotConfig("", SCRAPPER_URL, 100000,
+                new BotConfig.KafkaTopics("updates", "dead-letters"));
 
     @Spy
     private WebClient restClient = new BotApplicationConfig().scrapperWebClient(TEST_CONFIG);
@@ -57,11 +58,8 @@ class ScrapperServiceTest {
                                                 "{\"description\":\"Bad Request\",\"code\":\"400\",\"exceptionName\":\"backend.academy.scrapper.exceptions.AlreadyExistsException\",\"exceptionMessage\":\"Link already exists\",\"stacktrace\":[\"\"]}")));
 
 
-        assertThrows(RuntimeException.class,
-            () -> service.trackRequest(chat, request).onErrorStop().subscribe(
-                success -> { throw new AssertionError("Unexpected result: error response expected"); },
-                e -> { throw new RuntimeException(e); }
-            ));
+        assertThatThrownBy(() -> service.trackRequest(chat, request).block())
+            .isInstanceOf(ApiErrorResponseException.class);
     }
 
     @AfterEach
