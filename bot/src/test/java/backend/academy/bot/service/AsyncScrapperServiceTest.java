@@ -177,6 +177,15 @@ class AsyncScrapperServiceTest {
 
     @ParameterizedTest
     @MethodSource("methods")
+    public void request_on429ErrorResponse_retry(MethodDescription description) {
+        stubFor(description.requestTargetMapping().willReturn(aResponse().withStatus(429)));
+        var response = description.requestCaller().get();
+        response.doOnError((t) -> log.atWarn().setCause(t).log()).onErrorComplete().block();
+        verify(exactly(3), description.requestTargetPattern());
+    }
+
+    @ParameterizedTest
+    @MethodSource("methods")
     public void request_waitLimitReached_error(MethodDescription description) {
         stubFor(description.requestTargetMapping().willReturn(ok().withFixedDelay(600)));
         assertThatThrownBy(() -> description.requestCaller().get().block())

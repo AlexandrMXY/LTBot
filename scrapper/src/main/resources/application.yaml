@@ -11,6 +11,7 @@ app:
   github-api-url: https://api.github.com
   stackoverflow-api-url: https://api.stackexchange.com/2.2
 
+  enable-kafka: true
   access-type: orm # sql, orm
   message-transport: kafka # kafka, http
 

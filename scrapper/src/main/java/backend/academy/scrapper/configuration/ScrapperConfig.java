@@ -19,6 +19,7 @@ public record ScrapperConfig(
         @NotEmpty String botUrl,
         @NotEmpty String githubApiUrl,
         @NotEmpty String stackoverflowApiUrl,
+        boolean enableKafka,
         DBAccessImpl accessType,
         MessageTransport messageTransport,
         @Min(1) int updateThreadsCnt,

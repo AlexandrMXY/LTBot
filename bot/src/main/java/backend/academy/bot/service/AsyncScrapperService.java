@@ -1,6 +1,6 @@
 package backend.academy.bot.service;
 
-import backend.academy.api.exceptions.ApiErrorResponseException;
+import backend.academy.api.exceptions.ErrorResponseException;
 import backend.academy.api.exceptions.BadRequestErrorResponseException;
 import backend.academy.api.exceptions.ServerErrorErrorResponseException;
 import backend.academy.api.model.NotificationPolicy;
@@ -12,10 +12,8 @@ import backend.academy.api.model.responses.ApiErrorResponse;
 import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.api.model.responses.TagsListResponse;
-import backend.academy.bot.config.BotConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -24,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -174,16 +173,18 @@ public class AsyncScrapperService {
                     .log();
             }
 
-            if (response.getStatusCode().is5xxServerError())
+            if (response.getStatusCode().is5xxServerError() ||
+                response.getStatusCode().isSameCodeAs(HttpStatus.TOO_MANY_REQUESTS)) {
                 return Mono.error(new ServerErrorErrorResponseException(
                     details,
                     response.getStatusCode().value()));
+            }
             if (response.getStatusCode().is4xxClientError())
                 return Mono.error(new BadRequestErrorResponseException(
                     details,
                     response.getStatusCode().value()));
 
-            return Mono.error(new ApiErrorResponseException(
+            return Mono.error(new ErrorResponseException(
                 details,
                 response.getStatusCode().value()));
         });

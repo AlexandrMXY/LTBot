@@ -3,7 +3,7 @@ package backend.academy.bot.service;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.*;
 
-import backend.academy.api.exceptions.ApiErrorResponseException;
+import backend.academy.api.exceptions.ErrorResponseException;
 import backend.academy.api.model.requests.AddLinkRequest;
 import backend.academy.bot.config.BotApplicationConfig;
 import backend.academy.bot.config.BotConfig;
@@ -11,14 +11,12 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +57,7 @@ class ScrapperServiceTest {
 
 
         assertThatThrownBy(() -> service.trackRequest(chat, request).block())
-            .isInstanceOf(ApiErrorResponseException.class);
+            .isInstanceOf(ErrorResponseException.class);
     }
 
     @AfterEach

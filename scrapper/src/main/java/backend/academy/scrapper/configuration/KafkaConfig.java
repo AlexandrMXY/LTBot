@@ -4,12 +4,15 @@ import static backend.academy.scrapper.configuration.KafkaConfig.KafkaBeans.KAFK
 
 import java.util.HashMap;
 import java.util.Map;
+import jakarta.annotation.PostConstruct;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +25,8 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
 @EnableKafka
-//@ConditionalOnProperty(prefix = "app", name = "message-transport", havingValue = "kafka")
+@Slf4j
+@ConditionalOnProperty(prefix = "app", name = "enable-kafka", havingValue = "true")
 public class KafkaConfig {
     @Autowired
     private KafkaProperties kafkaProperties;

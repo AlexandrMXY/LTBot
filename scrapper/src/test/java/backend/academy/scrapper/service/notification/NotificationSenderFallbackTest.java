@@ -34,6 +34,8 @@ public class NotificationSenderFallbackTest {
     private KafkaTemplate kafkaTemplate;
     @MockitoBean
     private ScrapperConfig scrapperConfig;
+    @MockitoBean
+    private KafkaConfig kafkaConfig;
 
     @MockitoSpyBean
     private KafkaBotNotificationSender kafkaBotNotificationSender;

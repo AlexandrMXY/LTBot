@@ -52,7 +52,9 @@ public class HttpBotNotificationSender implements BotNotificationSender {
 
     @SuppressWarnings("unused")
     private void fallback(Updates updates, RuntimeException exception) {
-        log.info("Failed to send updates with HttpBotNotificationSender. Using fallback notification sender");
+        log.atWarn()
+            .setCause(exception)
+            .log("Failed to send updates with HttpBotNotificationSender. Using fallback notification sender");
         if (fallbackNotificationSender == null) {
             throw exception;
         }

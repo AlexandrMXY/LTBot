@@ -11,6 +11,7 @@ app:
   github-api-url: http://localhost:8082
   stackoverflow-api-url: http://localhost:8083
 
+  enable-kafka: false
   access-type: sql # sql or orm
   message-transport: http # kafka, http
 
