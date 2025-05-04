@@ -51,6 +51,7 @@ public class SpringTestConfig {
                 "http://localhost:8080",
                 "http://localhost:8082",
                 "http://localhost:8083",
+                false,
                 ScrapperConfig.DBAccessImpl.ORM,
                 ScrapperConfig.MessageTransport.HTTP,
                 10,
