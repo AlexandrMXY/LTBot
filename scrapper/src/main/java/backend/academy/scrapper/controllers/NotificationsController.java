@@ -2,6 +2,8 @@ package backend.academy.scrapper.controllers;
 
 import backend.academy.api.model.NotificationPolicy;
 import backend.academy.scrapper.service.UserService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/notifications")
+@TimeLimiter(name = NotificationsController.RESILIENCE4J_INSTANCE_NAME)
+@RateLimiter(name = NotificationsController.RESILIENCE4J_INSTANCE_NAME)
 public class NotificationsController {
+    public static final String RESILIENCE4J_INSTANCE_NAME = "notifications-controller";
     @Autowired
     private UserService userService;
 

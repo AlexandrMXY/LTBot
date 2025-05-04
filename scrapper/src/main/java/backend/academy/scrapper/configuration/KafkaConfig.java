@@ -22,7 +22,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
 @EnableKafka
-@ConditionalOnProperty(prefix = "app", name = "message-transport", havingValue = "kafka")
+//@ConditionalOnProperty(prefix = "app", name = "message-transport", havingValue = "kafka")
 public class KafkaConfig {
     @Autowired
     private KafkaProperties kafkaProperties;

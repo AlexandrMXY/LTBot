@@ -1,6 +1,7 @@
 package backend.academy.scrapper;
 
 import backend.academy.scrapper.configuration.ScrapperConfig;
+import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
 import io.lettuce.core.RedisURI;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
@@ -37,6 +38,8 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.retry.annotation.CircuitBreaker;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -54,7 +57,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @EnableJpaRepositories
 @AutoConfigureTestEntityManager
 @EnableConfigurationProperties(value = ScrapperConfig.class)
-@Import(AbstractAppTest.TestConfig.class)
+@Import({AbstractAppTest.TestConfig.class, CircuitBreakerAutoConfiguration.class})
 @EnableTransactionManagement
 @AutoConfigureDataJpa
 public abstract class AbstractAppTest {

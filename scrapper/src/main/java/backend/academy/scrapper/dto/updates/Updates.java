@@ -48,6 +48,10 @@ public class Updates implements Iterable<Update> {
         return updates;
     }
 
+    public Update pop() {
+        return updates.isEmpty() ? null : updates.removeLast();
+    }
+
     @Override
     public @NotNull Iterator<Update> iterator() {
         return updates.iterator();

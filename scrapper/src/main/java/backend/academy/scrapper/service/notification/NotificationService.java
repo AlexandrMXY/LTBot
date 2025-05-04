@@ -15,7 +15,7 @@ public class NotificationService {
     private static final String TIME_CACHE_PREFIX = "time:";
 
     @Autowired
-    private BotNotificationSender botNotificationSender;
+    private NotificationSenderService botNotificationSender;
 
     @Autowired
     @Qualifier(RedisConfig.UPDATES_TEMPLATE)

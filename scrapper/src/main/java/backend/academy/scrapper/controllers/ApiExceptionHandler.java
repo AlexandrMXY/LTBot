@@ -5,6 +5,7 @@ import backend.academy.api.exceptions.NotFoundException;
 import backend.academy.api.model.responses.ApiErrorResponse;
 import backend.academy.scrapper.exceptions.AlreadyExistsException;
 import backend.academy.scrapper.exceptions.UnsupportedLinkException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,5 +42,10 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(
                 new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "500", t),
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ResponseEntity<ApiErrorResponse> tooManyRequests(RequestNotPermitted exception) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 }

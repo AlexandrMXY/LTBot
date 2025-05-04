@@ -21,6 +21,69 @@ app:
     updates: updates
     dead-letters-queue: dead-letters
 
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        permittedNumberOfCallsInHalfOpenState: 10
+        slowCallDurationThreshold: 4s
+        slowCallRateThreshold: 90
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        minimumNumberOfCalls: 10
+    instances:
+      kafka-notification-sender:
+        base-config: default
+      http-notification-sender:
+        base-config: default
+  retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 100ms
+    instances:
+      kafka-notification-sender:
+        base-config: default
+      http-notification-sender:
+        base-config: default
+  timelimiter:
+    configs:
+      client-default:
+        timeout-duration: 2s
+      controller-default:
+        timeout-duration: 2s
+    instances:
+      kafka-notification-sender:
+        base-config: client-default
+      http-notification-sender:
+        base-config: client-default
+      notifications-controller:
+        base-config: controller-default
+      chat-controller:
+        base-config: controller-default
+      links-controller:
+        base-config: controller-default
+      tags-controller:
+        base-config: controller-default
+  ratelimiter:
+    configs:
+      controller-default:
+        limit-for-period: 10
+        limit-refresh-period: 1000s
+    instances:
+      notifications-controller:
+        base-config: controller-default
+      chat-controller:
+        base-config: controller-default
+      links-controller:
+        base-config: controller-default
+      tags-controller:
+        base-config: controller-default
+
+
+
+
 
 spring:
 #  profiles:

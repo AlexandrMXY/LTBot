@@ -5,6 +5,8 @@ import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.api.model.responses.TagsListResponse;
 import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.TagsService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@TimeLimiter(name = TagsController.RESILIENCE4J_INSTANCE_NAME)
+@RateLimiter(name = TagsController.RESILIENCE4J_INSTANCE_NAME)
 public class TagsController {
+    public static final String RESILIENCE4J_INSTANCE_NAME = "tags-controller";
     @Autowired
     private TagsService tagsService;
 

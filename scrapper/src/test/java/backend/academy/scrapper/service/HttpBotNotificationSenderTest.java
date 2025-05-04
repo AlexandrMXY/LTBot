@@ -15,16 +15,18 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import java.util.List;
+import io.github.resilience4j.springboot3.circuitbreaker.autoconfigure.CircuitBreakerAutoConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.retry.annotation.EnableRetry;
 
-// @ExtendWith(MockitoExtension.class)
-@SpringBootTest(classes = {HttpBotNotificationSender.class, BotRestClient.class})
+@SpringBootTest(classes = {HttpBotNotificationSender.class, BotRestClient.class, CircuitBreakerAutoConfiguration.class})
 @EnableConfigurationProperties(value = ScrapperConfig.class)
+@EnableRetry
 class HttpBotNotificationSenderTest {
     @Autowired
     private HttpBotNotificationSender service;

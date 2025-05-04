@@ -151,10 +151,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.github.resilience4j</groupId>-->
-<!--            <artifactId>resilience4j-spring-boot3</artifactId>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
