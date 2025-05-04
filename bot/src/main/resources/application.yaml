@@ -13,10 +13,16 @@ resilience4j:
     instances:
       scrapperService:
         timeout-duration: 5s
+      updates-controller:
+        timeout-duration: 5s
   ratelimiter:
     instances:
       scrapperService:
         limit-for-period: 500
+        limit-refresh-period: 1s
+        timeout-duration: 5s
+      updates-controller:
+        limit-for-period: 40
         limit-refresh-period: 1s
         timeout-duration: 5s
   retry:
