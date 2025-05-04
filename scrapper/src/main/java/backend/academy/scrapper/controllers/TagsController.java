@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RateLimiter(name = TagsController.RESILIENCE4J_INSTANCE_NAME)
 public class TagsController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "tags-controller";
+
     @Autowired
     private TagsService tagsService;
 

@@ -1,7 +1,7 @@
 package backend.academy.bot.service;
 
-import backend.academy.api.exceptions.ErrorResponseException;
 import backend.academy.api.exceptions.BadRequestErrorResponseException;
+import backend.academy.api.exceptions.ErrorResponseException;
 import backend.academy.api.exceptions.ServerErrorErrorResponseException;
 import backend.academy.api.model.NotificationPolicy;
 import backend.academy.api.model.requests.AddLinkRequest;
@@ -13,11 +13,11 @@ import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.api.model.responses.TagsListResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -159,34 +159,31 @@ public class AsyncScrapperService {
     private Mono<Throwable> errorResponseHandler(ClientResponse clientResponse) {
         return clientResponse.toEntity(byte[].class).flatMap(response -> {
             log.atDebug()
-                .addKeyValue("status", clientResponse.statusCode())
-                .addKeyValue("uri", clientResponse.request().getURI())
-                .addKeyValue("method", clientResponse.request().getMethod())
-                .log("Error response from server received: {}", response);
+                    .addKeyValue("status", clientResponse.statusCode())
+                    .addKeyValue("uri", clientResponse.request().getURI())
+                    .addKeyValue("method", clientResponse.request().getMethod())
+                    .log("Error response from server received: {}", response);
             ApiErrorResponse details = null;
             try {
                 details = objectMapper.readValue(response.getBody(), ApiErrorResponse.class);
             } catch (Throwable t) {
                 log.atWarn()
-                    .setMessage("Error during error response details parsing")
-                    .setCause(t)
-                    .log();
+                        .setMessage("Error during error response details parsing")
+                        .setCause(t)
+                        .log();
             }
 
-            if (response.getStatusCode().is5xxServerError() ||
-                response.getStatusCode().isSameCodeAs(HttpStatus.TOO_MANY_REQUESTS)) {
+            if (response.getStatusCode().is5xxServerError()
+                    || response.getStatusCode().isSameCodeAs(HttpStatus.TOO_MANY_REQUESTS)) {
                 return Mono.error(new ServerErrorErrorResponseException(
-                    details,
-                    response.getStatusCode().value()));
+                        details, response.getStatusCode().value()));
             }
             if (response.getStatusCode().is4xxClientError())
                 return Mono.error(new BadRequestErrorResponseException(
-                    details,
-                    response.getStatusCode().value()));
+                        details, response.getStatusCode().value()));
 
-            return Mono.error(new ErrorResponseException(
-                details,
-                response.getStatusCode().value()));
+            return Mono.error(
+                    new ErrorResponseException(details, response.getStatusCode().value()));
         });
     }
 }

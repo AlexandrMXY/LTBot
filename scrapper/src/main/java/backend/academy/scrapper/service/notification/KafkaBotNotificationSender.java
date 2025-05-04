@@ -33,16 +33,16 @@ public class KafkaBotNotificationSender implements BotNotificationSender {
     private HttpBotNotificationSender fallbackNotificationSender;
 
     @Override
-    @CircuitBreaker(name = KafkaBotNotificationSender.RESILIENCE4J_INSTANCE_NAME, fallbackMethod = "fallback")
-    @Retry(name = KafkaBotNotificationSender.RESILIENCE4J_INSTANCE_NAME, fallbackMethod = "fallback")
-    @TimeLimiter(name = KafkaBotNotificationSender.RESILIENCE4J_INSTANCE_NAME, fallbackMethod = "fallback")
+    @CircuitBreaker(name = RESILIENCE4J_INSTANCE_NAME, fallbackMethod = "fallback")
+    @Retry(name = RESILIENCE4J_INSTANCE_NAME, fallbackMethod = "fallback")
+    @TimeLimiter(name = RESILIENCE4J_INSTANCE_NAME, fallbackMethod = "fallback")
     public void sendUpdates(Updates updates) {
         sendUpdatesWithoutFallback(updates);
     }
 
-    @CircuitBreaker(name = KafkaBotNotificationSender.RESILIENCE4J_INSTANCE_NAME)
-    @Retry(name = KafkaBotNotificationSender.RESILIENCE4J_INSTANCE_NAME)
-    @TimeLimiter(name = KafkaBotNotificationSender.RESILIENCE4J_INSTANCE_NAME)
+    @CircuitBreaker(name = RESILIENCE4J_INSTANCE_NAME)
+    @Retry(name = RESILIENCE4J_INSTANCE_NAME)
+    @TimeLimiter(name = RESILIENCE4J_INSTANCE_NAME)
     public void sendUpdatesWithoutFallback(Updates updates) {
         if (updates == null) return;
         for (Update update : updates.getUpdates()) {
@@ -54,8 +54,8 @@ public class KafkaBotNotificationSender implements BotNotificationSender {
     @SuppressWarnings("unused")
     private void fallback(Updates updates, RuntimeException exception) {
         log.atWarn()
-            .setCause(exception)
-            .log("Failed to send updates with KafkaBotNotificationSender. Using fallback notification sender");
+                .setCause(exception)
+                .log("Failed to send updates with KafkaBotNotificationSender. Using fallback notification sender");
         if (fallbackNotificationSender == null) {
             throw exception;
         }
@@ -68,13 +68,9 @@ public class KafkaBotNotificationSender implements BotNotificationSender {
         @ConditionalOnBean(KafkaConfig.class)
         @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
         public KafkaBotNotificationSender kafkaBotNotificationSender(
-            @Qualifier(KafkaConfig.KafkaBeans.KAFKA_TEMPLATE_BEAN)
-            KafkaTemplate kafkaTemplate,
-            ScrapperConfig scrapperConfig,
-            @Lazy
-            @Autowired(required = false)
-            HttpBotNotificationSender fallbackNotificationSender
-        ) {
+                @Qualifier(KafkaConfig.KafkaBeans.KAFKA_TEMPLATE_BEAN) KafkaTemplate kafkaTemplate,
+                ScrapperConfig scrapperConfig,
+                @Lazy @Autowired(required = false) HttpBotNotificationSender fallbackNotificationSender) {
             return new KafkaBotNotificationSender(kafkaTemplate, scrapperConfig, fallbackNotificationSender);
         }
     }

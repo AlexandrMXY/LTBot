@@ -8,17 +8,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class NotificationSenderService {
+public final class NotificationSenderService {
     private final BotNotificationSender primarySender;
 
     public NotificationSenderService(
             ScrapperConfig config,
             @Autowired(required = false) HttpBotNotificationSender httpSender,
-            @Autowired(required = false) KafkaBotNotificationSender kafkaSender
-    ) {
+            @Autowired(required = false) KafkaBotNotificationSender kafkaSender) {
         primarySender = switch (config.messageTransport()) {
-            case HTTP ->  httpSender;
-            case KAFKA ->  kafkaSender;
+            case HTTP -> httpSender;
+            case KAFKA -> kafkaSender;
         };
         if (primarySender == null) {
             throw new IllegalStateException("No primary notifications sender instance found");

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RateLimiter(name = LinksController.RESILIENCE4J_INSTANCE_NAME)
 public class LinksController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "links-controller";
+
     @Autowired
     private LinksService linksService;
 

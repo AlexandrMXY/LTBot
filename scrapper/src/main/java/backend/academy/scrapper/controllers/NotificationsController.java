@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RateLimiter(name = NotificationsController.RESILIENCE4J_INSTANCE_NAME)
 public class NotificationsController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "notifications-controller";
+
     @Autowired
     private UserService userService;
 

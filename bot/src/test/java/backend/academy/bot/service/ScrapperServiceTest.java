@@ -23,8 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 class ScrapperServiceTest {
     public static final String SCRAPPER_URL = "http://localhost:8080";
     private static final BotConfig TEST_CONFIG =
-            new BotConfig("", SCRAPPER_URL, 100000,
-                new BotConfig.KafkaTopics("updates", "dead-letters"));
+            new BotConfig("", SCRAPPER_URL, 100000, new BotConfig.KafkaTopics("updates", "dead-letters"));
 
     @Spy
     private WebClient restClient = new BotApplicationConfig().scrapperWebClient(TEST_CONFIG);
@@ -55,9 +54,8 @@ class ScrapperServiceTest {
                                         .withBody(
                                                 "{\"description\":\"Bad Request\",\"code\":\"400\",\"exceptionName\":\"backend.academy.scrapper.exceptions.AlreadyExistsException\",\"exceptionMessage\":\"Link already exists\",\"stacktrace\":[\"\"]}")));
 
-
         assertThatThrownBy(() -> service.trackRequest(chat, request).block())
-            .isInstanceOf(ErrorResponseException.class);
+                .isInstanceOf(ErrorResponseException.class);
     }
 
     @AfterEach
