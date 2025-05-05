@@ -3,9 +3,7 @@ create sequence if not exists tracked_link_seq
 
 create table if not exists users (
     id                  bigint not null primary key,
-    inactive_tags       varchar(1024),
-    notification_policy varchar(64) CHECK (notification_policy IN ('INSTANT', 'DELAYED')),
-    notification_time   integer
+    inactive_tags       varchar(1024)
 );
 
 create table if not exists tracked_link (

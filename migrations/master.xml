@@ -8,5 +8,7 @@
     <changeSet id="1" author="">
         <sqlFile path="create-traced-link-and-users-tables.sql" relativeToChangelogFile="true"/>
     </changeSet>
-
+    <changeSet id="2" author="">
+        <sqlFile path="add-notification-policy-cols.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog>

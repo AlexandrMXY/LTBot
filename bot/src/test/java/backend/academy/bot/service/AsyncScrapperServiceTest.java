@@ -36,7 +36,7 @@ import reactor.core.publisher.Mono;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-@ActiveProfiles({"noKafka"})
+@ActiveProfiles({"noKafka", "noRedis"})
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 class AsyncScrapperServiceTest {

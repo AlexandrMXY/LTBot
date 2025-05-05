@@ -62,6 +62,11 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  data:
+    redis:
+      host: localhost
+      port: 6380
+
   kafka:
     bootstrap-servers: localhost:19092
     consumer.properties:

@@ -29,7 +29,7 @@ class ScrapperServiceTest {
     private WebClient restClient = new BotApplicationConfig().scrapperWebClient(TEST_CONFIG);
 
     @InjectMocks
-    private AsyncScrapperService service = new AsyncScrapperService();
+    private ScrapperService service = new AsyncScrapperService();
 
     private WireMockServer wireMock;
 

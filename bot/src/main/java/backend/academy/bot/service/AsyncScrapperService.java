@@ -21,6 +21,8 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -37,7 +39,8 @@ import reactor.core.publisher.Mono;
 @CircuitBreaker(name = AsyncScrapperService.RESILIENCE4J_INSTANCE_NAME)
 @RateLimiter(name = AsyncScrapperService.RESILIENCE4J_INSTANCE_NAME)
 @TimeLimiter(name = AsyncScrapperService.RESILIENCE4J_INSTANCE_NAME)
-public class AsyncScrapperService {
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class AsyncScrapperService implements ScrapperService {
     public static final String RESILIENCE4J_INSTANCE_NAME = "scrapperService";
 
     @Autowired
@@ -47,6 +50,7 @@ public class AsyncScrapperService {
     @Qualifier("scrapperWebClient")
     private WebClient client;
 
+    @Override
     public Mono<ResponseEntity<Void>> deactivateTag(long chatId, String tag) {
         return client.post()
                 .uri("/tags/deactivate")
@@ -56,6 +60,7 @@ public class AsyncScrapperService {
                 .toBodilessEntity();
     }
 
+    @Override
     public Mono<ResponseEntity<Void>> reactivateTag(long chatId, String tag) {
         return client.post()
                 .uri("/tags/reactivate")
@@ -65,6 +70,7 @@ public class AsyncScrapperService {
                 .toBodilessEntity();
     }
 
+    @Override
     public Mono<TagsListResponse> getTagsList(long chatId) {
         return client.get()
                 .uri("/tags/" + chatId)
@@ -73,6 +79,7 @@ public class AsyncScrapperService {
                 .bodyToMono(TagsListResponse.class);
     }
 
+    @Override
     public Mono<LinkResponse> trackRequest(long chatId, AddLinkRequest request) {
         return client.post()
                 .uri("/links")
@@ -83,6 +90,7 @@ public class AsyncScrapperService {
                 .bodyToMono(LinkResponse.class);
     }
 
+    @Override
     public Mono<LinkResponse> removeLink(long chatId, RemoveLinkRequest request) {
         return client.method(HttpMethod.DELETE)
                 .uri("/links")
@@ -94,6 +102,7 @@ public class AsyncScrapperService {
                 .bodyToMono(LinkResponse.class);
     }
 
+    @Override
     public Mono<ResponseEntity<Void>> registerChat(long id) {
         return client.post()
                 .uri("/tg-chat/" + id)
@@ -102,6 +111,7 @@ public class AsyncScrapperService {
                 .toBodilessEntity();
     }
 
+    @Override
     public Mono<ListLinksResponse> getTrackedLinks(long chatId) {
         return client.get()
                 .uri("/links")
@@ -112,24 +122,27 @@ public class AsyncScrapperService {
                 .bodyToMono(ListLinksResponse.class);
     }
 
-    public Mono<ResponseEntity<Void>> addTagToLink(long charId, String link, String tag) {
+    @Override
+    public Mono<ResponseEntity<Void>> addTagToLink(long chatId, String link, String tag) {
         return client.post()
                 .uri("/links/tags")
-                .bodyValue(new LinkTagRequest(charId, tag, link))
+                .bodyValue(new LinkTagRequest(chatId, tag, link))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::errorResponseHandler)
                 .toBodilessEntity();
     }
 
-    public Mono<ResponseEntity<Void>> removeTagFromLink(long charId, String link, String tag) {
+    @Override
+    public Mono<ResponseEntity<Void>> removeTagFromLink(long chatId, String link, String tag) {
         return client.method(HttpMethod.DELETE)
                 .uri("/links/tags")
-                .bodyValue(new LinkTagRequest(charId, tag, link))
+                .bodyValue(new LinkTagRequest(chatId, tag, link))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::errorResponseHandler)
                 .toBodilessEntity();
     }
 
+    @Override
     public Mono<ListLinksResponse> getLinksWithTag(long chatId, String tag) {
         return client.method(HttpMethod.GET)
                 .uri("/tags/linksWithTag")
@@ -139,6 +152,7 @@ public class AsyncScrapperService {
                 .bodyToMono(ListLinksResponse.class);
     }
 
+    @Override
     public Mono<ResponseEntity<Void>> setNotificationPolicy(long chatId, NotificationPolicy policy) {
         return client.post()
                 .uri("notifications/{user}/policy", Map.of("user", chatId))
@@ -148,6 +162,7 @@ public class AsyncScrapperService {
                 .toBodilessEntity();
     }
 
+    @Override
     public Mono<NotificationPolicy> getNotificationPolicy(long chatId) {
         return client.get()
                 .uri("notifications/{user}/policy", Map.of("user", chatId))

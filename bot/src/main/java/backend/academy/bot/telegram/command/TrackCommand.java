@@ -1,7 +1,7 @@
 package backend.academy.bot.telegram.command;
 
 import backend.academy.api.model.requests.AddLinkRequest;
-import backend.academy.bot.service.AsyncScrapperService;
+import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.service.telegram.TelegramService;
 import backend.academy.bot.telegram.command.session.SessionState;
 import backend.academy.bot.telegram.command.session.SessionStateHandler;
@@ -31,9 +31,7 @@ public class TrackCommand implements Command {
     private final SessionStateHandler serverResponseHandler;
 
     public TrackCommand(
-            TelegramService telegramService,
-            AsyncScrapperService scrapperService,
-            SessionStateManager sessionStateManager) {
+            TelegramService telegramService, ScrapperService scrapperService, SessionStateManager sessionStateManager) {
         serverResponseHandler = (state, event0) -> {
             if (!(event0 instanceof ServerResponseEvent event)) {
                 return false;

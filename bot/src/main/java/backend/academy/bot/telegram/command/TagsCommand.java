@@ -1,6 +1,6 @@
 package backend.academy.bot.telegram.command;
 
-import backend.academy.bot.service.AsyncScrapperService;
+import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.service.telegram.TelegramService;
 import backend.academy.bot.telegram.command.session.SessionStateManager;
 import backend.academy.bot.telegram.command.session.events.ErrorResponseEvent;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class TagsCommand extends AbstractSimpleRequestCommand {
     public TagsCommand(
             TelegramService telegramService,
-            AsyncScrapperService scrapperService,
+            ScrapperService scrapperService,
             SessionStateManager sessionStateManager,
             LinksListFormatter formatter) {
         super(

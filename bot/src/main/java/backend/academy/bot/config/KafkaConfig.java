@@ -2,7 +2,6 @@ package backend.academy.bot.config;
 
 import static backend.academy.bot.config.KafkaConfig.KafkaBeans.DEAD_LETTERS_TEMPLATE;
 import static backend.academy.bot.config.KafkaConfig.KafkaBeans.DEFAULT_CONSUMER_FACTORY;
-import static backend.academy.bot.config.KafkaConfig.KafkaBeans.LINK_UPDATE_CONSUMER_TEMPLATE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,19 +58,6 @@ public class KafkaConfig {
         return new NewTopic(botConfig.kafkaTopics().deadLettersQueue(), 1, (short) 1);
     }
 
-    @Bean(LINK_UPDATE_CONSUMER_TEMPLATE)
-    public KafkaTemplate<Long, String> linkUpdateConsumerKafkaTemplate() {
-        var props = properties.buildConsumerProperties();
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
-
-        //        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, LinkUpdate.class.getName());
-        //        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-
-        var factory = new DefaultKafkaProducerFactory<Long, String>(props);
-        return new KafkaTemplate<>(factory);
-    }
-
     @Bean(DEAD_LETTERS_TEMPLATE)
     public KafkaTemplate<Long, Object> deadLettersTopicKafkaTemplate() {
         Map<String, Object> props = properties.buildProducerProperties();
@@ -103,7 +89,6 @@ public class KafkaConfig {
 
     @UtilityClass
     public static class KafkaBeans {
-        public static final String LINK_UPDATE_CONSUMER_TEMPLATE = "linkUpdateConsumerKafkaTemplate";
         public static final String DEAD_LETTERS_TEMPLATE = "deadLettersKafkaTemplate";
 
         public static final String DEFAULT_CONSUMER_FACTORY = "defaultConsumerFactory";

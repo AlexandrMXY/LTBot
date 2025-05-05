@@ -1,7 +1,7 @@
 package backend.academy.bot.telegram.command;
 
 import backend.academy.api.model.NotificationPolicy;
-import backend.academy.bot.service.AsyncScrapperService;
+import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.service.telegram.TelegramService;
 import backend.academy.bot.telegram.command.session.SessionStateManager;
 import backend.academy.bot.telegram.command.session.events.ErrorResponseEvent;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationsCommand extends AbstractSimpleRequestCommand {
     public NotificationsCommand(
-            TelegramService telegramService,
-            AsyncScrapperService scrapperService,
-            SessionStateManager sessionStateManager) {
+            TelegramService telegramService, ScrapperService scrapperService, SessionStateManager sessionStateManager) {
         super(
                 (message) -> {
                     String[] args = message.message().trim().split("\\s");

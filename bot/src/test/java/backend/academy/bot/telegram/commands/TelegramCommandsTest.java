@@ -6,7 +6,7 @@ import static org.mockito.Mockito.*;
 import backend.academy.api.model.responses.LinkResponse;
 import backend.academy.api.model.responses.ListLinksResponse;
 import backend.academy.bot.dto.MessageDto;
-import backend.academy.bot.service.AsyncScrapperService;
+import backend.academy.bot.service.ScrapperService;
 import backend.academy.bot.service.telegram.MessageProcessorService;
 import backend.academy.bot.service.telegram.TelegramService;
 import java.util.List;
@@ -27,7 +27,7 @@ public class TelegramCommandsTest {
     private TelegramService telegramService;
 
     @MockitoBean
-    private AsyncScrapperService scrapperService;
+    private ScrapperService scrapperService;
 
     @Autowired
     private MessageProcessorService messageProcessorService;

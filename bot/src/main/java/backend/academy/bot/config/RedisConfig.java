@@ -1,26 +1,22 @@
-package backend.academy.scrapper.configuration;
+package backend.academy.bot.config;
 
-import backend.academy.scrapper.dto.updates.Update;
+import backend.academy.api.model.responses.ListLinksResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@Profile("!noRedis")
 public class RedisConfig {
-    public static final String UPDATES_TEMPLATE = "redisUpdatesTemplate";
+    public static final String LINKS_TEMPLATE = "redisLinksTemplate";
 
-    @Bean
-    public LettuceConnectionFactory lettuceConnectionFactory() {
-        return new LettuceConnectionFactory();
-    }
-
-    @Bean(UPDATES_TEMPLATE)
-    public RedisTemplate<String, Update> redisUpdatesTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Update> template = new RedisTemplate<>();
+    @Bean(LINKS_TEMPLATE)
+    public RedisTemplate<String, ListLinksResponse> redisLinksTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, ListLinksResponse> template = new RedisTemplate<>();
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         template.setConnectionFactory(redisConnectionFactory);

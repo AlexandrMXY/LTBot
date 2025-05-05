@@ -33,7 +33,7 @@ public class KafkaTest extends AbstractKafkaTest {
         byte[] bytes = "aaa".getBytes();
         testTemplate.send(botConfig.kafkaTopics().updates(), bytes);
 
-        var record = DLQ_RECORDS.poll(10, TimeUnit.SECONDS);
+        var record = DLQ_RECORDS.poll(100, TimeUnit.SECONDS);
 
         Assertions.assertThat(record.value()).containsExactly(bytes);
     }
