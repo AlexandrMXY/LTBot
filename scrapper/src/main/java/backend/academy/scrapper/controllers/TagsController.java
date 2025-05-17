@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@TimeLimiter(name = TagsController.RESILIENCE4J_INSTANCE_NAME)
 @RateLimiter(name = TagsController.RESILIENCE4J_INSTANCE_NAME)
 public class TagsController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "tags-controller";

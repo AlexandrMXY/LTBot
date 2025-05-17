@@ -13,6 +13,7 @@ import backend.academy.scrapper.service.LinksService;
 import backend.academy.scrapper.service.TagsService;
 import backend.academy.scrapper.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.springboot3.ratelimiter.autoconfigure.RateLimiterAutoConfiguration;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
@@ -48,6 +49,9 @@ public class ControllersRateLimiterTest {
     @MockitoBean
     private LinksService linksService;
 
+    @Autowired
+    private RateLimiterRegistry rateLimiterRegistry;
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @SneakyThrows
@@ -57,43 +61,44 @@ public class ControllersRateLimiterTest {
 
     public static Stream<Arguments> requests() {
         return Stream.of(
-                Arguments.of(post("/tg-chat/444")),
-                Arguments.of(delete("/tg-chat/444")),
-                Arguments.of(get("/links").header("Tg-Chat-Id", 44)),
-                Arguments.of(post("/links")
+                Arguments.of(ChatController.RESILIENCE4J_INSTANCE_NAME, post("/tg-chat/444")),
+                Arguments.of(ChatController.RESILIENCE4J_INSTANCE_NAME, delete("/tg-chat/444")),
+                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, get("/links").header("Tg-Chat-Id", 44)),
+                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, post("/links")
                         .header("Tg-Chat-Id", 44)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new AddLinkRequest(null, null, null)))),
-                Arguments.of(delete("/links")
+                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, delete("/links")
                         .header("Tg-Chat-Id", 44)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new RemoveLinkRequest(null)))),
-                Arguments.of(delete("/links/tags")
+                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, delete("/links/tags")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new LinkTagRequest(0, null, null)))),
-                Arguments.of(post("/links/tags")
+                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, post("/links/tags")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new LinkTagRequest(0, null, null)))),
-                Arguments.of(get("/notifications/11/policy")),
-                Arguments.of(post("/notifications/11/policy")
+                Arguments.of(NotificationsController.RESILIENCE4J_INSTANCE_NAME, get("/notifications/11/policy")),
+                Arguments.of(NotificationsController.RESILIENCE4J_INSTANCE_NAME, post("/notifications/11/policy")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new NotificationPolicy(null, null)))),
-                Arguments.of(post("/tags/deactivate")
+                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, post("/tags/deactivate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new TagsRequest(0, null)))),
-                Arguments.of(post("/tags/reactivate")
+                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, post("/tags/reactivate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new TagsRequest(0, null)))),
-                Arguments.of(get("/tags/111")),
-                Arguments.of(get("/tags/linksWithTag")
+                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, get("/tags/111")),
+                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, get("/tags/linksWithTag")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new TagsRequest(0, null)))));
     }
 
     @ParameterizedTest
     @MethodSource("requests")
-    public void endpoint_requestLimitExceeded_returns429(RequestBuilder request) throws Exception {
+    public void endpoint_requestLimitExceeded_returns429(String limiter, RequestBuilder request) throws Exception {
         int RATE_LIMIT = 10;
+        rateLimiterRegistry.rateLimiter(limiter).reservePermission(RATE_LIMIT);
         for (int i = 0; i < RATE_LIMIT; i++) {
             try {
                 mockMvc.perform(request).andExpect((res) -> {});

@@ -9,7 +9,6 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app")
-@EnableScheduling
 @EnableRetry
 public record ScrapperConfig(
         @NotEmpty String githubToken,

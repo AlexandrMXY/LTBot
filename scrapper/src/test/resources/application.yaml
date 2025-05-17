@@ -72,6 +72,7 @@ resilience4j:
       controller-default:
         limit-for-period: 10
         limit-refresh-period: 1000s
+        timeout-duration: 500ms
     instances:
       notifications-controller:
         base-config: controller-default

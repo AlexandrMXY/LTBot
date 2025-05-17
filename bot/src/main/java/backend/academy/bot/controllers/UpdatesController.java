@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Log4j2
-@TimeLimiter(name = UpdatesController.RESILIENCE4J_INSTANCE_NAME)
 @RateLimiter(name = UpdatesController.RESILIENCE4J_INSTANCE_NAME)
 public class UpdatesController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "updates-controller";

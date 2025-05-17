@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/notifications")
-@TimeLimiter(name = NotificationsController.RESILIENCE4J_INSTANCE_NAME)
 @RateLimiter(name = NotificationsController.RESILIENCE4J_INSTANCE_NAME)
 public class NotificationsController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "notifications-controller";

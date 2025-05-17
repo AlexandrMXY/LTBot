@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/links")
-@TimeLimiter(name = LinksController.RESILIENCE4J_INSTANCE_NAME)
 @RateLimiter(name = LinksController.RESILIENCE4J_INSTANCE_NAME)
 public class LinksController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "links-controller";

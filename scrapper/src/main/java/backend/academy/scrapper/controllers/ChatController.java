@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/tg-chat/{id}")
-@TimeLimiter(name = ChatController.RESILIENCE4J_INSTANCE_NAME)
 @RateLimiter(name = ChatController.RESILIENCE4J_INSTANCE_NAME)
 public class ChatController {
     public static final String RESILIENCE4J_INSTANCE_NAME = "chat-controller";
