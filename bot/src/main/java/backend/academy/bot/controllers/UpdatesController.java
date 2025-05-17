@@ -3,7 +3,6 @@ package backend.academy.bot.controllers;
 import backend.academy.api.model.LinkUpdate;
 import backend.academy.bot.service.UpdatesService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;

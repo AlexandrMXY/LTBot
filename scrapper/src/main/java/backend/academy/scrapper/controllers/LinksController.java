@@ -9,7 +9,6 @@ import backend.academy.scrapper.dto.LinkDto;
 import backend.academy.scrapper.service.LinksService;
 import backend.academy.scrapper.service.TagsService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

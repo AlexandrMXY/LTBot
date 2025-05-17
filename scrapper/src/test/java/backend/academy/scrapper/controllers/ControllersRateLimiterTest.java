@@ -1,6 +1,5 @@
 package backend.academy.scrapper.controllers;
 
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -63,35 +62,53 @@ public class ControllersRateLimiterTest {
         return Stream.of(
                 Arguments.of(ChatController.RESILIENCE4J_INSTANCE_NAME, post("/tg-chat/444")),
                 Arguments.of(ChatController.RESILIENCE4J_INSTANCE_NAME, delete("/tg-chat/444")),
-                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, get("/links").header("Tg-Chat-Id", 44)),
-                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, post("/links")
-                        .header("Tg-Chat-Id", 44)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new AddLinkRequest(null, null, null)))),
-                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, delete("/links")
-                        .header("Tg-Chat-Id", 44)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new RemoveLinkRequest(null)))),
-                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, delete("/links/tags")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new LinkTagRequest(0, null, null)))),
-                Arguments.of(LinksController.RESILIENCE4J_INSTANCE_NAME, post("/links/tags")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new LinkTagRequest(0, null, null)))),
+                Arguments.of(
+                        LinksController.RESILIENCE4J_INSTANCE_NAME,
+                        get("/links").header("Tg-Chat-Id", 44)),
+                Arguments.of(
+                        LinksController.RESILIENCE4J_INSTANCE_NAME,
+                        post("/links")
+                                .header("Tg-Chat-Id", 44)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new AddLinkRequest(null, null, null)))),
+                Arguments.of(
+                        LinksController.RESILIENCE4J_INSTANCE_NAME,
+                        delete("/links")
+                                .header("Tg-Chat-Id", 44)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new RemoveLinkRequest(null)))),
+                Arguments.of(
+                        LinksController.RESILIENCE4J_INSTANCE_NAME,
+                        delete("/links/tags")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new LinkTagRequest(0, null, null)))),
+                Arguments.of(
+                        LinksController.RESILIENCE4J_INSTANCE_NAME,
+                        post("/links/tags")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new LinkTagRequest(0, null, null)))),
                 Arguments.of(NotificationsController.RESILIENCE4J_INSTANCE_NAME, get("/notifications/11/policy")),
-                Arguments.of(NotificationsController.RESILIENCE4J_INSTANCE_NAME, post("/notifications/11/policy")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new NotificationPolicy(null, null)))),
-                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, post("/tags/deactivate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new TagsRequest(0, null)))),
-                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, post("/tags/reactivate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new TagsRequest(0, null)))),
+                Arguments.of(
+                        NotificationsController.RESILIENCE4J_INSTANCE_NAME,
+                        post("/notifications/11/policy")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new NotificationPolicy(null, null)))),
+                Arguments.of(
+                        TagsController.RESILIENCE4J_INSTANCE_NAME,
+                        post("/tags/deactivate")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new TagsRequest(0, null)))),
+                Arguments.of(
+                        TagsController.RESILIENCE4J_INSTANCE_NAME,
+                        post("/tags/reactivate")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new TagsRequest(0, null)))),
                 Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, get("/tags/111")),
-                Arguments.of(TagsController.RESILIENCE4J_INSTANCE_NAME, get("/tags/linksWithTag")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(new TagsRequest(0, null)))));
+                Arguments.of(
+                        TagsController.RESILIENCE4J_INSTANCE_NAME,
+                        get("/tags/linksWithTag")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json(new TagsRequest(0, null)))));
     }
 
     @ParameterizedTest

@@ -6,6 +6,8 @@ import io.lettuce.core.RedisURI;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -17,7 +19,7 @@ import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.DirectoryResourceAccessor;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
@@ -54,6 +56,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @EnableTransactionManagement
 @AutoConfigureDataJpa
 public abstract class AbstractAppTest {
+    private static final String MIGRATIONS_DIR_PATH;
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
@@ -72,7 +76,10 @@ public abstract class AbstractAppTest {
             .withExposedPorts(6379);
 
     static {
-        System.out.println(new File("../migrations").getAbsolutePath());
+        String[] pathArr = new File("").getAbsolutePath().split("[\\\\/]");
+        pathArr[pathArr.length - 1] = "migrations";
+        MIGRATIONS_DIR_PATH = String.join(File.separator, pathArr);
+
         redis.start();
         postgres.start();
     }
@@ -88,18 +95,20 @@ public abstract class AbstractAppTest {
         registry.add("spring.liquibase.url", postgres::getJdbcUrl);
         registry.add("spring.liquibase.user", postgres::getUsername);
         registry.add("spring.liquibase.password", postgres::getPassword);
+        registry.add("spring.liquibase.change-log", () -> (MIGRATIONS_DIR_PATH + File.separator + "master.xml"));
     }
 
     @TestConfiguration
     @ComponentScan("backend")
     public static class TestConfig {
         @PostConstruct
-        private void migrate() throws SQLException, LiquibaseException {
+        private void migrate() throws SQLException, LiquibaseException, FileNotFoundException {
             try (var connection = DriverManager.getConnection(
                     postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())) {
                 var database =
                         DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
-                var liquibase = new Liquibase("test-db-init.xml", new ClassLoaderResourceAccessor(), database);
+                var liquibase = new Liquibase(
+                        "master.xml", new DirectoryResourceAccessor(Path.of(MIGRATIONS_DIR_PATH)), database);
                 liquibase.update(new Contexts(), new LabelExpression());
             }
         }

@@ -3,7 +3,6 @@ package backend.academy.scrapper.controllers;
 import backend.academy.api.model.NotificationPolicy;
 import backend.academy.scrapper.service.UserService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
