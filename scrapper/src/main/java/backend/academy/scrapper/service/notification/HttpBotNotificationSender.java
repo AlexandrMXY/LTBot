@@ -41,9 +41,10 @@ public class HttpBotNotificationSender implements BotNotificationSender {
         if (updates == null) return;
 
         Update update;
-        while ((update = updates.pop()) != null) {
+        while ((update = updates.peek()) != null) {
             var request = update.createRequest();
             client.postRequest("/updates", request);
+            updates.pop();
         }
     }
 
@@ -51,7 +52,7 @@ public class HttpBotNotificationSender implements BotNotificationSender {
     private void fallback(Updates updates, RuntimeException exception) {
         log.atWarn()
                 .setCause(exception)
-                .log("Failed to send updates with HttpBotNotificationSender. Using fallback notification sender");
+                .log("Failed to send updates with HttpBotNotificationSender. " + (fallbackNotificationSender == null ? "" : "Using fallback notification sender"));
         if (fallbackNotificationSender == null) {
             throw exception;
         }

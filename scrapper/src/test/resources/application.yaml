@@ -52,21 +52,11 @@ resilience4j:
     configs:
       client-default:
         timeout-duration: 2s
-      controller-default:
-        timeout-duration: 2s
     instances:
       kafka-notification-sender:
         base-config: client-default
       http-notification-sender:
         base-config: client-default
-      notifications-controller:
-        base-config: controller-default
-      chat-controller:
-        base-config: controller-default
-      links-controller:
-        base-config: controller-default
-      tags-controller:
-        base-config: controller-default
   ratelimiter:
     configs:
       controller-default:

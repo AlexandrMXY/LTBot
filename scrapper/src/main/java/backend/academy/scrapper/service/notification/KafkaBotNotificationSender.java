@@ -45,9 +45,12 @@ public class KafkaBotNotificationSender implements BotNotificationSender {
     @TimeLimiter(name = RESILIENCE4J_INSTANCE_NAME)
     public void sendUpdatesWithoutFallback(Updates updates) {
         if (updates == null) return;
-        for (Update update : updates.getUpdates()) {
+
+        Update update;
+        while ((update = updates.peek()) != null) {
             var request = update.createRequest();
             kafkaTemplate.send(scrapperConfig.kafkaTopics().updates(), request).join();
+            updates.pop();
         }
     }
 

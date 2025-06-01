@@ -52,6 +52,10 @@ public class Updates implements Iterable<Update> {
         return updates.isEmpty() ? null : updates.removeLast();
     }
 
+    public Update peek() {
+        return updates.isEmpty() ? null : updates.get(0);
+    }
+
     @Override
     public @NotNull Iterator<Update> iterator() {
         return updates.iterator();
